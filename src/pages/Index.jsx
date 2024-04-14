@@ -69,6 +69,9 @@ const ProjectCard = ({ project }) => {
       <Heading size="md" mt={2}>
         {project.name}
       </Heading>
+     <Text fontSize="lg" mb={6}>
+       As a content creator, techfren is dedicated to sharing knowledge on AI and software engineering, helping others to learn and grow in the tech industry.
+     </Text>
       <Text fontSize="sm">{project.description}</Text>
       <HStack>
         {project.github && (
@@ -121,11 +124,17 @@ const Index = () => {
         <Heading as="h1" size="2xl" mb={2}>
           techfren
         </Heading>
+     <Text fontSize="lg" mb={6}>
+       As a content creator, techfren is dedicated to sharing knowledge on AI and software engineering, helping others to learn and grow in the tech industry.
+     </Text>
         <Text fontSize="xl">Software Engineer & Creative Thinker</Text>
       </Box>
       <Heading as="h2" size="xl" mb={6}>
         Latest Projects
       </Heading>
+     <Text fontSize="lg" mb={6}>
+       As a content creator, techfren is dedicated to sharing knowledge on AI and software engineering, helping others to learn and grow in the tech industry.
+     </Text>
       <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
         {projects.map((project, index) => (
           <ProjectCard key={index} project={project} />
