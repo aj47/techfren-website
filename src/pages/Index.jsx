@@ -121,6 +121,11 @@ const Index = () => {
         <Heading as="h1" size="2xl" mb={2}>
           techfren
         </Heading>
+       <Box p={4} borderWidth="1px" borderRadius="lg" mb={6}>
+         <Text fontSize="lg">
+           techfren is a content creator that creates content about AI and software engineering, sharing insights and knowledge with a wide audience.
+         </Text>
+       </Box>
         <Text fontSize="xl">Software Engineer & Creative Thinker</Text>
       </Box>
       <Heading as="h2" size="xl" mb={6}>
