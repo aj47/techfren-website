@@ -126,8 +126,7 @@ const Index = () => {
            techfren is a content creator that creates content about AI and software engineering, sharing insights and knowledge with a wide audience.
          </Text>
        </Box>
-        <Text fontSize="xl">Software Engineer & Creative Thinker</Text>
-      </Box>
+       </Box>
       <Heading as="h2" size="xl" mb={6}>
         Latest Projects
       </Heading>
