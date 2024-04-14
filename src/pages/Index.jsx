@@ -119,7 +119,7 @@ const Index = () => {
       <ColorModeSwitcher />
       <Box textAlign="center" mb={10}>
         <Heading as="h1" size="2xl" mb={2}>
-          Arash Joobandi
+          techfren
         </Heading>
         <Text fontSize="xl">Software Engineer & Creative Thinker</Text>
       </Box>
