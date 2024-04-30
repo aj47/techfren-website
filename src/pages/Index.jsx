@@ -12,8 +12,18 @@ import {
   useColorMode,
   useColorModeValue,
   Switch,
+  Collapse
 } from "@chakra-ui/react";
-import { FaGithub, FaExternalLinkAlt, FaMoon, FaSun, FaTiktok, FaYoutube, FaTwitch } from "react-icons/fa";
+import {
+  FaGithub,
+  FaExternalLinkAlt,
+  FaMoon,
+  FaSun,
+  FaTiktok,
+  FaYoutube,
+  FaTwitch,
+} from "react-icons/fa";
+import { useState } from "react";
 
 const projects = [
   {
@@ -95,13 +105,13 @@ const ProjectCard = ({ project }) => {
           />
         )}
         {project.live && (
-        <IconButton
-          as={Link}
-          href={project.live}
-          icon={<FaExternalLinkAlt />}
-          aria-label="Live Demo"
-          isExternal
-        />
+          <IconButton
+            as={Link}
+            href={project.live}
+            icon={<FaExternalLinkAlt />}
+            aria-label="Live Demo"
+            isExternal
+          />
         )}
       </HStack>
     </VStack>
@@ -128,45 +138,102 @@ const Index = () => {
   const bgColor = useColorModeValue("gray.50", "gray.800");
   const color = useColorModeValue("gray.800", "white");
 
+  const CollapsibleSection = ({ title, children }) => {
+    const [isOpen, setIsOpen] = useState(false);
+  
+    return (
+      <Box>
+        <Heading
+          as="h2"
+          size="xl"
+          mb={6}
+          onClick={() => setIsOpen(!isOpen)}
+          cursor="pointer"
+        >
+          {title}
+        </Heading>
+        <Collapse in={isOpen} animateOpacity>
+          {children}
+        </Collapse>
+      </Box>
+    );
+  };
+  
   return (
     <Container maxW="container.xl" py={10} bg={bgColor} color={color}>
       <ColorModeSwitcher />
-      <Box textAlign="center" mb={10}>
-        <Heading as="h1" size="2xl" mb={2}>
-          techfren, content creator
-        </Heading>
-       <Box p={4} borderWidth="1px" borderRadius="lg" mb={6}>
-         <Text fontSize="lg">
-           techfren is a content creator that creates content about AI and software engineering, sharing insights and knowledge with a wide audience.
-         </Text>
-       </Box>
-       <HStack spacing={4} justify="center" mt={4}>
-         <IconButton as={Link} href="https://tiktok.com/@techfren" icon={<FaTiktok />} aria-label="TikTok" isExternal />
-         <IconButton as={Link} href="https://youtube.com/techfren" icon={<FaYoutube />} aria-label="YouTube" isExternal />
-         <IconButton as={Link} href="https://twitch.tv/techfren" icon={<FaTwitch />} aria-label="Twitch" isExternal />
-       </HStack>
-      </Box>
-      <Heading as="h2" size="xl" mb={6}>
-        Latest Projects
-      </Heading>
-      <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
-        {projects.map((project, index) => (
-          <ProjectCard key={index} project={project} />
-        ))}
-      </SimpleGrid>
-      <Heading as="h2" size="xl" mb={6}>
-        Latest Content
-      </Heading>
-      <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
-        {latestContents.map((content, index) => (
-          <Box key={index} p={4} boxShadow="md" borderWidth="1px" borderRadius="lg" align="start">
-            <Image src={content.image} borderRadius="md" boxSize="100%" objectFit="cover" />
-            <Heading size="md" mt={2}>{content.name}</Heading>
-            <Text fontSize="sm">{content.description}</Text>
-            <Link href={content.link} isExternal>Learn More</Link>
+        <Box textAlign="center" mb={10}>
+          <Heading as="h1" size="2xl" mb={2}>
+            techfren
+          </Heading>
+          <Box p={4} borderWidth="1px" borderRadius="lg" mb={6}>
+            <Text fontSize="lg">
+              techfren is a content creator that creates content about AI and
+              software engineering, sharing insights and knowledge with a wide
+              audience.
+            </Text>
           </Box>
-        ))}
-      </SimpleGrid>
+          <HStack spacing={4} justify="center" mt={4}>
+            <IconButton
+              as={Link}
+              href="https://tiktok.com/@techfren"
+              icon={<FaTiktok />}
+              aria-label="TikTok"
+              isExternal
+            />
+            <IconButton
+              as={Link}
+              href="https://youtube.com/techfren"
+              icon={<FaYoutube />}
+              aria-label="YouTube"
+              isExternal
+            />
+            <IconButton
+              as={Link}
+              href="https://twitch.tv/techfren"
+              icon={<FaTwitch />}
+              aria-label="Twitch"
+              isExternal
+            />
+          </HStack>
+        </Box>
+  
+      <CollapsibleSection title="Latest Content">
+        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
+          {latestContents.map((content, index) => (
+            <Box
+              key={index}
+              p={4}
+              boxShadow="md"
+              borderWidth="1px"
+              borderRadius="lg"
+              align="start"
+            >
+              <Image
+                src={content.image}
+                borderRadius="md"
+                boxSize="100%"
+                objectFit="cover"
+              />
+              <Heading size="md" mt={2}>
+                {content.name}
+              </Heading>
+              <Text fontSize="sm">{content.description}</Text>
+              <Link href={content.link} isExternal>
+                Learn More
+              </Link>
+            </Box>
+          ))}
+        </SimpleGrid>
+      </CollapsibleSection>
+  
+      <CollapsibleSection title="Latest Projects">
+        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
+          {projects.map((project, index) => (
+            <ProjectCard key={index} project={project} />
+          ))}
+        </SimpleGrid>
+      </CollapsibleSection>
     </Container>
   );
 };
