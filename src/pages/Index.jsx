@@ -13,7 +13,7 @@ import {
   useColorModeValue,
   Switch,
 } from "@chakra-ui/react";
-import { FaGithub, FaExternalLinkAlt, FaMoon, FaSun } from "react-icons/fa";
+import { FaGithub, FaExternalLinkAlt, FaMoon, FaSun, FaTiktok, FaYoutube, FaTwitch } from "react-icons/fa";
 
 const projects = [
   {
@@ -48,6 +48,20 @@ const projects = [
       "https://images.unsplash.com/photo-1627253781598-63b98c51da42?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MDcxMzJ8MHwxfHNlYXJjaHwxfHxjcnlwdG9jdXJyZW5jeSUyMGFwcHxlbnwwfHx8fDE3MDUyMTk1MDF8MA&ixlib=rb-4.0.3&q=80&w=1080",
     github: "",
     live: "www.timestampgenius.com",
+  },
+];
+const latestContents = [
+  {
+    name: "Content Placeholder 1",
+    description: "Description for content placeholder 1",
+    image: "https://via.placeholder.com/150",
+    link: "#",
+  },
+  {
+    name: "Content Placeholder 2",
+    description: "Description for content placeholder 2",
+    image: "https://via.placeholder.com/150",
+    link: "#",
   },
 ];
 
@@ -119,20 +133,38 @@ const Index = () => {
       <ColorModeSwitcher />
       <Box textAlign="center" mb={10}>
         <Heading as="h1" size="2xl" mb={2}>
-          techfren
+          techfren, content creator
         </Heading>
        <Box p={4} borderWidth="1px" borderRadius="lg" mb={6}>
          <Text fontSize="lg">
            techfren is a content creator that creates content about AI and software engineering, sharing insights and knowledge with a wide audience.
          </Text>
        </Box>
-       </Box>
+       <HStack spacing={4} justify="center" mt={4}>
+         <IconButton as={Link} href="https://tiktok.com/@techfren" icon={<FaTiktok />} aria-label="TikTok" isExternal />
+         <IconButton as={Link} href="https://youtube.com/techfren" icon={<FaYoutube />} aria-label="YouTube" isExternal />
+         <IconButton as={Link} href="https://twitch.tv/techfren" icon={<FaTwitch />} aria-label="Twitch" isExternal />
+       </HStack>
+      </Box>
       <Heading as="h2" size="xl" mb={6}>
         Latest Projects
       </Heading>
       <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
         {projects.map((project, index) => (
           <ProjectCard key={index} project={project} />
+        ))}
+      </SimpleGrid>
+      <Heading as="h2" size="xl" mb={6}>
+        Latest Content
+      </Heading>
+      <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
+        {latestContents.map((content, index) => (
+          <Box key={index} p={4} boxShadow="md" borderWidth="1px" borderRadius="lg" align="start">
+            <Image src={content.image} borderRadius="md" boxSize="100%" objectFit="cover" />
+            <Heading size="md" mt={2}>{content.name}</Heading>
+            <Text fontSize="sm">{content.description}</Text>
+            <Link href={content.link} isExternal>Learn More</Link>
+          </Box>
         ))}
       </SimpleGrid>
     </Container>
