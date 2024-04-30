@@ -12,7 +12,9 @@ import {
   useColorMode,
   useColorModeValue,
   Switch,
-  Collapse
+  Collapse,
+  Button,
+  Icon
 } from "@chakra-ui/react";
 import {
   FaGithub,
@@ -22,6 +24,8 @@ import {
   FaTiktok,
   FaYoutube,
   FaTwitch,
+  FaChevronDown,
+  FaChevronUp
 } from "react-icons/fa";
 import { useState } from "react";
 
@@ -138,66 +142,74 @@ const Index = () => {
   const bgColor = useColorModeValue("gray.50", "gray.800");
   const color = useColorModeValue("gray.800", "white");
 
-  const CollapsibleSection = ({ title, children }) => {
-    const [isOpen, setIsOpen] = useState(false);
-  
-    return (
-      <Box>
-        <Heading
-          as="h2"
-          size="xl"
-          mb={6}
-          onClick={() => setIsOpen(!isOpen)}
-          cursor="pointer"
-        >
-          {title}
-        </Heading>
-        <Collapse in={isOpen} animateOpacity>
-          {children}
-        </Collapse>
-      </Box>
-    );
-  };
-  
+const CollapsibleSection = ({ title, children }) => {
+const [isOpen, setIsOpen] = useState(false);
+
+  const toggleOpen = () => setIsOpen(!isOpen);
+
+  return (
+    <Box mb={10}>
+      <Button
+        variant="outline"
+        colorScheme="gray"
+        onClick={toggleOpen}
+        width="100%"
+        mb={4}
+        rightIcon={isOpen ? <FaChevronUp /> : <FaChevronDown />}
+        _hover={{
+          bgColor: "gray.300", // Changed hover color to be darker
+          borderColor: "gray.400",
+          colorScheme: "gray",
+        }}
+      >
+        <Text fontSize="lg">{title}</Text> {/* Increased title font size */}
+      </Button>
+      <Collapse in={isOpen}>
+        <Box p={4}>{children}</Box>
+      </Collapse>
+    </Box>
+  );
+};
+
   return (
     <Container maxW="container.xl" py={10} bg={bgColor} color={color}>
       <ColorModeSwitcher />
-        <Box textAlign="center" mb={10}>
-          <Heading as="h1" size="2xl" mb={2}>
-            techfren
-          </Heading>
-          <Box p={4} borderWidth="1px" borderRadius="lg" mb={6}>
-            <Text fontSize="lg">
-              techfren is a content creator that creates content about AI and
-              software engineering, sharing insights and knowledge with a wide
-              audience.
-            </Text>
-          </Box>
-          <HStack spacing={4} justify="center" mt={4}>
-            <IconButton
-              as={Link}
-              href="https://tiktok.com/@techfren"
-              icon={<FaTiktok />}
-              aria-label="TikTok"
-              isExternal
-            />
-            <IconButton
-              as={Link}
-              href="https://youtube.com/techfren"
-              icon={<FaYoutube />}
-              aria-label="YouTube"
-              isExternal
-            />
-            <IconButton
-              as={Link}
-              href="https://twitch.tv/techfren"
-              icon={<FaTwitch />}
-              aria-label="Twitch"
-              isExternal
-            />
-          </HStack>
+      <Box textAlign="center" mb={10}>
+        <Heading as="h1" size="2xl" mb={2}>
+          techfren
+        </Heading>
+        <Box p={4} borderWidth="1px" borderRadius="lg" mb={6}>
+          <Text fontSize="lg">
+            techfren is a content creator that creates content about AI and
+            software engineering, sharing insights and knowledge with a wide
+            audience.
+          </Text>
         </Box>
-  
+        <HStack spacing={4} justify="center" mt={4}>
+          <IconButton
+            as={Link}
+            href="https://tiktok.com/@techfren"
+            icon={<FaTiktok />}
+            aria-label="TikTok"
+            isExternal
+          />
+          <IconButton
+            as={Link}
+            href="https://youtube.com/techfren"
+            icon={<FaYoutube />}
+            aria-label="YouTube"
+            isExternal
+          />
+          <IconButton
+            as={Link}
+            href="https://twitch.tv/techfren"
+            icon={<FaTwitch />}
+            aria-label="Twitch"
+            isExternal
+          />
+        </HStack>
+      </Box>
+
       <CollapsibleSection title="Latest Content">
         <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
           {latestContents.map((content, index) => (
@@ -226,7 +238,7 @@ const Index = () => {
           ))}
         </SimpleGrid>
       </CollapsibleSection>
-  
+
       <CollapsibleSection title="Latest Projects">
         <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
           {projects.map((project, index) => (
