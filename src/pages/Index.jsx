@@ -1,5 +1,4 @@
 import {
-  AspectRatio,
   Box,
   Container,
   Heading,
@@ -15,7 +14,6 @@ import {
   Switch,
   Collapse,
   Button,
-  Icon,
 } from "@chakra-ui/react";
 import {
   FaGithub,
@@ -29,58 +27,8 @@ import {
   FaChevronUp,
 } from "react-icons/fa";
 import { useState } from "react";
-import { useEffect } from "react";
 import videos from "../techfren_videos.json";
-
-const projects = [
-  {
-    name: "Autogen Skill Repository",
-    description: "A repository of python skills that can be added to Autogen",
-    image:
-      "https://images.unsplash.com/photo-1527335480088-278dbeec0ad5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MDcxMzJ8MHwxfHNlYXJjaHwxfHxzb2Z0d2FyZSUyMGFwcCUyMGludGVyZmFjZXxlbnwwfHx8fDE3MDUyMTk1MDB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-    github: "https://github.com/aj47/autogen-studio-skills",
-    live: "",
-  },
-  {
-    name: "LM Studio Preset Repository",
-    description:
-      "A robust system offering scalable solutions for enterprise needs.",
-    image:
-      "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MDcxMzJ8MHwxfHNlYXJjaHwxfHxlbnRlcnByaXNlJTIwc29mdHdhcmUlMjBhcHB8ZW58MHx8fHwxNzA1MjE5NTAwfDA&ixlib=rb-4.0.3&q=80&w=1080",
-    github: "https://github.com/aj47/lm-studio-presets",
-    live: "",
-  },
-  {
-    name: "BeriGame MMO Alpha",
-    description: "A proof of concept cross platform MMO Game",
-    image:
-      "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MDcxMzJ8MHwxfHNlYXJjaHwxfHxwcm9qZWN0JTIwbWFuYWdlbWVudCUyMGFwcHxlbnwwfHx8fDE3MDUyMTk1MDF8MA&ixlib=rb-4.0.3&q=80&w=1080",
-    github: "",
-    live: "www.alpha.berigame.com",
-  },
-  {
-    name: "TimestampGenius.com",
-    description: "Automatically Generate Timestamps for Youtube Videos with AI",
-    image:
-      "https://images.unsplash.com/photo-1627253781598-63b98c51da42?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MDcxMzJ8MHwxfHNlYXJjaHwxfHxjcnlwdG9jdXJyZW5jeSUyMGFwcHxlbnwwfHx8fDE3MDUyMTk1MDF8MA&ixlib=rb-4.0.3&q=80&w=1080",
-    github: "",
-    live: "www.timestampgenius.com",
-  },
-];
-const latestContents = [
-  {
-    name: "Content Placeholder 1",
-    description: "Description for content placeholder 1",
-    image: "https://via.placeholder.com/150",
-    link: "#",
-  },
-  {
-    name: "Content Placeholder 2",
-    description: "Description for content placeholder 2",
-    image: "https://via.placeholder.com/150",
-    link: "#",
-  },
-];
+import projects from "../projects.json";
 
 const ProjectCard = ({ project }) => {
   return (
