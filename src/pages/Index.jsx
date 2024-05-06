@@ -1,4 +1,5 @@
 import {
+  AspectRatio,
   Box,
   Container,
   Heading,
@@ -14,7 +15,7 @@ import {
   Switch,
   Collapse,
   Button,
-  Icon
+  Icon,
 } from "@chakra-ui/react";
 import {
   FaGithub,
@@ -25,9 +26,11 @@ import {
   FaYoutube,
   FaTwitch,
   FaChevronDown,
-  FaChevronUp
+  FaChevronUp,
 } from "react-icons/fa";
 import { useState } from "react";
+import { useEffect } from "react";
+import videos from "../techfren_videos.json";
 
 const projects = [
   {
@@ -138,12 +141,29 @@ const ColorModeSwitcher = () => {
   );
 };
 
-const Index = () => {
-  const bgColor = useColorModeValue("gray.50", "gray.800");
-  const color = useColorModeValue("gray.800", "white");
+// async function fetchTikTokThumbnail (url) {
+//   const encodedUrl = encodeURIComponent(url);
+//   const apiUrl = `https://www.tiktok.com/oembed?url=${encodedUrl}`;
 
-const CollapsibleSection = ({ title, children }) => {
-const [isOpen, setIsOpen] = useState(false);
+//   return await fetch(apiUrl)
+//     .then((response) => {
+//       if (!response.ok) {
+//         throw new Error(`HTTP error! Status: ${response.status}`);
+//       }
+//       return response.json();
+//     })
+//     .then((data) => {
+//       // Return the thumbnail URL
+//       console.log(data.thumbnail_url, "data");
+//       return data.thumbnail_url;
+//     })
+//     .catch((error) => {
+//       console.error("Error fetching TikTok oEmbed data:", error);
+//     });
+// }
+//
+const CollapsibleSection = ({ title, children, defaultOpen = false }) => {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
 
   const toggleOpen = () => setIsOpen(!isOpen);
 
@@ -157,12 +177,16 @@ const [isOpen, setIsOpen] = useState(false);
         mb={4}
         rightIcon={isOpen ? <FaChevronUp /> : <FaChevronDown />}
         _hover={{
-          bgColor: "gray.300", // Changed hover color to be darker
-          borderColor: "gray.400",
-          colorScheme: "gray",
+          bgColor: "gray.500", // Darker hover background color
+          borderColor: "gray.600",
+          color: "gray.800", // Darker text color on hover
         }}
       >
-        <Text fontSize="lg">{title}</Text> {/* Increased title font size */}
+        <Text fontSize="xl">
+          {" "}
+          {/* Increased title font size to extra large */}
+          {title}
+        </Text>
       </Button>
       <Collapse in={isOpen}>
         <Box p={4}>{children}</Box>
@@ -171,6 +195,19 @@ const [isOpen, setIsOpen] = useState(false);
   );
 };
 
+const Index = () => {
+  const bgColor = useColorModeValue("gray.50", "gray.800");
+  const color = useColorModeValue("gray.800", "white");
+  // const [videos, setVideos] = useState([]);
+
+  // useEffect(() => {
+  //   fetch("/public/techfren_videos.json")
+  //     .then((response) => response.json())
+  //     .then((data) => setVideos(data))
+  //     .catch((error) => console.error("Error loading videos:", error));
+  // }, []);
+
+  console.log(videos, "videos");
   return (
     <Container maxW="container.xl" py={10} bg={bgColor} color={color}>
       <ColorModeSwitcher />
@@ -209,36 +246,36 @@ const [isOpen, setIsOpen] = useState(false);
           />
         </HStack>
       </Box>
-
-      <CollapsibleSection title="Latest Content">
+      <CollapsibleSection title="ShortForm Content" defaultOpen={true}>
         <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
-          {latestContents.map((content, index) => (
-            <Box
-              key={index}
-              p={4}
-              boxShadow="md"
-              borderWidth="1px"
-              borderRadius="lg"
-              align="start"
-            >
-              <Image
-                src={content.image}
-                borderRadius="md"
-                boxSize="100%"
-                objectFit="cover"
-              />
-              <Heading size="md" mt={2}>
-                {content.name}
-              </Heading>
-              <Text fontSize="sm">{content.description}</Text>
-              <Link href={content.link} isExternal>
-                Learn More
-              </Link>
-            </Box>
-          ))}
+          {videos?.slice(0, 6).map((video, index) => {
+            return (
+              <Box
+                key={index}
+                p={4}
+                boxShadow="md"
+                borderWidth="1px"
+                borderRadius="lg"
+                align="start"
+              >
+                {/* <AspectRatio ratio={16 / 9}>
+                <Image src={await fetchTikTokThumbnail(video["tiktok link"])} />
+              </AspectRatio> */}
+                <Heading size="md" mt={2}>
+                  {video["video caption / description"]?.slice(0, 20)}
+                </Heading>
+                <Text fontSize="sm">Views: {video["video views"]}</Text>
+                <Text fontSize="sm">Likes: {video["likes"]}</Text>
+                <Text fontSize="sm">Comments: {video["comments"]}</Text>
+                <Text fontSize="sm">Duration: {video["video duration"]}</Text>
+                <Link href={video["tiktok link"]} isExternal>
+                  Watch Video
+                </Link>
+              </Box>
+            );
+          })}
         </SimpleGrid>
       </CollapsibleSection>
-
       <CollapsibleSection title="Latest Projects">
         <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
           {projects.map((project, index) => (
