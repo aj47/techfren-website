@@ -21,7 +21,7 @@ import {
 } from "react-icons/fa";
 import projects from "../projects.json";
 import Socials from "./Socials";
-import CollapsibleSection from "../Components/CollapsibleSection"
+import CollapsibleSection from "../components/CollapsibleSection"
 
 const ProjectCard = ({ project }) => {
   return (
