@@ -13,15 +13,10 @@ import {
   useColorModeValue,
   Switch,
 } from "@chakra-ui/react";
-import {
-  FaGithub,
-  FaExternalLinkAlt,
-  FaMoon,
-  FaSun,
-} from "react-icons/fa";
+import { FaGithub, FaExternalLinkAlt, FaMoon, FaSun } from "react-icons/fa";
 import projects from "../projects.json";
 import Socials from "./Socials";
-import CollapsibleSection from "../components/CollapsibleSection"
+import CollapsibleSection from "../components/CollapsibleSection";
 
 const ProjectCard = ({ project }) => {
   return (
@@ -120,6 +115,12 @@ const Index = () => {
             software engineering, sharing insights and knowledge with a wide
             audience.
           </Text>
+          <a
+            style={{ color: "red", textDecoration: "underline" }}
+            href="https://docs.google.com/spreadsheets/d/19uE7EzGv-uqH7JyjG0FpC4mD21HPTeP6SWXpVhvNcxI/edit#gid=1353307486"
+          >
+            CODING AI TOOLS RUBRIC ETC
+          </a>
         </Box>
         <Socials />
       </Box>
