@@ -45,7 +45,6 @@ const ProjectCard = ({ project }) => {
         />
       )}
 
-
       <Heading size="md" mt={2}>
         {project.name}
       </Heading>
@@ -77,16 +76,24 @@ const ProjectCard = ({ project }) => {
 const ColorModeSwitcher = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   return (
-    <Switch
-      position="fixed"
-      top="1rem"
-      right="1rem"
-      color="green"
-      isChecked={colorMode === "dark"}
-      onChange={toggleColorMode}
-      icon={colorMode === "light" ? <FaMoon /> : <FaSun />}
-      size="lg"
-    />
+    <Box
+      ml="auto"
+      display="flex"
+      alignItems="center"
+      justifyContent="space-between"
+      width={90}
+    >
+      {colorMode === "dark" ? <FaSun size={30} /> : <FaMoon size={30} />}
+      <Switch
+        // position="fixed"
+        // top="1rem"
+        // right="1rem"
+        color="green"
+        isChecked={colorMode === "dark"}
+        onChange={toggleColorMode}
+        size="lg"
+      />
+    </Box>
   );
 };
 
