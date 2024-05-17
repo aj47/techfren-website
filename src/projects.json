@@ -7,6 +7,20 @@
     "live": "https://alpha.berigame.com"
   },
   {
+    "name": "Clickolas Cage",
+    "description": "a chrome extension that performs web browsing actions autonomously to complete a given goal/task (using LLM as a brain).",
+    "image": "/clickcage.png",
+    "github": "https://github.com/aj47/clickolas-cage",
+    "live": ""
+  },
+  {
+    "name": "techfren.net",
+    "description": "this website you're on right now :)",
+    "image": "/thissite.png",
+    "github": "https://github.com/aj47/techfren-website",
+    "live": "https://www.techfren.net"
+  },
+  {
     "name": "TimestampGenius.com",
     "description": "Automatically Generate Timestamps for Youtube Videos with AI",
     "image": "/tsg.png",

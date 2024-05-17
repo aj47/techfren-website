@@ -127,7 +127,7 @@ const Index = () => {
           </a>
         </Box>
       </Box>
-      <CollapsibleSection title="Projects">
+      <CollapsibleSection title="My Open Source Projects">
         <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
           {projects.map((project, index) => (
             <ProjectCard key={index} project={project} />
