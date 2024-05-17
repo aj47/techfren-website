@@ -134,6 +134,7 @@ const Index = () => {
             src="/hero.png"
             alt="Hero image"
             maxW={500}
+            width="90%"
             borderRadius="lg"
           />
         </Box>
