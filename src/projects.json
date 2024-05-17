@@ -1,10 +1,10 @@
 [
   {
-    "name": "BeriGame MMO Alpha",
-    "description": "A proof of concept cross platform MMO Game",
-    "image": "/berigame.png",
-    "github": "https://github.com/aj47/berigame",
-    "live": "https://alpha.berigame.com"
+    "name": "Coding AI Tools Tested",
+    "description": "A spreadsheet with the results of my testing of AI tools",
+    "image": "/aitools.png",
+    "github": "",
+    "live": "https://docs.google.com/spreadsheets/d/19uE7EzGv-uqH7JyjG0FpC4mD21HPTeP6SWXpVhvNcxI/edit#gid=1353307486"
   },
   {
     "name": "Clickolas Cage",
@@ -26,6 +26,13 @@
     "image": "/tsg.png",
     "github": "https://github.com/aj47/timestampgenius",
     "live": "https://www.timestampgenius.com"
+  },
+  {
+    "name": "BeriGame MMO Alpha",
+    "description": "A proof of concept cross platform MMO Game",
+    "image": "/berigame.png",
+    "github": "https://github.com/aj47/berigame",
+    "live": "https://alpha.berigame.com"
   },
   {
     "name": "Autogen Skill Repository",

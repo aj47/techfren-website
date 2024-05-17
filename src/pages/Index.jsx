@@ -27,12 +27,25 @@ const ProjectCard = ({ project }) => {
       borderRadius="lg"
       align="start"
     >
-      <Image
-        src={project.image}
-        borderRadius="md"
-        boxSize="100%"
-        objectFit="cover"
-      />
+      {project.live !== "" ? (
+        <Link href={project.live} isExternal boxSize="100%" objectFit="cover">
+          <Image
+            src={project.image}
+            borderRadius="md"
+            boxSize="100%"
+            objectFit="cover"
+          />
+        </Link>
+      ) : (
+        <Image
+          src={project.image}
+          borderRadius="md"
+          boxSize="100%"
+          objectFit="cover"
+        />
+      )}
+
+
       <Heading size="md" mt={2}>
         {project.name}
       </Heading>
@@ -110,24 +123,22 @@ const Index = () => {
           techfren
         </Heading>
         <Box display="flex" justifyContent="center">
-          <Image src="/hero.png" alt="Hero image" maxW={500} borderRadius="lg"/>
+          <Image
+            src="/hero.png"
+            alt="Hero image"
+            maxW={500}
+            borderRadius="lg"
+          />
         </Box>
         <Socials />
         <Box p={4} borderWidth="1px" borderRadius="lg" mb={6}>
           <Text fontSize="lg">
             techfren is a content creator that creates content about AI and
-            software engineering, sharing insights and knowledge with a wide
-            audience.
+            software engineering
           </Text>
-          <a
-            style={{ color: "red", textDecoration: "underline" }}
-            href="https://docs.google.com/spreadsheets/d/19uE7EzGv-uqH7JyjG0FpC4mD21HPTeP6SWXpVhvNcxI/edit#gid=1353307486"
-          >
-            CODING AI TOOLS RUBRIC ETC
-          </a>
         </Box>
       </Box>
-      <CollapsibleSection title="My Open Source Projects">
+      <CollapsibleSection title="My Open Source Projects" defaultOpen>
         <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
           {projects.map((project, index) => (
             <ProjectCard key={index} project={project} />
