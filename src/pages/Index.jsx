@@ -5,13 +5,13 @@ import {
   SimpleGrid,
   Text,
   Link,
-  Image,
   VStack,
   HStack,
   IconButton,
   useColorMode,
   useColorModeValue,
   Switch,
+  Image,
 } from "@chakra-ui/react";
 import { FaGithub, FaExternalLinkAlt, FaMoon, FaSun } from "react-icons/fa";
 import projects from "../projects.json";
@@ -109,6 +109,10 @@ const Index = () => {
         <Heading as="h1" size="2xl" mb={2}>
           techfren
         </Heading>
+        <Box display="flex" justifyContent="center">
+          <Image src="/hero.png" alt="Hero image" maxW={500} borderRadius="lg"/>
+        </Box>
+        <Socials />
         <Box p={4} borderWidth="1px" borderRadius="lg" mb={6}>
           <Text fontSize="lg">
             techfren is a content creator that creates content about AI and
@@ -122,9 +126,8 @@ const Index = () => {
             CODING AI TOOLS RUBRIC ETC
           </a>
         </Box>
-        <Socials />
       </Box>
-      <CollapsibleSection title="Latest Projects">
+      <CollapsibleSection title="Projects">
         <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
           {projects.map((project, index) => (
             <ProjectCard key={index} project={project} />

@@ -1,5 +1,5 @@
 import { Link, HStack, IconButton } from "@chakra-ui/react";
-import { FaTiktok, FaYoutube, FaTwitch, FaInstagram, FaTwitter } from "react-icons/fa";
+import { FaTiktok, FaYoutube, FaTwitch, FaInstagram, FaTwitter, FaDiscord } from "react-icons/fa";
 
 
 /**
@@ -11,7 +11,7 @@ import { FaTiktok, FaYoutube, FaTwitch, FaInstagram, FaTwitter } from "react-ico
  */
 export default function Socials() {
   return (
-    <HStack spacing={4} justify="center" mt={4}>
+    <HStack spacing={4} justify="center" m={4}>
       <IconButton
         as={Link}
         href="https://tiktok.com/@techfren"
@@ -45,6 +45,13 @@ export default function Socials() {
         href="https://twitter.com/techfrenAJ"
         icon={<FaTwitter />}
         aria-label="Twitter"
+        isExternal
+      />
+      <IconButton
+        as={Link}
+        href="https://discord.gg/jNBJJgZm"
+        icon={<FaDiscord />}
+        aria-label="Discord"
         isExternal
       />
     </HStack>
