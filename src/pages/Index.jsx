@@ -182,7 +182,6 @@ const Index = () => {
         <Box 
           textAlign="center" 
           mb={10} 
-          bg="rgba(0, 0, 0, 0.7)"
           p={6}
           borderRadius="lg"
         >
