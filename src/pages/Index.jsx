@@ -221,7 +221,7 @@ const Index = () => {
             />
           </Box>
         </Box>
-        <CollapsibleSection title="Quick Links">
+        <CollapsibleSection title="Quick Links" defaultOpen>
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
             <ProjectCard
               project={{
