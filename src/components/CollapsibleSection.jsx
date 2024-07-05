@@ -1,4 +1,4 @@
-import { Box, Button, Text, Collapse } from "@chakra-ui/react";
+import { Box, Button, Text, Collapse, useTheme } from "@chakra-ui/react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { useState } from "react";
 
@@ -8,6 +8,7 @@ export default function CollapsibleSection({
   defaultOpen = false,
 }) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
+  const theme = useTheme();
 
   const toggleOpen = () => setIsOpen(!isOpen);
 
@@ -22,13 +23,18 @@ export default function CollapsibleSection({
         rightIcon={isOpen ? <FaChevronUp /> : <FaChevronDown />}
         color="#00ff00"
         borderColor="#00ff00"
+        size="md"
         _hover={{
           bgColor: "rgba(0, 255, 0, 0.2)",
           borderColor: "#00ff00",
           color: "#00ff00",
         }}
       >
-        <Text fontSize="xl" textShadow="0 0 5px #00ff00">
+        <Text 
+          fontSize="sm" 
+          textShadow="0 0 5px #00ff00"
+          fontFamily={theme.fonts.heading}
+        >
           {title}
         </Text>
       </Button>

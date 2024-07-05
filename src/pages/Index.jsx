@@ -83,18 +83,11 @@ const ProjectCard = ({ project, isQuickLink = false }) => {
           spacing={4}
           _hover={{ bg: "rgba(0, 255, 0, 0.1)" }}
         >
-          <Image
-            src={project.image}
-            borderRadius="full"
-            boxSize="50px"
-            mr={4}
-            objectFit="cover"
-          />
           <VStack align="start" spacing={1}>
-            <Heading size="sm" fontSize="md" wordBreak="break-word">
+            <Heading size="sm" fontSize="sm" wordBreak="break-word" color="#00ff00">
               {project.name}
             </Heading>
-            <Text fontSize="sm" wordBreak="break-word" color="gray.400">
+            <Text fontSize="xs" wordBreak="break-word" color="#00ff00">
               {project.description}
             </Text>
           </VStack>
