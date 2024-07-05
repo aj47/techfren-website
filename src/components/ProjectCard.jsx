@@ -34,6 +34,7 @@ const ProjectCard = ({ project, isQuickLink = false }) => {
         borderWidth="2px"
         borderColor="#00ff00"
         borderRadius="lg"
+        bg="rgba(0, 0, 0, 0.8)"
         _hover={{ bg: "rgba(0, 255, 0, 0.1)" }}
       >
         <VStack h="100%" spacing={4} align="stretch" justify="space-between">

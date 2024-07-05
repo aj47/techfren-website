@@ -24,6 +24,7 @@ export default function CollapsibleSection({
         color="#00ff00"
         borderColor="#00ff00"
         size="md"
+        bg="rgba(0, 0, 0, 0.8)"
         _hover={{
           bgColor: "rgba(0, 255, 0, 0.2)",
           borderColor: "#00ff00",
