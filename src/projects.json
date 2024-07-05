@@ -33,19 +33,5 @@
     "image": "/berigame.png",
     "github": "https://github.com/aj47/berigame",
     "live": "https://alpha.berigame.com"
-  },
-  {
-    "name": "Autogen Skill Repository",
-    "description": "A repository of python skills that can be added to Autogen",
-    "image": "/autogen.png",
-    "github": "https://github.com/aj47/autogen-studio-skills",
-    "live": ""
-  },
-  {
-    "name": "LM Studio Preset Repository",
-    "description": "json presets to be used with LLMs in LM Studio application",
-    "image": "/lmstudio.png",
-    "github": "https://github.com/aj47/lm-studio-presets",
-    "live": ""
   }
 ]

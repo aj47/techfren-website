@@ -109,7 +109,13 @@ const ProjectCard = ({ project, isQuickLink = false }) => {
         spacing={4}
         _hover={{ bg: "rgba(0, 255, 0, 0.1)" }}
       >
-        <Image src={project.image} alt={project.name} borderRadius="lg" />
+        <Image 
+          src={project.image} 
+          alt={project.name} 
+          borderRadius="lg" 
+          maxH={{ base: "33vh", md: "auto" }}
+          objectFit="cover"
+        />
         <Heading size="md">{project.name}</Heading>
         <Text>{project.description}</Text>
         <HStack justify="space-between">
