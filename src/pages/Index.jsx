@@ -200,20 +200,11 @@ const Index = () => {
             />
           </Box>
         </Box>
-        <Box
-          p={6}
-          borderWidth="2px"
-          borderRadius="lg"
-          mt={-6}
-          mb={6}
-          borderColor="#00ff00"
-        >
-          <Text fontSize="lg">
-            techfren is a content creator that creates content about AI and
-            software engineering
-          </Text>
-        </Box>
-        <CollapsibleSection title="My Open Source Projects" defaultOpen>
+        <CollapsibleSection title="Quick Links">
+        </CollapsibleSection>
+        <CollapsibleSection title="Video Highlights">
+        </CollapsibleSection>
+        <CollapsibleSection title="My Open Source Projects">
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
             {projects.map((project, index) => (
               <ProjectCard key={index} project={project} />

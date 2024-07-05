@@ -12,7 +12,7 @@ export default function CollapsibleSection({
   const toggleOpen = () => setIsOpen(!isOpen);
 
   return (
-    <Box mb={10}>
+    <Box mb={0}>
       <Button
         variant="outline"
         colorScheme="green"
@@ -33,7 +33,7 @@ export default function CollapsibleSection({
         </Text>
       </Button>
       <Collapse in={isOpen}>
-        <Box p={4} borderColor="#00ff00" borderWidth="2px" borderRadius="lg">
+        <Box p={4}>
           {children}
         </Box>
       </Collapse>
