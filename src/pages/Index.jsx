@@ -54,6 +54,14 @@ const theme = extendTheme({
         textShadow: "0 0 10px #00ff00",
       },
     },
+    Container: {
+      baseStyle: {
+        borderColor: "#00ff00",
+        borderWidth: "2px",
+        borderStyle: "solid",
+        boxShadow: "0 0 10px #00ff00",
+      },
+    },
   },
 });
 
@@ -63,6 +71,7 @@ const ProjectCard = ({ project }) => {
       p={4}
       boxShadow="0 0 10px #00ff00"
       borderWidth="2px"
+      borderColor="#00ff00"
       borderRadius="lg"
       align="start"
       spacing={4}
@@ -196,7 +205,7 @@ const Index = () => {
             />
           </Box>
           <Socials />
-          <Box p={4} borderWidth="2px" borderRadius="lg" mb={6}>
+          <Box p={4} borderWidth="2px" borderRadius="lg" mb={6} borderColor="#00ff00">
             <Text fontSize="lg">
               techfren is a content creator that creates content about AI and
               software engineering

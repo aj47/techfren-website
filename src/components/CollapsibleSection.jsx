@@ -1,6 +1,7 @@
 import { Box, Button, Text, Collapse } from "@chakra-ui/react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { useState } from "react";
+
 export default function CollapsibleSection({
   title,
   children,
@@ -14,25 +15,27 @@ export default function CollapsibleSection({
     <Box mb={10}>
       <Button
         variant="outline"
-        colorScheme="gray"
+        colorScheme="green"
         onClick={toggleOpen}
         width="100%"
         mb={4}
         rightIcon={isOpen ? <FaChevronUp /> : <FaChevronDown />}
+        color="#00ff00"
+        borderColor="#00ff00"
         _hover={{
-          bgColor: "gray.500", // Darker hover background color
-          borderColor: "gray.600",
-          color: "gray.800", // Darker text color on hover
+          bgColor: "rgba(0, 255, 0, 0.2)",
+          borderColor: "#00ff00",
+          color: "#00ff00",
         }}
       >
-        <Text fontSize="xl">
-          {" "}
-          {/* Increased title font size to extra large */}
+        <Text fontSize="xl" textShadow="0 0 5px #00ff00">
           {title}
         </Text>
       </Button>
       <Collapse in={isOpen}>
-        <Box p={4}>{children}</Box>
+        <Box p={4} borderColor="#00ff00" borderWidth="2px" borderRadius="lg">
+          {children}
+        </Box>
       </Collapse>
     </Box>
   );
