@@ -19,6 +19,7 @@ import { FaGithub, FaExternalLinkAlt, FaMoon, FaSun } from "react-icons/fa";
 import projects from "../projects.json";
 import Socials from "./Socials";
 import CollapsibleSection from "../components/CollapsibleSection";
+import DigitalRain from "../components/DigitalRain";
 import "@fontsource/press-start-2p";
 import "@fontsource/roboto";
 
@@ -174,9 +175,16 @@ const Index = () => {
 
   return (
     <ChakraProvider theme={theme}>
+      <DigitalRain />
       <Container maxW="container.xl" py={10}>
         <ColorModeSwitcher />
-        <Box textAlign="center" mb={10}>
+        <Box 
+          textAlign="center" 
+          mb={10} 
+          bg={colorMode === "dark" ? "rgba(0, 0, 0, 0.7)" : "white"}
+          p={6}
+          borderRadius="lg"
+        >
           <Heading as="h1" size="2xl" mb={6}>
             techfren
           </Heading>
