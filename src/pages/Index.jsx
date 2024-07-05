@@ -201,8 +201,10 @@ const Index = () => {
           </Box>
         </Box>
         <CollapsibleSection title="Quick Links">
+          Error: 404 - Developer too lazy to write this section
         </CollapsibleSection>
         <CollapsibleSection title="Video Highlights">
+          Error: L4Zy - Developer too lazy to write this section too but not lazy enough to not make it different and write a whole bunch of words to prove a point
         </CollapsibleSection>
         <CollapsibleSection title="My Open Source Projects">
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
