@@ -27,10 +27,15 @@ const DigitalRain = () => {
       ctx.font = '15px monospace';
 
       for (let i = 0; i < drops.length; i++) {
-        const text = String.fromCharCode(Math.random() * 128);
+        let text;
+        if (Math.random() < 0.5) {
+          text = String.fromCharCode(Math.floor(Math.random() * 26) + 97); // Lowercase English letters
+        } else {
+          text = String.fromCharCode(Math.floor(Math.random() * (0x30A1 - 0x3041 + 1)) + 0x3041); // Japanese Hiragana and Katakana characters
+        }
         ctx.fillText(text, i * 20, drops[i] * 20);
 
-        if (drops[i] * 20 > canvas.height && Math.random() > 0.975) {
+        if (drops[i] * 20 > canvas.height && Math.random() > 0.89) {
           drops[i] = 0;
         }
         drops[i]++;
