@@ -197,11 +197,11 @@ const Index = () => {
           <AnimatedTitle />
           <Box display="flex" justifyContent="center" mb={6}>
             <Image
-              src="/hero.png"
+              src="/hero.jpg"
               alt="Hero image"
-              maxW={500}
+              maxW={200}
               width="90%"
-              borderRadius="lg"
+              borderRadius="10%"
             />
           </Box>
           <Socials />
