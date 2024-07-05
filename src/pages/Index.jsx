@@ -54,14 +54,6 @@ const theme = extendTheme({
         textShadow: "0 0 10px #00ff00",
       },
     },
-    Container: {
-      baseStyle: {
-        borderColor: "#00ff00",
-        borderWidth: "2px",
-        borderStyle: "solid",
-        boxShadow: "0 0 10px #00ff00",
-      },
-    },
   },
 });
 
@@ -195,6 +187,7 @@ const Index = () => {
           borderRadius="lg"
         >
           <AnimatedTitle />
+          <Socials />
           <Box display="flex" justifyContent="center" mb={6}>
             <Image
               src="/hero.jpg"
@@ -204,7 +197,6 @@ const Index = () => {
               borderRadius="10%"
             />
           </Box>
-          <Socials />
           <Box p={4} borderWidth="2px" borderRadius="lg" mb={6} borderColor="#00ff00">
             <Text fontSize="lg">
               techfren is a content creator that creates content about AI and
