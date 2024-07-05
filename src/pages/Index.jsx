@@ -11,8 +11,9 @@ import {
   Image,
   ChakraProvider,
   extendTheme,
+  Flex,
 } from "@chakra-ui/react";
-import { FaGithub, FaExternalLinkAlt } from "react-icons/fa";
+import { FaGithub, FaExternalLinkAlt, FaCode, FaCalendarAlt, FaDollarSign } from "react-icons/fa";
 import React, { useState, useEffect } from "react";
 import projects from "../projects.json";
 import Socials from "./Socials";
@@ -57,68 +58,95 @@ const theme = extendTheme({
   },
 });
 
-const ProjectCard = ({ project }) => {
-  return (
-    <VStack
-      p={4}
-      boxShadow="0 0 10px #00ff00"
-      borderWidth="2px"
-      borderColor="#00ff00"
-      borderRadius="lg"
-      align="start"
-      spacing={4}
-    >
-      {project.live !== "" ? (
-        <Link href={project.live} isExternal boxSize="100%" objectFit="cover">
+const ProjectCard = ({ project, isQuickLink = false }) => {
+  const getIcon = (name) => {
+    if (name.includes("Scrimba")) return FaCode;
+    if (name.includes("Consultation")) return FaCalendarAlt;
+    if (name.includes("Donate")) return FaDollarSign;
+    return FaExternalLinkAlt;
+  };
+
+  if (isQuickLink) {
+    return (
+      <Link
+        href={project.live}
+        isExternal
+        _hover={{ textDecoration: 'none' }}
+      >
+        <Flex
+          p={4}
+          boxShadow="0 0 10px #00ff00"
+          borderWidth="2px"
+          borderColor="#00ff00"
+          borderRadius="lg"
+          align="center"
+          spacing={4}
+          _hover={{ bg: "rgba(0, 255, 0, 0.1)" }}
+        >
           <Image
             src={project.image}
-            borderRadius="md"
-            boxSize="100%"
+            borderRadius="full"
+            boxSize="50px"
+            mr={4}
             objectFit="cover"
           />
-        </Link>
-      ) : (
-        <Image
-          src={project.image}
-          borderRadius="md"
-          boxSize="100%"
-          objectFit="cover"
-        />
-      )}
+          <VStack align="start" spacing={1}>
+            <Heading size="sm" fontSize="md" wordBreak="break-word">
+              {project.name}
+            </Heading>
+            <Text fontSize="sm" wordBreak="break-word" color="gray.400">
+              {project.description}
+            </Text>
+          </VStack>
+        </Flex>
+      </Link>
+    );
+  }
 
-      <Heading size="md" fontSize="sm" wordBreak="break-word">
-        {project.name}
-      </Heading>
-      <Text fontSize="md" wordBreak="break-word">
-        {project.description}
-      </Text>
-      <HStack>
-        {project.github && (
-          <IconButton
-            as={Link}
-            href={project.github}
-            icon={<FaGithub />}
-            aria-label="GitHub"
-            isExternal
-            color="#00ff00"
-            bg="transparent"
-            _hover={{ bg: "rgba(0, 255, 0, 0.2)" }}
-          />
-        )}
-        {project.live && (
-          <IconButton
-            as={Link}
-            href={project.live}
-            icon={<FaExternalLinkAlt />}
-            aria-label="Live Demo"
-            isExternal
-            color="#00ff00"
-            bg="transparent"
-            _hover={{ bg: "rgba(0, 255, 0, 0.2)" }}
-          />
-        )}
-      </HStack>
-    </VStack>
+  const linkUrl = project.live || project.github;
+  return (
+    <Link href={linkUrl} isExternal _hover={{ textDecoration: 'none' }}>
+      <VStack
+        p={4}
+        boxShadow="0 0 10px #00ff00"
+        borderWidth="2px"
+        borderColor="#00ff00"
+        borderRadius="lg"
+        align="stretch"
+        spacing={4}
+        _hover={{ bg: "rgba(0, 255, 0, 0.1)" }}
+      >
+        <Image src={project.image} alt={project.name} borderRadius="lg" />
+        <Heading size="md">{project.name}</Heading>
+        <Text>{project.description}</Text>
+        <HStack justify="space-between">
+          {project.github && (
+            <IconButton
+              as="a"
+              href={project.github}
+              aria-label="GitHub"
+              icon={<FaGithub />}
+              variant="ghost"
+              color="#00ff00"
+              _hover={{ bg: "rgba(0, 255, 0, 0.1)" }}
+              onClick={(e) => e.stopPropagation()}
+            />
+          )}
+          {project.live && (
+            <IconButton
+              as="a"
+              href={project.live}
+              aria-label="Live site"
+              icon={<FaExternalLinkAlt />}
+              variant="ghost"
+              color="#00ff00"
+              _hover={{ bg: "rgba(0, 255, 0, 0.1)" }}
+              onClick={(e) => e.stopPropagation()}
+            />
+          )}
+        </HStack>
+      </VStack>
+    </Link>
   );
 };
 
@@ -201,7 +229,35 @@ const Index = () => {
           </Box>
         </Box>
         <CollapsibleSection title="Quick Links">
-          Error: 404 - Developer too lazy to write this section
+          <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
+            <ProjectCard
+              project={{
+                name: "Scrimba - Learn Software Engineering",
+                description: "Start your journey in software engineering with Scrimba's interactive courses.",
+                live: "https://v2.scrimba.com/?via=techfren",
+                image: "/scrimba.png",
+              }}
+              isQuickLink={true}
+            />
+            <ProjectCard
+              project={{
+                name: "Book a Tech Consultation",
+                description: "Schedule a one-on-one tech consultation to discuss your projects or career.",
+                live: "https://cal.com/techfren",
+                image: "/consultation.png",
+              }}
+              isQuickLink={true}
+            />
+            <ProjectCard
+              project={{
+                name: "Donate",
+                description: "Support @techfren's content creation efforts with a donation.",
+                live: "https://www.paypal.com/donate/?business=J4QC6X5R3ACQU&no_recurring=0&item_name=support+of+%40techfren+content+creation&currency_code=AUD",
+                image: "/donate.png",
+              }}
+              isQuickLink={true}
+            />
+          </SimpleGrid>
         </CollapsibleSection>
         <CollapsibleSection title="Video Highlights">
           Error: L4Zy - Developer too lazy to write this section too but not lazy enough to not make it different and write a whole bunch of words to prove a point
