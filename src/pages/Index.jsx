@@ -86,8 +86,12 @@ const ProjectCard = ({ project }) => {
         />
       )}
 
-      <Heading size="md" fontSize="sm" wordBreak="break-word">{project.name}</Heading>
-      <Text fontSize="md" wordBreak="break-word">{project.description}</Text>
+      <Heading size="md" fontSize="sm" wordBreak="break-word">
+        {project.name}
+      </Heading>
+      <Text fontSize="md" wordBreak="break-word">
+        {project.description}
+      </Text>
       <HStack>
         {project.github && (
           <IconButton
@@ -118,7 +122,6 @@ const ProjectCard = ({ project }) => {
   );
 };
 
-
 async function fetchTikTokThumbnail(url) {
   const encodedUrl = encodeURIComponent(url);
   const apiUrl = `https://www.tiktok.com/oembed?url=${encodedUrl}`;
@@ -141,9 +144,9 @@ async function fetchTikTokThumbnail(url) {
 }
 
 const AnimatedTitle = () => {
-  const [title, setTitle] = useState('');
+  const [title, setTitle] = useState("");
   const [showCursor, setShowCursor] = useState(true);
-  const fullTitle = 'techfren';
+  const fullTitle = "techfren";
 
   useEffect(() => {
     let currentIndex = 0;
@@ -157,7 +160,7 @@ const AnimatedTitle = () => {
     }, 200);
 
     const cursorInterval = setInterval(() => {
-      setShowCursor(prev => !prev);
+      setShowCursor((prev) => !prev);
     }, 1000);
 
     return () => {
@@ -167,7 +170,12 @@ const AnimatedTitle = () => {
   }, []);
 
   return (
-    <Heading as="h1" fontSize={{ base: "4xl", sm: "5xl", md: "6xl" }} mb={6} whiteSpace="nowrap">
+    <Heading
+      as="h1"
+      fontSize={{ base: "4xl", sm: "5xl", md: "6xl" }}
+      mb={6}
+      whiteSpace="nowrap"
+    >
       {title}
       <span style={{ opacity: showCursor ? 1 : 0 }}>_</span>
     </Heading>
@@ -179,12 +187,7 @@ const Index = () => {
     <ChakraProvider theme={theme}>
       <DigitalRain />
       <Container maxW="container.xl" py={10}>
-        <Box 
-          textAlign="center" 
-          mb={10} 
-          p={6}
-          borderRadius="lg"
-        >
+        <Box textAlign="center" p={6} borderRadius="lg">
           <AnimatedTitle />
           <Socials />
           <Box display="flex" justifyContent="center" mb={6}>
@@ -196,12 +199,19 @@ const Index = () => {
               borderRadius="10%"
             />
           </Box>
-          <Box p={4} borderWidth="2px" borderRadius="lg" mb={6} borderColor="#00ff00">
-            <Text fontSize="lg">
-              techfren is a content creator that creates content about AI and
-              software engineering
-            </Text>
-          </Box>
+        </Box>
+        <Box
+          p={6}
+          borderWidth="2px"
+          borderRadius="lg"
+          mt={-6}
+          mb={6}
+          borderColor="#00ff00"
+        >
+          <Text fontSize="lg">
+            techfren is a content creator that creates content about AI and
+            software engineering
+          </Text>
         </Box>
         <CollapsibleSection title="My Open Source Projects" defaultOpen>
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
