@@ -4,21 +4,16 @@ import {
   Heading,
   SimpleGrid,
   Text,
-  Link,
-  VStack,
-  HStack,
-  IconButton,
   Image,
   ChakraProvider,
   extendTheme,
-  Flex,
 } from "@chakra-ui/react";
-import { FaGithub, FaExternalLinkAlt, FaCode, FaCalendarAlt, FaDollarSign } from "react-icons/fa";
 import React, { useState, useEffect } from "react";
 import projects from "../projects.json";
 import Socials from "./Socials";
 import CollapsibleSection from "../components/CollapsibleSection";
 import DigitalRain from "../components/DigitalRain";
+import ProjectCard from "../components/ProjectCard";
 import "@fontsource/press-start-2p";
 import "@fontsource/roboto";
 
@@ -58,96 +53,6 @@ const theme = extendTheme({
   },
 });
 
-const ProjectCard = ({ project, isQuickLink = false }) => {
-  const getIcon = (name) => {
-    if (name.includes("Scrimba")) return FaCode;
-    if (name.includes("Consultation")) return FaCalendarAlt;
-    if (name.includes("Donate")) return FaDollarSign;
-    return FaExternalLinkAlt;
-  };
-
-  if (isQuickLink) {
-    return (
-      <Link
-        href={project.live}
-        isExternal
-        _hover={{ textDecoration: 'none' }}
-      >
-        <Flex
-          p={4}
-          boxShadow="0 0 10px #00ff00"
-          borderWidth="2px"
-          borderColor="#00ff00"
-          borderRadius="lg"
-          align="center"
-          spacing={4}
-          _hover={{ bg: "rgba(0, 255, 0, 0.1)" }}
-        >
-          <VStack align="start" spacing={1}>
-            <Heading size="sm" fontSize="sm" wordBreak="break-word" color="#00ff00">
-              {project.name}
-            </Heading>
-            <Text fontSize="xs" wordBreak="break-word" color="#00ff00">
-              {project.description}
-            </Text>
-          </VStack>
-        </Flex>
-      </Link>
-    );
-  }
-
-  const linkUrl = project.live || project.github;
-  return (
-    <Link href={linkUrl} isExternal _hover={{ textDecoration: 'none' }}>
-      <VStack
-        p={4}
-        boxShadow="0 0 10px #00ff00"
-        borderWidth="2px"
-        borderColor="#00ff00"
-        borderRadius="lg"
-        align="stretch"
-        spacing={4}
-        _hover={{ bg: "rgba(0, 255, 0, 0.1)" }}
-      >
-        <Image 
-          src={project.image} 
-          alt={project.name} 
-          borderRadius="lg" 
-          maxH={{ base: "33vh", md: "auto" }}
-          objectFit="cover"
-        />
-        <Heading size="md">{project.name}</Heading>
-        <Text>{project.description}</Text>
-        <HStack justify="space-between">
-          {project.github && (
-            <IconButton
-              as="a"
-              href={project.github}
-              aria-label="GitHub"
-              icon={<FaGithub />}
-              variant="ghost"
-              color="#00ff00"
-              _hover={{ bg: "rgba(0, 255, 0, 0.1)" }}
-              onClick={(e) => e.stopPropagation()}
-            />
-          )}
-          {project.live && (
-            <IconButton
-              as="a"
-              href={project.live}
-              aria-label="Live site"
-              icon={<FaExternalLinkAlt />}
-              variant="ghost"
-              color="#00ff00"
-              _hover={{ bg: "rgba(0, 255, 0, 0.1)" }}
-              onClick={(e) => e.stopPropagation()}
-            />
-          )}
-        </HStack>
-      </VStack>
-    </Link>
-  );
-};
 
 async function fetchTikTokThumbnail(url) {
   const encodedUrl = encodeURIComponent(url);
