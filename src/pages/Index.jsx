@@ -8,14 +8,12 @@ import {
   VStack,
   HStack,
   IconButton,
-  useColorMode,
-  useColorModeValue,
-  Switch,
   Image,
   ChakraProvider,
   extendTheme,
 } from "@chakra-ui/react";
-import { FaGithub, FaExternalLinkAlt, FaMoon, FaSun } from "react-icons/fa";
+import { FaGithub, FaExternalLinkAlt } from "react-icons/fa";
+import React, { useState, useEffect } from "react";
 import projects from "../projects.json";
 import Socials from "./Socials";
 import CollapsibleSection from "../components/CollapsibleSection";
@@ -29,42 +27,41 @@ const theme = extendTheme({
     body: "Roboto, sans-serif",
   },
   styles: {
-    global: (props) => ({
+    global: {
       body: {
-        bg: props.colorMode === "dark" ? "black" : "white",
-        color: props.colorMode === "dark" ? "#00ff00" : "black",
+        bg: "black",
+        color: "#00ff00",
       },
-    }),
+    },
   },
   components: {
     Box: {
-      baseStyle: (props) => ({
-        borderColor: props.colorMode === "dark" ? "#00ff00" : "black",
+      baseStyle: {
+        borderColor: "#00ff00",
         borderWidth: "2px",
         borderStyle: "solid",
-        boxShadow: props.colorMode === "dark" ? "0 0 10px #00ff00" : "none",
-      }),
+        boxShadow: "0 0 10px #00ff00",
+      },
     },
     Text: {
-      baseStyle: (props) => ({
-        textShadow: props.colorMode === "dark" ? "0 0 5px #00ff00" : "none",
+      baseStyle: {
+        textShadow: "0 0 5px #00ff00",
         fontSize: "1.2rem", // Set default font size for Text components
-      }),
+      },
     },
     Heading: {
-      baseStyle: (props) => ({
-        textShadow: props.colorMode === "dark" ? "0 0 10px #00ff00" : "none",
-      }),
+      baseStyle: {
+        textShadow: "0 0 10px #00ff00",
+      },
     },
   },
 });
 
 const ProjectCard = ({ project }) => {
-  const { colorMode } = useColorMode();
   return (
     <VStack
       p={4}
-      boxShadow={colorMode === "dark" ? "0 0 10px #00ff00" : "md"}
+      boxShadow="0 0 10px #00ff00"
       borderWidth="2px"
       borderRadius="lg"
       align="start"
@@ -98,9 +95,9 @@ const ProjectCard = ({ project }) => {
             icon={<FaGithub />}
             aria-label="GitHub"
             isExternal
-            color={colorMode === "dark" ? "#00ff00" : "black"}
-            bg={colorMode === "dark" ? "transparent" : "white"}
-            _hover={{ bg: colorMode === "dark" ? "rgba(0, 255, 0, 0.2)" : "gray.100" }}
+            color="#00ff00"
+            bg="transparent"
+            _hover={{ bg: "rgba(0, 255, 0, 0.2)" }}
           />
         )}
         {project.live && (
@@ -110,9 +107,9 @@ const ProjectCard = ({ project }) => {
             icon={<FaExternalLinkAlt />}
             aria-label="Live Demo"
             isExternal
-            color={colorMode === "dark" ? "#00ff00" : "black"}
-            bg={colorMode === "dark" ? "transparent" : "white"}
-            _hover={{ bg: colorMode === "dark" ? "rgba(0, 255, 0, 0.2)" : "gray.100" }}
+            color="#00ff00"
+            bg="transparent"
+            _hover={{ bg: "rgba(0, 255, 0, 0.2)" }}
           />
         )}
       </HStack>
@@ -120,34 +117,6 @@ const ProjectCard = ({ project }) => {
   );
 };
 
-const ColorModeSwitcher = () => {
-  const { colorMode, toggleColorMode } = useColorMode();
-  return (
-    <Box
-      ml="auto"
-      display="flex"
-      alignItems="center"
-      justifyContent="space-between"
-      width={90}
-    >
-      {colorMode === "dark" ? <FaSun size={30} color="#00ff00" /> : <FaMoon size={30} />}
-      <Switch
-        color="green"
-        isChecked={colorMode === "dark"}
-        onChange={toggleColorMode}
-        size="lg"
-        sx={{
-          '& .chakra-switch__track': {
-            bg: colorMode === "dark" ? "rgba(0, 255, 0, 0.3)" : "gray.300",
-          },
-          '& .chakra-switch__thumb': {
-            bg: colorMode === "dark" ? "#00ff00" : "white",
-          },
-        }}
-      />
-    </Box>
-  );
-};
 
 async function fetchTikTokThumbnail(url) {
   const encodedUrl = encodeURIComponent(url);
@@ -170,24 +139,53 @@ async function fetchTikTokThumbnail(url) {
     });
 }
 
-const Index = () => {
-  const { colorMode } = useColorMode();
+const AnimatedTitle = () => {
+  const [title, setTitle] = useState('');
+  const [showCursor, setShowCursor] = useState(true);
+  const fullTitle = 'techfren';
 
+  useEffect(() => {
+    let currentIndex = 0;
+    const typingInterval = setInterval(() => {
+      if (currentIndex < fullTitle.length) {
+        setTitle(fullTitle.slice(0, currentIndex + 1));
+        currentIndex++;
+      } else {
+        clearInterval(typingInterval);
+      }
+    }, 200);
+
+    const cursorInterval = setInterval(() => {
+      setShowCursor(prev => !prev);
+    }, 1000);
+
+    return () => {
+      clearInterval(typingInterval);
+      clearInterval(cursorInterval);
+    };
+  }, []);
+
+  return (
+    <Heading as="h1" size="2xl" mb={6}>
+      {title}
+      <span style={{ opacity: showCursor ? 1 : 0 }}>_</span>
+    </Heading>
+  );
+};
+
+const Index = () => {
   return (
     <ChakraProvider theme={theme}>
       <DigitalRain />
       <Container maxW="container.xl" py={10}>
-        <ColorModeSwitcher />
         <Box 
           textAlign="center" 
           mb={10} 
-          bg={colorMode === "dark" ? "rgba(0, 0, 0, 0.7)" : "white"}
+          bg="rgba(0, 0, 0, 0.7)"
           p={6}
           borderRadius="lg"
         >
-          <Heading as="h1" size="2xl" mb={6}>
-            techfren
-          </Heading>
+          <AnimatedTitle />
           <Box display="flex" justifyContent="center" mb={6}>
             <Image
               src="/hero.png"
