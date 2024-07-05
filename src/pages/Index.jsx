@@ -175,7 +175,7 @@ const AnimatedTitle = () => {
   }, []);
 
   return (
-    <Heading as="h1" size="2xl" mb={6}>
+    <Heading as="h1" fontSize={{ base: "4xl", sm: "5xl", md: "6xl" }} mb={6} whiteSpace="nowrap">
       {title}
       <span style={{ opacity: showCursor ? 1 : 0 }}>_</span>
     </Heading>
