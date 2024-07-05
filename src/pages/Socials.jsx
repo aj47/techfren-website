@@ -1,6 +1,5 @@
-import { Link, HStack, IconButton } from "@chakra-ui/react";
+import { Link, HStack, IconButton, useColorMode } from "@chakra-ui/react";
 import { FaTiktok, FaYoutube, FaTwitch, FaInstagram, FaTwitter, FaDiscord } from "react-icons/fa";
-
 
 /**
  * A social media links component.
@@ -10,6 +9,17 @@ import { FaTiktok, FaYoutube, FaTwitch, FaInstagram, FaTwitter, FaDiscord } from
  * @returns {JSX.Element} A horizontal stack of social media icon buttons.
  */
 export default function Socials() {
+  const { colorMode } = useColorMode();
+
+  const iconButtonProps = {
+    size: "lg",
+    fontSize: "3xl", // Increased from 2xl to 3xl
+    color: colorMode === "dark" ? "#00ff00" : "inherit",
+    _hover: {
+      bg: colorMode === "dark" ? "rgba(0, 255, 0, 0.2)" : "gray.100",
+    },
+  };
+
   return (
     <HStack spacing={4} justify="center" m={4}>
       <IconButton
@@ -18,6 +28,7 @@ export default function Socials() {
         icon={<FaTiktok />}
         aria-label="TikTok"
         isExternal
+        {...iconButtonProps}
       />
       <IconButton
         as={Link}
@@ -25,6 +36,7 @@ export default function Socials() {
         icon={<FaInstagram />}
         aria-label="Instagram"
         isExternal
+        {...iconButtonProps}
       />
       <IconButton
         as={Link}
@@ -32,6 +44,7 @@ export default function Socials() {
         icon={<FaYoutube />}
         aria-label="YouTube"
         isExternal
+        {...iconButtonProps}
       />
       <IconButton
         as={Link}
@@ -39,6 +52,7 @@ export default function Socials() {
         icon={<FaTwitch />}
         aria-label="Twitch"
         isExternal
+        {...iconButtonProps}
       />
       <IconButton
         as={Link}
@@ -46,6 +60,7 @@ export default function Socials() {
         icon={<FaTwitter />}
         aria-label="Twitter"
         isExternal
+        {...iconButtonProps}
       />
       <IconButton
         as={Link}
@@ -53,6 +68,7 @@ export default function Socials() {
         icon={<FaDiscord />}
         aria-label="Discord"
         isExternal
+        {...iconButtonProps}
       />
     </HStack>
   );
