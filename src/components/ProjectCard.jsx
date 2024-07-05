@@ -12,12 +12,15 @@ import {
 } from "@chakra-ui/react";
 import { FaGithub, FaExternalLinkAlt, FaCode, FaCalendarAlt, FaDollarSign } from "react-icons/fa";
 
+const iconMap = {
+  Scrimba: FaCode,
+  Consultation: FaCalendarAlt,
+  Donate: FaDollarSign,
+};
+
 const ProjectCard = ({ project, isQuickLink = false }) => {
   const getIcon = (name) => {
-    if (name.includes("Scrimba")) return FaCode;
-    if (name.includes("Consultation")) return FaCalendarAlt;
-    if (name.includes("Donate")) return FaDollarSign;
-    return FaExternalLinkAlt;
+    return Object.entries(iconMap).find(([key]) => name.includes(key))?.[1] || FaExternalLinkAlt;
   };
 
   const linkUrl = project.live || project.github;

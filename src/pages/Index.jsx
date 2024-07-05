@@ -6,7 +6,6 @@ import {
   Text,
   Image,
   ChakraProvider,
-  extendTheme,
 } from "@chakra-ui/react";
 import React, { useState, useEffect } from "react";
 import projects from "../projects.json";
@@ -14,65 +13,24 @@ import Socials from "./Socials";
 import CollapsibleSection from "../components/CollapsibleSection";
 import DigitalRain from "../components/DigitalRain";
 import ProjectCard from "../components/ProjectCard";
+import theme from "../theme";
 import "@fontsource/press-start-2p";
 import "@fontsource/roboto";
 
-const theme = extendTheme({
-  fonts: {
-    heading: "'Press Start 2P', cursive",
-    body: "Roboto, sans-serif",
-  },
-  styles: {
-    global: {
-      body: {
-        bg: "black",
-        color: "#00ff00",
-      },
-    },
-  },
-  components: {
-    Box: {
-      baseStyle: {
-        borderColor: "#00ff00",
-        borderWidth: "2px",
-        borderStyle: "solid",
-        boxShadow: "0 0 10px #00ff00",
-      },
-    },
-    Text: {
-      baseStyle: {
-        textShadow: "0 0 5px #00ff00",
-        fontSize: "1.2rem", // Set default font size for Text components
-      },
-    },
-    Heading: {
-      baseStyle: {
-        textShadow: "0 0 10px #00ff00",
-      },
-    },
-  },
-});
-
-
 async function fetchTikTokThumbnail(url) {
-  const encodedUrl = encodeURIComponent(url);
-  const apiUrl = `https://www.tiktok.com/oembed?url=${encodedUrl}`;
-
-  return await fetch(apiUrl)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      return response.json();
-    })
-    .then((data) => {
-      // Return the thumbnail URL
-      console.log(data.thumbnail_url, "data");
-      return data.thumbnail_url;
-    })
-    .catch((error) => {
-      console.error("Error fetching TikTok oEmbed data:", error);
-    });
+  try {
+    const encodedUrl = encodeURIComponent(url);
+    const apiUrl = `https://www.tiktok.com/oembed?url=${encodedUrl}`;
+    const response = await fetch(apiUrl);
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log(data.thumbnail_url, "data");
+    return data.thumbnail_url;
+  } catch (error) {
+    console.error("Error fetching TikTok oEmbed data:", error);
+  }
 }
 
 const AnimatedTitle = () => {
