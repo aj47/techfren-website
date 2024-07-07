@@ -65,7 +65,7 @@ export default function Socials() {
       />
       <IconButton
         as={Link}
-        href="https://discord.gg/jNBJJgZm"
+        href="https://discord.gg/cK9WeQ7jPq"
         icon={<FaDiscord />}
         aria-label="Discord"
         isExternal
