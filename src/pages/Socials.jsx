@@ -41,7 +41,7 @@ export default function Socials() {
       />
       <IconButton
         as={Link}
-        href="https://youtube.com/techfren"
+        href="https://youtube.com/@techfren"
         icon={<FaYoutube />}
         aria-label="YouTube"
         isExternal
