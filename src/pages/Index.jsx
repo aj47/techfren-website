@@ -90,17 +90,8 @@ const Index = () => {
             />
           </Box>
         </Box>
-        <CollapsibleSection title="Quick Links" defaultOpen>
+        <CollapsibleSection title="Quick Links">
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
-            <ProjectCard
-              project={{
-                name: "Scrimba - Learn Software Engineering",
-                description: "Start your journey in software engineering with Scrimba's interactive courses.",
-                live: "https://v2.scrimba.com/?via=techfren",
-                image: "/scrimba.png",
-              }}
-              isQuickLink={true}
-            />
             <ProjectCard
               project={{
                 name: "Book a Tech Consultation",
