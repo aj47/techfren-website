@@ -89,13 +89,17 @@ const Index = () => {
               borderRadius="10%"
             />
           </Box>
+          <Box display="flex" justifyContent="center" mb={6}>
+            follow me on the social links above
+          </Box>
         </Box>
         <CollapsibleSection title="Quick Links">
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
             <ProjectCard
               project={{
                 name: "Book a Tech Consultation",
-                description: "Schedule a one-on-one tech consultation to discuss your projects or career.",
+                description:
+                  "Schedule a one-on-one tech consultation to discuss your projects or career.",
                 live: "https://cal.com/techfren",
                 image: "/consultation.png",
               }}
@@ -104,16 +108,14 @@ const Index = () => {
             <ProjectCard
               project={{
                 name: "Donate",
-                description: "Support @techfren's content creation efforts with a donation.",
+                description:
+                  "Support @techfren's content creation efforts with a donation.",
                 live: "https://www.paypal.com/donate/?business=J4QC6X5R3ACQU&no_recurring=0&item_name=support+of+%40techfren+content+creation&currency_code=AUD",
                 image: "/donate.png",
               }}
               isQuickLink={true}
             />
           </SimpleGrid>
-        </CollapsibleSection>
-        <CollapsibleSection title="Video Highlights">
-          Error: L4Zy - Developer too lazy to write this section too but not lazy enough to not make it different and write a whole bunch of words to prove a point
         </CollapsibleSection>
         <CollapsibleSection title="My Open Source Projects">
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>

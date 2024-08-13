@@ -1,0 +1,228 @@
+<html><head><base href="https://www.websim.ai/techfren-simulation/"><title>@techfren 3D Particle Simulation with Matrix Digital Rain and Lightning</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cannon.js/0.6.2/cannon.min.js"></script>
+<style>
+    body { margin: 0; overflow: hidden; background-color: #000; }
+    canvas { width: 100%; height: 100%; position: absolute; top: 0; left: 0; }
+    #matrixRain { z-index: -1; }
+</style>
+</head>
+<body>
+<canvas id="matrixRain"></canvas>
+<script>
+// Matrix Digital Rain
+const canvas = document.getElementById('matrixRain');
+const ctx = canvas.getContext('2d');
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const japanese = "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん";
+const latin = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const nums = "0123456789";
+const alphabet = japanese + latin + nums;
+
+const fontSize = 16;
+const columns = canvas.width / fontSize;
+
+const rainDrops = [];
+
+for (let x = 0; x < columns; x++) {
+    rainDrops[x] = 1;
+}
+
+function drawMatrixRain() {
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = '#0F0';
+    ctx.font = fontSize + 'px monospace';
+
+    for (let i = 0; i < rainDrops.length; i++) {
+        const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+        ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
+
+        if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+            rainDrops[i] = 0;
+        }
+        rainDrops[i]++;
+    }
+}
+
+// 3D Particle Simulation
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setClearColor(0x000000, 0);
+document.body.appendChild(renderer.domElement);
+
+const world = new CANNON.World();
+world.gravity.set(0, -9.82, 0);
+
+const particleGeometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
+const particleMaterial = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
+const particles = [];
+const particleBodies = [];
+
+let boxSize = { 
+    width: window.innerWidth / 50 * 1.5,
+    height: window.innerHeight / 50 * 1.5,
+    depth: 20 * 1.5
+};
+
+const boxShape = new CANNON.Box(new CANNON.Vec3(boxSize.width/2, boxSize.height/2, boxSize.depth/2));
+const boxBody = new CANNON.Body({ mass: 0 });
+boxBody.addShape(boxShape);
+world.addBody(boxBody);
+
+for (let i = 0; i < 200; i++) {
+    const particle = new THREE.Mesh(particleGeometry, particleMaterial);
+    particle.position.set(
+        Math.random() * boxSize.width - boxSize.width/2,
+        Math.random() * boxSize.height - boxSize.height/2,
+        Math.random() * boxSize.depth - boxSize.depth/2
+    );
+    scene.add(particle);
+    particles.push(particle);
+
+    const particleBody = new CANNON.Body({
+        mass: 1,
+        shape: new CANNON.Box(new CANNON.Vec3(0.1, 0.1, 0.1)),
+        position: new CANNON.Vec3(particle.position.x, particle.position.y, particle.position.z),
+        velocity: new CANNON.Vec3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).scale(5)
+    });
+    particleBody.linearDamping = 0.1;
+    world.addBody(particleBody);
+    particleBodies.push(particleBody);
+}
+
+const loader = new THREE.FontLoader();
+loader.load('https://threejs.org/examples/fonts/helvetiker_bold.typeface.json', function(font) {
+    const textGeometry = new THREE.TextGeometry('@techfren', {
+        font: font,
+        size: 1.5,
+        height: 0.5,
+        curveSegments: 4,
+        bevelEnabled: true,
+        bevelThickness: 0.1,
+        bevelSize: 0.05,
+        bevelSegments: 3
+    });
+    const textMaterial = new THREE.MeshPhongMaterial({ color: 0xff00ff });
+    const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+    textMesh.position.set(-3.5, 0, 0);
+    scene.add(textMesh);
+});
+
+const ambientLight = new THREE.AmbientLight(0x404040);
+scene.add(ambientLight);
+const pointLight = new THREE.PointLight(0xffffff, 1, 100);
+pointLight.position.set(10, 10, 10);
+scene.add(pointLight);
+
+// Lightning
+const lightningMaterial = new THREE.LineBasicMaterial({ color: 0xFFFFFF });
+const lightningGeometry = new THREE.BufferGeometry();
+const lightningPoints = [];
+for (let i = 0; i < 10; i++) {
+    lightningPoints.push(new THREE.Vector3(0, 0, 0));
+}
+lightningGeometry.setFromPoints(lightningPoints);
+const lightning = new THREE.Line(lightningGeometry, lightningMaterial);
+scene.add(lightning);
+
+function updateLightning() {
+    const points = lightning.geometry.attributes.position.array;
+    let x = Math.random() * boxSize.width - boxSize.width/2;
+    let z = Math.random() * boxSize.depth - boxSize.depth/2;
+    for (let i = 0; i < points.length; i += 3) {
+        points[i] = x + (Math.random() - 0.5) * 2;
+        points[i+1] = boxSize.height/2 - (i/3) * (boxSize.height / 3);
+        points[i+2] = z + (Math.random() - 0.5) * 2;
+    }
+    lightning.geometry.attributes.position.needsUpdate = true;
+    lightning.visible = true;
+    setTimeout(() => { lightning.visible = false; }, 100);
+}
+
+const cameraDistance = Math.max(boxSize.width, boxSize.height) * 0.4;
+
+let time = 0;
+let lastTime = 0;
+const targetFPS = 60;
+const targetFrameTime = 1000 / targetFPS;
+
+function animate(currentTime) {
+    requestAnimationFrame(animate);
+
+    const deltaTime = currentTime - lastTime;
+
+    if (deltaTime >= targetFrameTime) {
+        lastTime = currentTime - (deltaTime % targetFrameTime);
+
+        world.step(1/60);
+
+        for (let i = 0; i < particles.length; i++) {
+            particles[i].position.copy(particleBodies[i].position);
+            particles[i].quaternion.copy(particleBodies[i].quaternion);
+
+            if (Math.abs(particleBodies[i].position.x) > boxSize.width/2 ||
+                Math.abs(particleBodies[i].position.y) > boxSize.height/2 ||
+                Math.abs(particleBodies[i].position.z) > boxSize.depth/2) {
+                particleBodies[i].position.set(
+                    Math.random() * boxSize.width - boxSize.width/2,
+                    Math.random() * boxSize.height - boxSize.height/2,
+                    Math.random() * boxSize.depth - boxSize.depth/2
+                );
+                particleBodies[i].velocity.set(
+                    Math.random() - 0.5,
+                    Math.random() - 0.5,
+                    Math.random() - 0.5
+                ).scale(5);
+            }
+        }
+
+        time += 0.005;
+        camera.position.x = Math.cos(time) * cameraDistance;
+        camera.position.z = Math.sin(time) * cameraDistance;
+        camera.lookAt(scene.position);
+
+        // Lightning update
+        if (Math.random() < 0.02) { // 2% chance each frame
+            updateLightning();
+        }
+
+        renderer.render(scene, camera);
+        drawMatrixRain();
+    }
+}
+
+animate(0);
+
+window.addEventListener('resize', function() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    boxSize = { 
+        width: window.innerWidth / 50 * 1.5,
+        height: window.innerHeight / 50 * 1.5,
+        depth: 20 * 1.5
+    };
+
+    boxBody.shapes[0].halfExtents = new CANNON.Vec3(boxSize.width/2, boxSize.height/2, boxSize.depth/2);
+    boxBody.updateBoundingRadius();
+
+    cameraDistance = Math.max(boxSize.width, boxSize.height) * 0.4;
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    rainDrops.length = Math.ceil(canvas.width / fontSize);
+    for (let x = 0; x < rainDrops.length; x++) {
+        rainDrops[x] = 1;
+    }
+});
+</script>
+</body>
+</html>
