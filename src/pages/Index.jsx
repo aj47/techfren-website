@@ -94,6 +94,15 @@ const Index = () => {
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
             <ProjectCard
               project={{
+                name: "ChatLLM by Abacus",
+                description: "Combines all of the best models along with all of the features you could want for half the price of just a single service",
+                live: "https://chatllm.abacus.ai/",
+                image: "",
+              }}
+              isQuickLink={true}
+            />
+            <ProjectCard
+              project={{
                 name: "Book a Tech Consultation",
                 description: "Schedule a one-on-one tech consultation to discuss your projects or career.",
                 live: "https://cal.com/techfren",
