@@ -106,6 +106,16 @@ const Index = () => {
             />
             <ProjectCard
               project={{
+                name: "Learn Software/AI Engineering",
+                description:
+                  "Scrimba has interactive courses where you can learn by doing on their great platform.",
+                live: "https://v2.scrimba.com/?via=techfren",
+                image: "/consultation.png",
+              }}
+              isQuickLink={true}
+            />
+            <ProjectCard
+              project={{
                 name: "Book a Tech Consultation",
                 description:
                   "Schedule a one-on-one tech consultation to discuss your projects or career.",
