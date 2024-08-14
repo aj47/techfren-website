@@ -90,7 +90,9 @@ const Index = () => {
             />
           </Box>
           <Box display="flex" justifyContent="center" mb={6}>
-            follow me on the social links above
+	    <p>
+	      techfren is a software engineer and content creator with a passion for Software Technology and AI Agents. Follow them by clicking the social icons above.
+	    </p>
           </Box>
         </Box>
         <CollapsibleSection title="Quick Links" defaultOpen>
