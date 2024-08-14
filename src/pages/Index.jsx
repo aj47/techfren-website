@@ -124,16 +124,6 @@ const Index = () => {
               }}
               isQuickLink={true}
             />
-            <ProjectCard
-              project={{
-                name: "Donate",
-                description:
-                  "Support @techfren's content creation efforts with a donation.",
-                live: "https://www.paypal.com/donate/?business=J4QC6X5R3ACQU&no_recurring=0&item_name=support+of+%40techfren+content+creation&currency_code=AUD",
-                image: "/donate.png",
-              }}
-              isQuickLink={true}
-            />
           </SimpleGrid>
         </CollapsibleSection>
         <CollapsibleSection title="My Open Source Projects">
