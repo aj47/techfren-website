@@ -108,15 +108,6 @@ const Index = () => {
             />
             <ProjectCard
               project={{
-                name: "ChatLLM by Abacus",
-                description: "Combines all of the best models along with all of the features you could want for half the price of just a single service",
-                live: "https://chatllm.abacus.ai/",
-                image: "",
-              }}
-              isQuickLink={true}
-            />
-            <ProjectCard
-              project={{
                 name: "Learn Software/AI Engineering",
                 description:
                   "Scrimba has interactive courses where you can learn by doing on their great platform.",
