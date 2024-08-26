@@ -1,10 +1,10 @@
 [
   {
-    "name": "Stream notes",
-    "description": "notes i take on stream",
-    "image": "",
-    "github": "",
-    "live": "https://techfren.notion.site/Techfren-STREAM-Notes-2bdfc29d9ffd4d2b93254644126581a9?pvs=74"
+    "name": "RapidReel",
+    "description": "a innovative interface for editing videos fast. built with AI live over two streams.",
+    "image": "/rapidreel.png",
+    "github": "https://github.com/aj47/rapidreel",
+    "live": "https://github.com/aj47/rapidreel"
   },
   {
     "name": "Coding AI Tools Tested",
@@ -23,7 +23,7 @@
   {
     "name": "techfren.net",
     "description": "this website you're on right now :)",
-    "image": "/thissite.png",
+    "image": "/techfrennet.png",
     "github": "https://github.com/aj47/techfren-website",
     "live": "https://www.techfren.net"
   },
@@ -32,7 +32,7 @@
     "description": "Automatically Generate Timestamps for Youtube Videos with AI",
     "image": "/tsg.png",
     "github": "https://github.com/aj47/timestampgenius",
-    "live": "https://www.timestampgenius.com"
+    "live": "https://github.com/aj47/timestampgenius"
   },
   {
     "name": "BeriGame MMO Alpha",
