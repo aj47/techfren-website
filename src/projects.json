@@ -1,5 +1,12 @@
 [
   {
+    "name": "Stream notes",
+    "description": "notes i take on stream",
+    "image": "",
+    "github": "",
+    "live": "https://techfren.notion.site/Techfren-STREAM-Notes-2bdfc29d9ffd4d2b93254644126581a9?pvs=74"
+  },
+  {
     "name": "Coding AI Tools Tested",
     "description": "A spreadsheet with the results of my testing of AI tools",
     "image": "/aitools.png",
