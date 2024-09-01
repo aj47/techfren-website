@@ -90,22 +90,15 @@ const Index = () => {
             />
           </Box>
           <Box display="flex" justifyContent="center" mb={6}>
-	    <p>
-	      techfren is a software engineer and content creator with a passion for Software Technology and AI Agents. Follow them by clicking the social icons above.
-	    </p>
+            <p>
+              techfren is a software engineer and content creator with a passion
+              for Software Technology and AI Agents. Follow them by clicking the
+              social icons above.
+            </p>
           </Box>
         </Box>
-        <CollapsibleSection title="Quick Links" defaultOpen>
+        <CollapsibleSection title="Quick Links">
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
-	    <ProjectCard
-              project={{
-                name: "Backpack",
-                description: "Create Custom Songs Using Images and Videos",
-                live: "https://backpackbot.ai/",
-                image: "",
-              }}
-              isQuickLink={true}
-            />
             <ProjectCard
               project={{
                 name: "Learn Software/AI Engineering",
@@ -128,7 +121,7 @@ const Index = () => {
             />
           </SimpleGrid>
         </CollapsibleSection>
-        <CollapsibleSection title="My Open Source Projects">
+        <CollapsibleSection title="My Open Source Projects" defaultOpen>
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
             {projects.map((project, index) => (
               <ProjectCard key={index} project={project} />

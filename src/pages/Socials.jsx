@@ -13,7 +13,7 @@ export default function Socials() {
 
   const iconButtonProps = {
     size: "lg",
-    fontSize: "3xl", // Increased from 2xl to 3xl
+    fontSize: "4xl", // Increased from 2xl to 3xl
     color: "#00ff00",
     bg: "rgba(0, 0, 0, 0.7)",
     _hover: {
