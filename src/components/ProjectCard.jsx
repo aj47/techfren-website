@@ -41,7 +41,7 @@ const ProjectCard = ({ project, isQuickLink = false }) => {
           {!isQuickLink && (
             <Image 
               src={project.image} 
-              alt={project.name} 
+              alt={`Screenshot of ${project.name}`} 
               borderRadius="lg" 
               objectFit="cover"
               h="200px"
