@@ -1,5 +1,5 @@
-import { Box, Button, Text, Collapse, useTheme } from "@chakra-ui/react";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { Box, Text, Collapse } from "@chakra-ui/react";
+import { FaChevronRight, FaChevronDown } from "react-icons/fa";
 import { useState } from "react";
 
 export default function CollapsibleSection({
@@ -8,39 +8,36 @@ export default function CollapsibleSection({
   defaultOpen = false,
 }) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
-  const theme = useTheme();
 
   const toggleOpen = () => setIsOpen(!isOpen);
 
   return (
-    <Box mb={0}>
-      <Button
-        variant="outline"
-        colorScheme="green"
+    <Box mb={4}>
+      <Box
+        as="button"
         onClick={toggleOpen}
         width="100%"
-        mb={4}
-        rightIcon={isOpen ? <FaChevronUp /> : <FaChevronDown />}
-        color="#00ff00"
-        borderColor="#00ff00"
-        size="md"
-        bg="rgba(0, 0, 0, 0.8)"
-        _hover={{
-          bgColor: "rgba(0, 255, 0, 0.2)",
-          borderColor: "#00ff00",
-          color: "#00ff00",
-        }}
+        textAlign="left"
+        bg="transparent"
+        border="none"
+        cursor="pointer"
+        _hover={{ color: "green.300" }}
+        transition="color 0.2s"
       >
-        <Text 
-          fontSize="sm" 
-          textShadow="0 0 5px #00ff00"
-          fontFamily={theme.fonts.heading}
+        <Text
+          fontSize="xs"
+          fontFamily="'Press Start 2P', cursive"
+          display="flex"
+          alignItems="center"
         >
-          {title}
+          {isOpen ? <FaChevronDown /> : <FaChevronRight />}
+          <Box as="span" ml={2}>
+            {title}
+          </Box>
         </Text>
-      </Button>
+      </Box>
       <Collapse in={isOpen}>
-        <Box p={4}>
+        <Box pl={6} mt={2} borderLeft="1px dashed #00ff00">
           {children}
         </Box>
       </Collapse>
