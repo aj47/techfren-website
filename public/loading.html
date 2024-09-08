@@ -1,0 +1,433 @@
+<html><head><base href="https://hypercool.techfren.com/ultra3d-cyber-eternal-loading/">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TechFren Ultra Stream Eternal Loading - Cyberpunk 3D Edition</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Wallpoet&display=swap" rel="stylesheet">
+<style>
+  body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    background-color: #000;
+    font-family: 'Orbitron', sans-serif;
+  }
+  
+  #scene-container {
+    width: 100%;
+    height: 100%;
+  }
+  
+  #loading-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #0ff;
+    font-size: 36px;
+    font-family: 'Wallpoet', cursive;
+    text-shadow: 0 0 10px #0ff, 0 0 20px #0ff, 0 0 30px #0ff;
+    z-index: 100;
+    pointer-events: none;
+    white-space: nowrap;
+    letter-spacing: 2px;
+  }
+  
+  #progress-bar {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    height: 5px;
+    background-color: #111;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  
+  #progress {
+    width: 0%;
+    height: 100%;
+    background-color: #0ff;
+    transition: width 0.5s ease;
+  }
+  
+  .glitch {
+    position: relative;
+  }
+  
+  .glitch::before,
+  .glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .glitch::before {
+    left: 2px;
+    text-shadow: -2px 0 #ff00de;
+    clip: rect(24px, 550px, 90px, 0);
+    animation: glitch-anim-2 3s infinite linear alternate-reverse;
+  }
+  
+  .glitch::after {
+    left: -2px;
+    text-shadow: -2px 0 #00fff9, 2px 2px #ff00de;
+    animation: glitch-anim 2.5s infinite linear alternate-reverse;
+  }
+  
+  @keyframes glitch-anim {
+    0% {
+      clip: rect(105px, 9999px, 72px, 0);
+    }
+    20% {
+      clip: rect(98px, 9999px, 42px, 0);
+    }
+    40% {
+      clip: rect(50px, 9999px, 27px, 0);
+    }
+    60% {
+      clip: rect(24px, 9999px, 14px, 0);
+    }
+    80% {
+      clip: rect(67px, 9999px, 86px, 0);
+    }
+    100% {
+      clip: rect(16px, 9999px, 78px, 0);
+    }
+  }
+  
+  @keyframes glitch-anim-2 {
+    0% {
+      clip: rect(65px, 9999px, 119px, 0);
+    }
+    20% {
+      clip: rect(82px, 9999px, 73px, 0);
+    }
+    40% {
+      clip: rect(128px, 9999px, 98px, 0);
+    }
+    60% {
+      clip: rect(23px, 9999px, 61px, 0);
+    }
+    80% {
+      clip: rect(54px, 9999px, 39px, 0);
+    }
+    100% {
+      clip: rect(45px, 9999px, 96px, 0);
+    }
+  }
+</style>
+</head>
+<body>
+<div id="scene-container"></div>
+<div id="loading-text" class="glitch" data-text="TECHFREN STREAM LOADING">TECHFREN STREAM LOADING</div>
+<div id="progress-bar"><div id="progress"></div></div>
+
+<script>
+let scene, camera, renderer, tunnel, numbers, particles, bouncing3DObjects = [];
+
+function init() {
+  scene = new THREE.Scene();
+  camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.z = 5;
+
+  renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.getElementById('scene-container').appendChild(renderer.domElement);
+
+  createTunnel();
+  createNumbers();
+  createParticles();
+  createBouncing3DObjects();
+  
+  window.addEventListener('resize', onWindowResize, false);
+}
+
+function createTunnel() {
+  const geometry = new THREE.CylinderGeometry(2, 2, 20, 32, 1, true);
+  const material = new THREE.ShaderMaterial({
+    uniforms: {
+      time: { value: 0 }
+    },
+    vertexShader: `
+      varying vec2 vUv;
+      void main() {
+        vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      uniform float time;
+      varying vec2 vUv;
+      void main() {
+        vec2 position = vUv * 2.0 - 1.0;
+        float r = length(position);
+        float theta = atan(position.y, position.x);
+        float intensity = sin(r * 10.0 + time * 2.0) * 0.5 + 0.5;
+        vec3 color = mix(vec3(0.0, 1.0, 1.0), vec3(1.0, 0.0, 0.87), intensity);
+        gl_FragColor = vec4(color, 0.7);
+      }
+    `,
+    side: THREE.BackSide,
+    transparent: true
+  });
+  tunnel = new THREE.Mesh(geometry, material);
+  tunnel.rotation.z = Math.PI / 2;
+  scene.add(tunnel);
+}
+
+function createNumbers() {
+  numbers = new THREE.Group();
+  const loader = new THREE.FontLoader();
+  
+  loader.load('https://threejs.org/examples/fonts/helvetiker_bold.typeface.json', function(font) {
+    for (let i = 0; i < 200; i++) {
+      const textGeometry = new THREE.TextGeometry(Math.floor(Math.random() * 2).toString(), {
+        font: font,
+        size: 0.2,
+        height: 0.05
+      });
+      const textMaterial = new THREE.MeshPhongMaterial({ 
+        color: 0x00ffff,
+        emissive: 0x00ffff,
+        emissiveIntensity: 0.5,
+        shininess: 100
+      });
+      const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+      
+      textMesh.position.set(
+        (Math.random() - 0.5) * 4,
+        (Math.random() - 0.5) * 20,
+        (Math.random() - 0.5) * 4
+      );
+      
+      textMesh.rotation.x = Math.random() * Math.PI;
+      textMesh.rotation.y = Math.random() * Math.PI;
+      
+      numbers.add(textMesh);
+    }
+    scene.add(numbers);
+  });
+}
+
+function createParticles() {
+  const geometry = new THREE.BufferGeometry();
+  const vertices = [];
+  const sizes = [];
+
+  for (let i = 0; i < 1000; i++) {
+    vertices.push((Math.random() - 0.5) * 10);
+    vertices.push((Math.random() - 0.5) * 20);
+    vertices.push((Math.random() - 0.5) * 10);
+    sizes.push(Math.random() * 0.05 + 0.01);
+  }
+
+  geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+  geometry.setAttribute('size', new THREE.Float32BufferAttribute(sizes, 1));
+
+  const material = new THREE.ShaderMaterial({
+    uniforms: {
+      time: { value: 0 },
+      color: { value: new THREE.Color(0x00ffff) }
+    },
+    vertexShader: `
+      uniform float time;
+      attribute float size;
+      varying vec3 vColor;
+      void main() {
+        vColor = vec3(0.0, 1.0, 1.0);
+        vec3 pos = position;
+        pos.y = mod(pos.y + time, 20.0) - 10.0;
+        vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
+        gl_PointSize = size * (300.0 / -mvPosition.z);
+        gl_Position = projectionMatrix * mvPosition;
+      }
+    `,
+    fragmentShader: `
+      uniform vec3 color;
+      varying vec3 vColor;
+      void main() {
+        if (length(gl_PointCoord - vec2(0.5, 0.5)) > 0.475) discard;
+        gl_FragColor = vec4(color * vColor, 1.0);
+      }
+    `,
+    transparent: true
+  });
+
+  particles = new THREE.Points(geometry, material);
+  scene.add(particles);
+}
+
+function createBouncing3DObjects() {
+  const geometries = [
+    new THREE.IcosahedronGeometry(0.5, 0),
+    new THREE.OctahedronGeometry(0.5, 0),
+    new THREE.TetrahedronGeometry(0.5, 0)
+  ];
+
+  const material = new THREE.MeshPhongMaterial({
+    color: 0x00ffff,
+    emissive: 0x00ffff,
+    emissiveIntensity: 0.5,
+    shininess: 100,
+    specular: 0xffffff
+  });
+
+  for (let i = 0; i < 5; i++) {
+    const geometry = geometries[Math.floor(Math.random() * geometries.length)];
+    const object = new THREE.Mesh(geometry, material);
+    object.position.set(
+      (Math.random() - 0.5) * 10,
+      (Math.random() - 0.5) * 10,
+      (Math.random() - 0.5) * 10
+    );
+    object.velocity = new THREE.Vector3(
+      (Math.random() - 0.5) * 0.02,
+      (Math.random() - 0.5) * 0.02,
+      (Math.random() - 0.5) * 0.02
+    );
+    bouncing3DObjects.push(object);
+    scene.add(object);
+  }
+}
+
+function animateTunnel(time) {
+  tunnel.material.uniforms.time.value = time;
+}
+
+function animateNumbers(time) {
+  numbers.children.forEach((number, index) => {
+    number.position.y -= 0.05;
+    if (number.position.y < -10) {
+      number.position.y = 10;
+    }
+    number.rotation.x += 0.01;
+    number.rotation.y += 0.01;
+    number.material.emissiveIntensity = Math.sin(time * 2 + index) * 0.25 + 0.75;
+  });
+}
+
+function animateParticles(time) {
+  particles.material.uniforms.time.value = time * 0.5;
+}
+
+function animateBouncing3DObjects() {
+  bouncing3DObjects.forEach(object => {
+    object.position.x += object.velocity.x * 0.2;
+    object.position.y += object.velocity.y * 0.2;
+    object.position.z += object.velocity.z * 0.2;
+
+    object.rotation.x += 0.004;
+    object.rotation.y += 0.004;
+    object.rotation.z += 0.004;
+
+    if (Math.abs(object.position.x) > 5) object.velocity.x *= -1;
+    if (Math.abs(object.position.y) > 5) object.velocity.y *= -1;
+    if (Math.abs(object.position.z) > 5) object.velocity.z *= -1;
+  });
+}
+
+function onWindowResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+function animate(time) {
+  time *= 0.001;  // convert to seconds
+  requestAnimationFrame(animate);
+  animateTunnel(time);
+  if (numbers) animateNumbers(time);
+  animateParticles(time);
+  animateBouncing3DObjects();
+  renderer.render(scene, camera);
+}
+
+init();
+animate(0);
+
+// Enhanced loading text animation
+const loadingText = document.getElementById('loading-text');
+gsap.to(loadingText, {
+  duration: 1,
+  opacity: 0.3,
+  yoyo: true,
+  repeat: -1,
+  ease: "power2.inOut"
+});
+
+// Eternal progress bar animation
+const progress = document.getElementById('progress');
+gsap.to(progress, {
+  duration: 10,
+  width: "100%",
+  ease: "power1.inOut",
+  repeat: -1,
+  onRepeat: () => {
+    gsap.set(progress, { width: "0%" });
+  }
+});
+
+// Camera movement
+gsap.to(camera.position, {
+  duration: 20,
+  z: 3,
+  ease: "power1.inOut",
+  repeat: -1,
+  yoyo: true
+});
+
+// Add ambient light
+const ambientLight = new THREE.AmbientLight(0x404040);
+scene.add(ambientLight);
+
+// Add point light
+const pointLight = new THREE.PointLight(0x00ffff, 1, 100);
+pointLight.position.set(0, 0, 5);
+scene.add(pointLight);
+
+// Animate point light
+gsap.to(pointLight.position, {
+  duration: 5,
+  x: 2,
+  y: 2,
+  z: 3,
+  repeat: -1,
+  yoyo: true,
+  ease: "power1.inOut"
+});
+
+// Glitch effect
+function applyGlitchEffect() {
+  gsap.to(loadingText, {
+    skewX: 20,
+    duration: 0.1,
+    repeat: 1,
+    yoyo: true,
+    ease: "power1.inOut",
+    onComplete: () => {
+      gsap.delayedCall(Math.random() * 5 + 1, applyGlitchEffect);
+    }
+  });
+}
+
+applyGlitchEffect();
+
+// Add random data transfer percentage updates
+function updateDataTransfer() {
+  const percentage = Math.floor(Math.random() * 100);
+  loadingText.textContent = `TECHFREN STREAM LOADING ${percentage}%`;
+  loadingText.setAttribute('data-text', `TECHFREN STREAM LOADING ${percentage}%`);
+  gsap.delayedCall(Math.random() * 2 + 0.5, updateDataTransfer);
+}
+
+updateDataTransfer();
+</script>
+</body>
+</html>
