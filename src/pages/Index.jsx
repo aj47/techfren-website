@@ -97,17 +97,6 @@ const Index = () => {
             </p>
           </Box>
         </Box>
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <iframe
-            src="https://docs.google.com/forms/d/e/1FAIpQLScuLNA-bl7CsXZ6X6aU3_4wmPrHzzuPwXkfCdIqdecgMq535g/viewform?embedded=true"
-            width="640"
-            height="604"
-            frameborder="0"
-            marginheight="0"
-            marginwidth="0"
-          />
-        </div>
-          Loading…
         <CollapsibleSection title="Quick Links">
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
             <ProjectCard
