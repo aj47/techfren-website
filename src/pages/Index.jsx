@@ -129,6 +129,16 @@ const Index = () => {
               }}
               isQuickLink={true}
             />
+         <ProjectCard
+              project={{
+                name: "AIEase",
+                description:
+                  "Free Unlimited AI Image Editing Tools.",
+                live: "https://bit.ly/3YmrKCb",
+                image: "/consultation.png",
+              }}
+              isQuickLink={true}
+            />
           </SimpleGrid>
         </CollapsibleSection>
         <CollapsibleSection title="My Open Source Projects" defaultOpen>
