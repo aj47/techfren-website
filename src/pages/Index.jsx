@@ -97,8 +97,26 @@ const Index = () => {
             </p>
           </Box>
         </Box>
-        <CollapsibleSection title="Quick Links">
+        <CollapsibleSection title="Quick Links" defaultOpen>
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
+            <ProjectCard
+              project={{
+                name: "AIEase",
+                description: "Free Unlimited AI Image Editing Tools.",
+                live: "https://bit.ly/3YmrKCb",
+                image: "/consultation.png",
+              }}
+              isQuickLink={true}
+            />
+            <ProjectCard
+              project={{
+                name: "ChatLLM by Abacus",
+                description: "All the AI features under one subscription",
+                live: "https://chatllm.abacus.ai/LwsNvkXHdV ",
+                image: "/consultation.png",
+              }}
+              isQuickLink={true}
+            />
             <ProjectCard
               project={{
                 name: "Links from videos",
@@ -120,6 +138,16 @@ const Index = () => {
             />
             <ProjectCard
               project={{
+                name: "Media Kit",
+                description:
+                  "Information about my social accounts and collaborations",
+                live: "https://beacons.ai/techfren/mediakit",
+                image: "/consultation.png",
+              }}
+              isQuickLink={true}
+            />
+            <ProjectCard
+              project={{
                 name: "Book a Tech Consultation",
                 description:
                   "Schedule a one-on-one tech consultation to discuss your projects or career.",
@@ -128,27 +156,9 @@ const Index = () => {
               }}
               isQuickLink={true}
             />
-            <ProjectCard
-              project={{
-                name: "AIEase",
-                description: "Free Unlimited AI Image Editing Tools.",
-                live: "https://bit.ly/3YmrKCb",
-                image: "/consultation.png",
-              }}
-              isQuickLink={true}
-            />
-            <ProjectCard
-              project={{
-                name: "ChatLLM by Abacus",
-                description: "All the AI features under one subscription",
-                live: "https://chatllm.abacus.ai/LwsNvkXHdV ",
-                image: "/consultation.png",
-              }}
-              isQuickLink={true}
-            />
           </SimpleGrid>
         </CollapsibleSection>
-        <CollapsibleSection title="My Open Source Projects" defaultOpen>
+        <CollapsibleSection title="My Open Source Projects">
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
             {projects.map((project, index) => (
               <ProjectCard key={index} project={project} />

@@ -1,10 +1,10 @@
 [
   {
-    "name": "RapidReel",
-    "description": "a innovative interface for editing videos fast. built with AI live over two streams.",
-    "image": "/rapidreel.png",
-    "github": "https://github.com/aj47/rapidreel",
-    "live": "https://github.com/aj47/rapidreel"
+    "name": "Block Editor",
+    "description": "My video editing tool",
+    "image": "/bloc.png",
+    "github": "https://github.com/aj47/block-editor",
+    "live": "https://github.com/aj47/block-editor"
   },
   {
     "name": "Coding AI Tools Tested",
