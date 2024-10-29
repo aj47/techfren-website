@@ -102,8 +102,7 @@ const Index = () => {
             <ProjectCard
               project={{
                 name: "Links from videos",
-                description:
-                  "List of links that I've referred to in videos",
+                description: "List of links that I've referred to in videos",
                 live: "https://github.com/aj47/techfren-vids/blob/main/links.md",
                 image: "/consultation.png",
               }}
@@ -129,12 +128,20 @@ const Index = () => {
               }}
               isQuickLink={true}
             />
-         <ProjectCard
+            <ProjectCard
               project={{
                 name: "AIEase",
-                description:
-                  "Free Unlimited AI Image Editing Tools.",
+                description: "Free Unlimited AI Image Editing Tools.",
                 live: "https://bit.ly/3YmrKCb",
+                image: "/consultation.png",
+              }}
+              isQuickLink={true}
+            />
+            <ProjectCard
+              project={{
+                name: "ChatLLM by Abacus",
+                description: "All the AI features under one subscription",
+                live: "https://chatllm.abacus.ai/LwsNvkXHdV ",
                 image: "/consultation.png",
               }}
               isQuickLink={true}
