@@ -1,0 +1,197 @@
+<html><head><base href="." />
+<title>TECH FRENS CREATOR HACKATHON</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+:root {
+  --neon-green: #00ff41;
+  --dark-bg: #0a0a0a;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--dark-bg);
+  color: white;
+  font-family: 'Space Grotesk', sans-serif;
+  line-height: 1.6;
+}
+
+.matrix-rain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  padding: 1rem;
+}
+
+.content {
+  z-index: 1;
+  text-align: center;
+  max-width: 800px;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 2rem;
+  border-radius: 15px;
+}
+
+h1 {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 3rem;
+  margin: 0;
+  color: var(--neon-green);
+  text-shadow: 0 0 10px var(--neon-green);
+  animation: pulse 2s ease-in-out infinite;
+  letter-spacing: -1px;
+}
+
+@keyframes pulse {
+  0% { text-shadow: 0 0 10px var(--neon-green); }
+  50% { text-shadow: 0 0 20px var(--neon-green), 0 0 30px var(--neon-green); }
+  100% { text-shadow: 0 0 10px var(--neon-green); }
+}
+
+.deadline {
+  font-size: 2rem;
+  color: var(--neon-green);
+  margin: 1.5rem 0;
+  font-weight: bold;
+}
+
+.submission-box {
+  background: rgba(0, 255, 65, 0.05);
+  border-radius: 15px;
+  padding: 2rem;
+  margin: 1.5rem 0;
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(0, 255, 65, 0.2);
+}
+
+.submit-btn {
+  background: transparent;
+  border: 2px solid var(--neon-green);
+  padding: 0.8rem 1.5rem;
+  font-size: 1.2rem;
+  color: var(--neon-green);
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Share Tech Mono', monospace;
+  text-shadow: 0 0 5px var(--neon-green);
+  box-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
+}
+
+.submit-btn:hover {
+  background: var(--neon-green);
+  color: var(--dark-bg);
+  transform: scale(1.05);
+}
+
+.requirements {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0;
+}
+
+.requirements li {
+  margin: 1rem 0;
+  padding: 0.5rem;
+  border-left: 3px solid var(--neon-green);
+  text-align: left;
+}
+
+.discord-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 2;
+}
+</style>
+</head>
+<body>
+  <canvas class="matrix-rain"></canvas>
+  <div class="hero">
+    <a href="https://discord.com/channels/1010083670599671838/1302336766522560612" target="_blank" class="discord-btn">
+      <button class="submit-btn">Join Discord</button>
+    </a>
+    <div class="content">
+      <h1>TECH FRENS CREATOR HACKATHON</h1>
+      
+      <div class="deadline">
+        Entries Due: November 20
+      </div>
+      
+      <div class="submission-box">
+        <h2>Submission Requirements</h2>
+        <ul class="requirements">
+          <li>📹 Devlog Video (Any Duration)
+            <br><small>Document your journey and development process</small>
+          </li>
+          <li>🎥 Demo Video (3 Minutes Max)
+            <br><small>Show off your final creation</small>
+          </li>
+        </ul>
+        
+        <a href="https://forms.gle/submission" target="_blank">
+          <button class="submit-btn">
+            Submit Your Entry
+          </button>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.querySelector('.matrix-rain');
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const chars = '01'.split('');
+    const drops = [];
+    const fontSize = 16;
+    const columns = canvas.width/fontSize;
+
+    for(let x = 0; x < columns; x++) {
+      drops[x] = 1;
+    }
+
+    function draw() {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      ctx.fillStyle = '#00ff41';
+      ctx.font = fontSize + 'px monospace';
+
+      for(let i = 0; i < drops.length; i++) {
+        const text = chars[Math.floor(Math.random() * chars.length)];
+        ctx.fillText(text, i*fontSize, drops[i]*fontSize);
+        
+        if(drops[i]*fontSize > canvas.height && Math.random() > 0.975)
+          drops[i] = 0;
+        
+        drops[i]++;
+      }
+    }
+
+    setInterval(draw, 33);
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
+</body>
+</html>
