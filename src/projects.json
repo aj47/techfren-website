@@ -1,12 +1,5 @@
 [
   {
-    "name": "Block Editor",
-    "description": "My video editing tool",
-    "image": "/bloc.png",
-    "github": "https://github.com/aj47/block-editor",
-    "live": "https://github.com/aj47/block-editor"
-  },
-  {
     "name": "Coding AI Tools Tested",
     "description": "A spreadsheet with the results of my testing of AI tools",
     "image": "/aitools.png",
