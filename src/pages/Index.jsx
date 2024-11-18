@@ -101,15 +101,6 @@ const Index = () => {
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
             <ProjectCard
               project={{
-                name: "AIEase",
-                description: "Free Unlimited AI Image Editing Tools.",
-                live: "https://bit.ly/3YmrKCb",
-                image: "/consultation.png",
-              }}
-              isQuickLink={true}
-            />
-            <ProjectCard
-              project={{
                 name: "ChatLLM by Abacus",
                 description: "All the AI features under one subscription",
                 live: "https://chatllm.abacus.ai/LwsNvkXHdV ",
@@ -148,9 +139,9 @@ const Index = () => {
             />
             <ProjectCard
               project={{
-                name: "Book a Tech Consultation",
+                name: "Book my time",
                 description:
-                  "Schedule a one-on-one tech consultation to discuss your projects or career.",
+                  "Schedule a one-on-one",
                 live: "https://cal.com/techfren",
                 image: "/consultation.png",
               }}
