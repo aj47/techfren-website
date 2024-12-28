@@ -101,24 +101,6 @@ const Index = () => {
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
             <ProjectCard
               project={{
-                name: "Javascriptmas",
-                description: "Win Macbook for Javascript challenges",
-                live: "https://scrimba.com/javascriptmas?via=techfren",
-                image: "/consultation.png",
-              }}
-              isQuickLink={true}
-            />
-            <ProjectCard
-              project={{
-                name: "ChatLLM by Abacus",
-                description: "All the AI features under one subscription",
-                live: "https://chatllm.abacus.ai/LwsNvkXHdV",
-                image: "/consultation.png",
-              }}
-              isQuickLink={true}
-            />
-            <ProjectCard
-              project={{
                 name: "Links from videos",
                 description: "List of links that I've referred to in videos",
                 live: "https://github.com/aj47/techfren-vids/blob/main/links.md",
