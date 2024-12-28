@@ -1,0 +1,16 @@
+{
+  "links": [
+    {
+      "text": "Home",
+      "url": "/"
+    },
+    {
+      "text": "Projects",
+      "url": "/projects"
+    },
+    {
+      "text": "Socials",
+      "url": "/socials"
+    }
+  ]
+}
