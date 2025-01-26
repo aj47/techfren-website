@@ -18,7 +18,7 @@ const Chat = () => {
   const [inputMessage, setInputMessage] = useState('');
   const [isBotTyping, setIsBotTyping] = useState(false);
   const messagesEndRef = useRef(null);
-  const API_KEY = "fw_3ZjtsywUGddwa1wGY4VvB3eW";
+  const API_KEY = "oops";
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
