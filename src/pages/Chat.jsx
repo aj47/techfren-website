@@ -171,7 +171,7 @@ const Chat = () => {
           </Flex>
         </form>
       </Box>
-    </ChakraProvider>
+    </>
   );
 };
 
