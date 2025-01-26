@@ -24,6 +24,8 @@ const Chat = () => {
     apiKey: import.meta.env.VITE_OPENAI_COMPATIBLE_API_KEY,
     baseURL: 'https://api.fireworks.ai/inference/v1',
     dangerouslyAllowBrowser: true,
+    defaultHeaders: {},
+    fetch: fetch
   });
 
   const scrollToBottom = () => {
