@@ -19,9 +19,9 @@ const Chat = () => {
   const [inputMessage, setInputMessage] = useState('');
   const [isBotTyping, setIsBotTyping] = useState(false);
   const messagesEndRef = useRef(null);
-  
+  console.log(    import.meta.env.VITE_OPENAI_COMPATIBLE_API_KEY)  
   const client = new OpenAI({
-    apiKey: import.meta.env.VITE_OPENAI_COMPATIBLE_API_KEY,
+    apiKey: "fw_3ZjtsywUGddwa1wGY4VvB3eW",
     baseURL: 'https://api.fireworks.ai/inference/v1',
     dangerouslyAllowBrowser: true,
     defaultHeaders: {},
