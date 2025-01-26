@@ -10,8 +10,8 @@ import {
   Flex,
   useColorModeValue
 } from '@chakra-ui/react';
-import { FaPaperPlane, FaRobot, FaUser, FaTerminal } from 'react-icons/fa';
-import { generateTechResponse } from '../utils/chatBot';
+import { FaPaperPlane, FaRobot, FaUser } from 'react-icons/fa';
+import { TokenJS } from 'token.js';
 import DigitalRain from '../components/DigitalRain';
 import theme from '../theme';
 const Chat = () => {
@@ -20,15 +20,10 @@ const Chat = () => {
   const [isBotTyping, setIsBotTyping] = useState(false);
   const messagesEndRef = useRef(null);
   
-  const botResponses = [
-    "01100110 01110101 01110100 01110101 01110010 01100101 00100001",
-    "SYNTAX ERROR IN QUERY. TRY AGAIN.",
-    "ACCESSING NEURAL NET... PLEASE WAIT",
-    "CYBER SYSTEMS: ONLINE",
-    "WARNING: INTRUSION DETECTED",
-    "DECRYPTING DATA STREAM...",
-    "AI CORE TEMP: 42.3°C"
-  ];
+  const tokenjs = new TokenJS({
+    baseURL: 'https://api.fireworks.ai/inference/v1',
+    apiKey: import.meta.env.VITE_OPENAI_COMPATIBLE_API_KEY,
+  });
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -50,15 +45,36 @@ const Chat = () => {
     setIsBotTyping(true);
     
     // Add bot response after delay
-    setTimeout(() => {
-      const response = generateTechResponse(inputMessage);
+    try {
+      const completion = await tokenjs.chat.completions.create({
+        provider: 'accounts/sentientfoundation/models/dobby-mini-leashed-llama-3-1-8b#accounts/sentientfoundation/deployments/22e7b3fd',
+        model: 'llama3.2',
+        messages: [
+          {
+            role: "system",
+            content: "You are a snarky tech support AI with a cyberpunk aesthetic. Respond using terminal-style formatting, error messages, and hacker jargon. Keep responses brief and use ALL CAPS for system messages."
+          },
+          {
+            role: "user",
+            content: inputMessage
+          }
+        ]
+      });
+      
+      const response = completion.choices[0].message.content;
       setMessages(prev => [...prev, { 
         text: response, 
         isBot: true,
         timestamp: new Date().toISOString()
       }]);
-      setIsBotTyping(false);
-    }, 1500);
+    } catch (error) {
+      setMessages(prev => [...prev, { 
+        text: "SYSTEM ERROR: NEURAL NETWORK FAILURE\nCONTACT SYSTEM ADMINISTRATOR",
+        isBot: true,
+        timestamp: new Date().toISOString()
+      }]);
+    }
+    setIsBotTyping(false);
 
     setInputMessage('');
   };
