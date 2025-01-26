@@ -47,18 +47,20 @@ const Chat = () => {
     // Add bot response after delay
     try {
       const completion = await tokenjs.chat.completions.create({
-        provider: 'accounts/sentientfoundation/models/dobby-mini-leashed-llama-3-1-8b#accounts/sentientfoundation/deployments/22e7b3fd',
-        model: 'llama3.2',
+        model: 'accounts/fireworks/models/llama-v3-70b-instruct',
         messages: [
           {
-            role: "system",
+            role: "system", 
             content: "You are a snarky tech support AI with a cyberpunk aesthetic. Respond using terminal-style formatting, error messages, and hacker jargon. Keep responses brief and use ALL CAPS for system messages."
           },
           {
             role: "user",
             content: inputMessage
           }
-        ]
+        ],
+        temperature: 0.5,
+        max_tokens: 200,
+        top_p: 0.9,
       });
       
       const response = completion.choices[0].message.content;
