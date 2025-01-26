@@ -33,7 +33,7 @@ const Index = () => {
           software engineer // AI researcher // cyberpunk enthusiast
         </Text>
       </Container>
-    </ChakraProvider>
+    </>
   );
 };
 
