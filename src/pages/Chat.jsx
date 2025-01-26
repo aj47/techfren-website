@@ -31,7 +31,7 @@ const Chat = () => {
 
   useEffect(scrollToBottom, [messages]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!inputMessage.trim()) return;
 
