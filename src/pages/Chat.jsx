@@ -96,13 +96,13 @@ const Chat = () => {
       <Box
         maxW="800px"
         mx="auto"
-        h="100vh"
+        h="95vh"
         display="flex"
         flexDirection="column"
-        p={4}
+        p={2}
       >
         <Heading 
-          mb={4} 
+          mb={2}
           textAlign="center"
           textShadow="0 0 10px #00ff00"
           fontFamily={theme.fonts.heading}
@@ -112,7 +112,7 @@ const Chat = () => {
         </Heading>
 
         <Text 
-          mb={4}
+          mb={2}
           p={3}
           border="1px solid #00ff00"
           borderRadius="md"
@@ -131,15 +131,16 @@ const Chat = () => {
           border="2px solid #00ff00"
           borderRadius="md"
           boxShadow="0 0 15px #00ff00"
-          mb={4}
-          p={4}
+          mb={2}
+          p={2}
+          height="60vh"
           bg="black"
         >
           <VStack spacing={4} align="stretch">
             {messages.map((msg, index) => (
               <Flex key={index} justify={msg.isBot ? "flex-start" : "flex-end"}>
                 <Box
-                  p={3}
+                  p={2}
                   borderRadius="md"
                   bg={msg.isBot ? "rgba(0, 255, 0, 0.1)" : "rgba(0, 255, 0, 0.2)"}
                   border="1px solid #00ff00"
@@ -155,9 +156,9 @@ const Chat = () => {
                       {msg.isBot ? "TECH_BOT" : "USER"}
                     </Text>
                   </Flex>
-                  <Text fontFamily="monospace">{msg.text}</Text>
+                  <Text fontFamily="monospace" fontSize="sm">{msg.text}</Text>
                   <Text 
-                    fontSize="xs" 
+                    fontSize="0.6rem"
                     color="rgba(0, 255, 0, 0.5)" 
                     textAlign="right"
                     mt={1}
@@ -190,7 +191,7 @@ const Chat = () => {
         </Box>
 
         <form onSubmit={handleSubmit}>
-          <Flex gap={2}>
+          <Flex gap={1} mb={2}>
             <Input
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
