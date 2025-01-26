@@ -64,7 +64,7 @@ const Chat = () => {
   };
 
   return (
-    <>
+    <React.Fragment>
       <DigitalRain />
       <Box
         maxW="800px"
@@ -169,7 +169,7 @@ const Chat = () => {
           </Flex>
         </form>
       </Box>
-    </>
+    </React.Fragment>
   );
 };
 
