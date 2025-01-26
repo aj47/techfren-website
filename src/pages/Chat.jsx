@@ -18,7 +18,7 @@ const Chat = () => {
   const [inputMessage, setInputMessage] = useState('');
   const [isBotTyping, setIsBotTyping] = useState(false);
   const messagesEndRef = useRef(null);
-  const API_KEY = "oops";
+  const API_KEY = import.meta.env.VITE_OPENAI_COMPATIBLE_API_KEY;
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
