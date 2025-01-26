@@ -1,15 +1,20 @@
-import { Container, Heading, Text, ChakraProvider } from "@chakra-ui/react";
+import { Container, Heading, Text } from "@chakra-ui/react";
 import React from "react";
 import DigitalRain from "../components/DigitalRain";
-import theme from "../theme";
 import "@fontsource/press-start-2p";
 import "@fontsource/roboto";
 
 const Index = () => {
   return (
-    <ChakraProvider theme={theme}>
+    <>
       <DigitalRain />
-      <Container maxW="container.xl" py={10} centerContent>
+      <Container 
+        maxW="container.xl" 
+        py={10} 
+        centerContent
+        position="relative" 
+        zIndex="1"
+      >
         <Heading 
           as="h1" 
           fontSize="6xl" 
