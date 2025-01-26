@@ -14,8 +14,6 @@ import { FaPaperPlane, FaRobot, FaUser, FaTerminal } from 'react-icons/fa';
 import { generateTechResponse } from '../utils/chatBot';
 import DigitalRain from '../components/DigitalRain';
 import theme from '../theme';
-import { ChakraProvider } from "@chakra-ui/react";
-
 const Chat = () => {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
@@ -66,7 +64,7 @@ const Chat = () => {
   };
 
   return (
-    <ChakraProvider theme={theme}>
+    <>
       <DigitalRain />
       <Box
         maxW="800px"
