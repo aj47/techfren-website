@@ -50,24 +50,35 @@ const Chat = () => {
     // Add bot response after delay
     console.log("bfore")
     try {
-      const completion = await client.chat.completions.create({
-        model: 'accounts/sentientfoundation/models/dobby-mini-leashed-llama-3-1-8b#accounts/sentientfoundation/deployments/22e7b3fd',
-        messages: [
-          {
-            role: "system", 
-            content: "You are a snarky tech support AI with a cyberpunk aesthetic. Respond using terminal-style formatting, error messages, and hacker jargon. Keep responses brief and use ALL CAPS for system messages."
-          },
-          {
-            role: "user",
-            content: inputMessage
-          }
-        ],
-        temperature: 0.5,
-        max_tokens: 200,
-        top_p: 0.9,
+      const response = await fetch('https://api.fireworks.ai/inference/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: 'accounts/sentientfoundation/models/dobby-mini-unhinged-llama-3-1-8b#accounts/sentientfoundation/deployments/81e155fc',
+          messages: [
+            {
+              role: "system", 
+              content: "You are a snarky tech support AI with a cyberpunk aesthetic. Respond using terminal-style formatting, error messages, and hacker jargon. Keep responses brief and use ALL CAPS for system messages."
+            },
+            {
+              role: "user",
+              content: inputMessage
+            }
+          ],
+          temperature: 0.5,
+          max_tokens: 200,
+          top_p: 0.9
+        })
       });
-      console.log(completion)
-      
+
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
+
+      const completion = await response.json();
       const response = completion.choices[0].message.content;
       setMessages(prev => [...prev, { 
         text: response, 
