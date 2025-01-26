@@ -3,6 +3,7 @@ import React from "react";
 import DigitalRain from "../components/DigitalRain";
 import "@fontsource/press-start-2p";
 import "@fontsource/roboto";
+import Chat from "./Chat";
 
 const Index = () => {
   return (
@@ -15,23 +16,7 @@ const Index = () => {
         position="relative" 
         zIndex="1"
       >
-        <Heading 
-          as="h1" 
-          fontSize="6xl" 
-          mb={6} 
-          textShadow="0 0 10px #00ff00"
-          fontFamily="'Press Start 2P', cursive"
-        >
-          techfren_
-        </Heading>
-        <Text 
-          fontSize="xl" 
-          textAlign="center" 
-          maxW="600px"
-          textShadow="0 0 5px #00ff00"
-        >
-          software engineer // AI researcher // cyberpunk enthusiast
-        </Text>
+        <Chat/>
       </Container>
     </>
   );

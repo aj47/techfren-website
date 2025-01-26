@@ -81,7 +81,7 @@ const Chat = () => {
           fontFamily={theme.fonts.heading}
         >
           <FaRobot style={{ display: 'inline-block', marginRight: '10px' }} />
-          TECH_BOT v2.3.7
+          techfren_AI v0.4.20
         </Heading>
         
         <Box
