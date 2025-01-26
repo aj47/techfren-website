@@ -10,7 +10,8 @@ import {
   Flex,
   useColorModeValue
 } from '@chakra-ui/react';
-import { FaPaperPlane, FaRobot, FaUser } from 'react-icons/fa';
+import { FaPaperPlane, FaRobot, FaUser, FaTerminal } from 'react-icons/fa';
+import { generateTechResponse } from '../utils/chatBot';
 import DigitalRain from '../components/DigitalRain';
 import theme from '../theme';
 import { ChakraProvider } from "@chakra-ui/react";
@@ -18,6 +19,7 @@ import { ChakraProvider } from "@chakra-ui/react";
 const Chat = () => {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
+  const [isBotTyping, setIsBotTyping] = useState(false);
   const messagesEndRef = useRef(null);
   
   const botResponses = [
@@ -40,14 +42,25 @@ const Chat = () => {
     e.preventDefault();
     if (!inputMessage.trim()) return;
 
-    // Add user message
-    setMessages(prev => [...prev, { text: inputMessage, isBot: false }]);
+    // Add user message with timestamp
+    setMessages(prev => [...prev, { 
+      text: inputMessage, 
+      isBot: false,
+      timestamp: new Date().toISOString() 
+    }]);
+    
+    setIsBotTyping(true);
     
     // Add bot response after delay
     setTimeout(() => {
-      const response = botResponses[Math.floor(Math.random() * botResponses.length)];
-      setMessages(prev => [...prev, { text: response, isBot: true }]);
-    }, 1000);
+      const response = generateTechResponse(inputMessage);
+      setMessages(prev => [...prev, { 
+        text: response, 
+        isBot: true,
+        timestamp: new Date().toISOString()
+      }]);
+      setIsBotTyping(false);
+    }, 1500);
 
     setInputMessage('');
   };
@@ -104,10 +117,36 @@ const Chat = () => {
                     </Text>
                   </Flex>
                   <Text fontFamily="monospace">{msg.text}</Text>
+                  <Text 
+                    fontSize="xs" 
+                    color="rgba(0, 255, 0, 0.5)" 
+                    textAlign="right"
+                    mt={1}
+                  >
+                    {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </Text>
                 </Box>
               </Flex>
             ))}
             <div ref={messagesEndRef} />
+            {isBotTyping && (
+              <Flex align="center" pl={2}>
+                <Box
+                  p={2}
+                  borderRadius="md"
+                  bg="rgba(0, 255, 0, 0.1)"
+                  border="1px solid #00ff00"
+                >
+                  <Flex align="center">
+                    <FaRobot style={{ marginRight: '8px' }} />
+                    <Text fontWeight="bold">TECH_BOT</Text>
+                    <Flex ml={2} align="center">
+                      <Box className="dot-flashing" />
+                    </Flex>
+                  </Flex>
+                </Box>
+              </Flex>
+            )}
           </VStack>
         </Box>
 
