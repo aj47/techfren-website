@@ -133,6 +133,7 @@ const Chat = () => {
           fontFamily="monospace"
           textAlign="center"
           color="red.400"
+          textShadow="0 0 10px rgba(255, 0, 0, 0.5)"
         >
           [WARNING]: CURRENTLY IN TEST MODE. 0 FUNDS AVAILABLE
         </Text>
