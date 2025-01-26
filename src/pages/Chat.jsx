@@ -49,7 +49,7 @@ const Chat = () => {
     console.log("bfore")
     try {
       const completion = await client.chat.completions.create({
-        model: 'accounts/fireworks/models/llama-v3p1-8b-instruct',
+        model: 'accounts/sentientfoundation/models/dobby-mini-leashed-llama-3-1-8b#accounts/sentientfoundation/deployments/22e7b3fd',
         messages: [
           {
             role: "system", 
