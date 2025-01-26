@@ -71,9 +71,9 @@ const Chat = () => {
       }
 
       const completion = await response.json();
-      const response = completion.choices[0].message.content;
+      const responseText = completion.choices[0].message.content;
       setMessages(prev => [...prev, { 
-        text: response, 
+        text: responseText, 
         isBot: true,
         timestamp: new Date().toISOString()
       }]);
