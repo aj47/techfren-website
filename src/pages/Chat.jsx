@@ -11,7 +11,6 @@ import {
   useColorModeValue
 } from '@chakra-ui/react';
 import { FaPaperPlane, FaRobot, FaUser } from 'react-icons/fa';
-import OpenAI from 'openai';
 import DigitalRain from '../components/DigitalRain';
 import theme from '../theme';
 const Chat = () => {
@@ -19,14 +18,7 @@ const Chat = () => {
   const [inputMessage, setInputMessage] = useState('');
   const [isBotTyping, setIsBotTyping] = useState(false);
   const messagesEndRef = useRef(null);
-  console.log(    import.meta.env.VITE_OPENAI_COMPATIBLE_API_KEY)  
-  const client = new OpenAI({
-    apiKey: "fw_3ZjtsywUGddwa1wGY4VvB3eW",
-    baseURL: 'https://api.fireworks.ai/inference/v1',
-    dangerouslyAllowBrowser: true,
-    defaultHeaders: {},
-    fetch: fetch
-  });
+  const API_KEY = "fw_3ZjtsywUGddwa1wGY4VvB3eW";
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
