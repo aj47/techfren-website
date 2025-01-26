@@ -11,7 +11,7 @@ import {
   useColorModeValue
 } from '@chakra-ui/react';
 import { FaPaperPlane, FaRobot, FaUser } from 'react-icons/fa';
-import { TokenJS } from 'token.js';
+import OpenAI from 'openai';
 import DigitalRain from '../components/DigitalRain';
 import theme from '../theme';
 const Chat = () => {
@@ -20,9 +20,10 @@ const Chat = () => {
   const [isBotTyping, setIsBotTyping] = useState(false);
   const messagesEndRef = useRef(null);
   
-  const tokenjs = new TokenJS({
-    baseURL: 'https://api.fireworks.ai/inference/v1',
+  const client = new OpenAI({
     apiKey: import.meta.env.VITE_OPENAI_COMPATIBLE_API_KEY,
+    baseURL: 'https://api.fireworks.ai/inference/v1',
+    dangerouslyAllowBrowser: true,
   });
 
   const scrollToBottom = () => {
@@ -47,9 +48,8 @@ const Chat = () => {
     // Add bot response after delay
     console.log("bfore")
     try {
-      const completion = await tokenjs.chat.completions.create({
-        provider: 'openai-compatible',
-        model: 'accounts/sentientfoundation/models/dobby-mini-leashed-llama-3-1-8b#accounts/sentientfoundation/deployments/22e7b3fd',
+      const completion = await client.chat.completions.create({
+        model: 'accounts/fireworks/models/llama-v3p1-8b-instruct',
         messages: [
           {
             role: "system", 
