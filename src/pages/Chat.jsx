@@ -45,9 +45,11 @@ const Chat = () => {
     setIsBotTyping(true);
     
     // Add bot response after delay
+    console.log("bfore")
     try {
       const completion = await tokenjs.chat.completions.create({
-        model: 'accounts/fireworks/models/llama-v3-70b-instruct',
+        provider: 'openai-compatible',
+        model: 'accounts/sentientfoundation/models/dobby-mini-leashed-llama-3-1-8b#accounts/sentientfoundation/deployments/22e7b3fd',
         messages: [
           {
             role: "system", 
@@ -62,6 +64,7 @@ const Chat = () => {
         max_tokens: 200,
         top_p: 0.9,
       });
+      console.log(completion)
       
       const response = completion.choices[0].message.content;
       setMessages(prev => [...prev, { 
@@ -70,6 +73,7 @@ const Chat = () => {
         timestamp: new Date().toISOString()
       }]);
     } catch (error) {
+      console.log(error)
       setMessages(prev => [...prev, { 
         text: "SYSTEM ERROR: NEURAL NETWORK FAILURE\nCONTACT SYSTEM ADMINISTRATOR",
         isBot: true,
@@ -155,7 +159,7 @@ const Chat = () => {
                 >
                   <Flex align="center">
                     <FaRobot style={{ marginRight: '8px' }} />
-                    <Text fontWeight="bold">TECH_BOT</Text>
+                    <Text fontWeight="bold">techfren (AI)</Text>
                     <Flex ml={2} align="center">
                       <Box className="dot-flashing" />
                     </Flex>
