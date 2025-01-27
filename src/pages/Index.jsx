@@ -16,7 +16,7 @@ const Index = () => {
         position="relative" 
         zIndex="1"
       >
-        <Chat/>
+        Coming soon...
       </Container>
     </>
   );
