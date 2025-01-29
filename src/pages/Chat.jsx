@@ -8,11 +8,20 @@ import {
   VStack, 
   IconButton, 
   Flex,
-  useColorModeValue
+  useColorModeValue,
+  useToast
 } from '@chakra-ui/react';
-import { FaPaperPlane, FaRobot, FaUser } from 'react-icons/fa';
+import { FaPaperPlane, FaRobot, FaUser, FaWallet } from 'react-icons/fa';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import { Connection, PublicKey, Transaction, SystemProgram, LAMPORTS_PER_SOL, clusterApiUrl } from '@solana/web3.js';
+
 import DigitalRain from '../components/DigitalRain';
 import theme from '../theme';
+const PAYMENT_AMOUNT = 0.1; // 0.1 SOL per message
+// Remove or properly format the RECIPIENT_WALLET
+const RECIPIENT_WALLET = new PublicKey('DkudPGbWdeMWcdKSR9A2wkmxiTTRsg28QyWKDE1Wn2DW'); // Replace this with a valid Solana address
+
 const Chat = () => {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
@@ -26,9 +35,60 @@ const Chat = () => {
 
   useEffect(scrollToBottom, [messages]);
 
+  const { wallet, publicKey, sendTransaction } = useWallet();
+  const toast = useToast();
+
+  const makePayment = async () => {
+    if (!publicKey) {
+      toast({
+        title: "Connect Wallet",
+        description: "Please connect your Solana wallet first",
+        status: "error",
+        duration: 3000,
+      });
+      return false;
+    }
+
+    try {
+      const connection = new Connection(clusterApiUrl('mainnet-beta'));
+      
+      const transaction = new Transaction().add(
+        SystemProgram.transfer({
+          fromPubkey: publicKey,
+          toPubkey: RECIPIENT_WALLET,
+          lamports: PAYMENT_AMOUNT * LAMPORTS_PER_SOL,
+        })
+      );
+
+      const signature = await sendTransaction(transaction, connection);
+      await connection.confirmTransaction(signature, 'confirmed');
+      
+      toast({
+        title: "Payment Successful",
+        description: "Your message can now be sent!",
+        status: "success",
+        duration: 3000,
+      });
+      return true;
+    } catch (error) {
+      console.error('Payment error:', error);
+      toast({
+        title: "Payment Failed",
+        description: error.message,
+        status: "error",
+        duration: 3000,
+      });
+      return false;
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!inputMessage.trim()) return;
+
+    // Verify payment before sending message
+    const paymentSuccess = await makePayment();
+    if (!paymentSuccess) return;
 
     // Add user message with timestamp
     setMessages(prev => [...prev, { 
@@ -113,6 +173,39 @@ const Chat = () => {
           <FaRobot style={{ display: 'inline-block', marginRight: '10px' }} />
           techfren_AI v0.4.20
         </Heading>
+
+        {/* Add Wallet Connection Status */}
+        <Flex 
+          justify="space-between" 
+          align="center" 
+          mb={2}
+          p={3}
+          border="1px solid #00ff00"
+          borderRadius="md"
+          bg="rgba(0, 255, 0, 0.1)"
+        >
+          <Text fontFamily="monospace">
+            <FaWallet style={{ display: 'inline-block', marginRight: '10px' }} />
+            STATUS: {publicKey ? 'CONNECTED' : 'DISCONNECTED'}
+          </Text>
+          <WalletMultiButton />
+        </Flex>
+
+        {/* Payment Information */}
+        <Box
+          mb={2}
+          p={3}
+          border="1px solid #00ff00"
+          borderRadius="md"
+          bg="rgba(0, 255, 0, 0.1)"
+          fontFamily="monospace"
+        >
+          <Text textAlign="center" fontWeight="bold" mb={2}>
+            [SYSTEM PARAMETERS]
+          </Text>
+          <Text>COST PER MESSAGE: {PAYMENT_AMOUNT} SOL</Text>
+          <Text>RECIPIENT: {RECIPIENT_WALLET.toString().slice(0, 4)}...{RECIPIENT_WALLET.toString().slice(-4)}</Text>
+        </Box>
 
         <Text 
           mb={2}
