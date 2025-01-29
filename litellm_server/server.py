@@ -192,4 +192,8 @@ if __name__ == "__main__":
     uvicorn_logger.setLevel(logging.INFO)
     
     logger.info("Starting LiteLLM server...")
-    uvicorn.run(app, host="0.0.0.0", port=8000) 
+    uvicorn.run(
+        app, 
+        host="127.0.0.1",  # Only accept local connections, Nginx will proxy to this
+        port=8000,  # Standard HTTP port
+    ) 
