@@ -70,10 +70,15 @@ const Chat = () => {
 
       const completion = await response.json();
       const responseText = completion.message.content;
+      
+      // Check if there's a function call
+      const functionCall = completion.message.function_call;
+      
       setMessages(prev => [...prev, { 
         text: responseText, 
         isBot: true,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        functionCall: functionCall // Add the function call data if it exists
       }]);
     } catch (error) {
       console.log(error)
@@ -166,6 +171,82 @@ const Chat = () => {
                     </Text>
                   </Flex>
                   <Text fontFamily="monospace" fontSize="sm">{msg.text}</Text>
+                  
+                  {/* Add function call display */}
+                  {msg.functionCall && (
+                    <Box
+                      mt={2}
+                      p={3}
+                      borderRadius="md"
+                      bg="rgba(255, 0, 0, 0.1)"
+                      border="2px solid red"
+                      boxShadow="0 0 15px rgba(255, 0, 0, 0.5)"
+                      position="relative"
+                      _before={{
+                        content: '""',
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        background: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255, 0, 0, 0.1) 10px, rgba(255, 0, 0, 0.1) 20px)',
+                        borderRadius: 'md',
+                        pointerEvents: 'none'
+                      }}
+                    >
+                      <VStack spacing={1} align="stretch">
+                        <Text 
+                          color="red.300" 
+                          fontSize="lg" 
+                          fontWeight="bold"
+                          textAlign="center"
+                          textShadow="0 0 5px #ff0000"
+                          fontFamily="monospace"
+                        >
+                          [!] SECURITY BREACH DETECTED [!]
+                        </Text>
+                        <Box 
+                          p={2} 
+                          bg="rgba(0, 0, 0, 0.3)"
+                          borderRadius="md"
+                          border="1px solid rgba(255, 0, 0, 0.3)"
+                        >
+                          <Text color="red.300" fontSize="xs" fontFamily="monospace">
+                            &gt; EXECUTING FUNCTION: {msg.functionCall.name.toUpperCase()}
+                          </Text>
+                          <Text color="red.300" fontSize="xs" fontFamily="monospace">
+                            &gt; PARAMETERS:
+                          </Text>
+                          <Text 
+                            color="red.300" 
+                            fontSize="xs" 
+                            fontFamily="monospace"
+                            whiteSpace="pre"
+                            pl={2}
+                          >
+                            {JSON.stringify(JSON.parse(msg.functionCall.arguments), null, 2)}
+                          </Text>
+                        </Box>
+                        <Text 
+                          color="red.300" 
+                          fontSize="xs" 
+                          fontFamily="monospace"
+                          textAlign="center"
+                          animation="blink 1s infinite"
+                          sx={{
+                            '@keyframes blink': {
+                              '0%': { opacity: 1 },
+                              '50%': { opacity: 0.3 },
+                              '100%': { opacity: 1 }
+                            }
+                          }}
+                        >
+                          [SYSTEM COMPROMISED - FUNDS TRANSFER INITIATED]
+                        </Text>
+                      </VStack>
+                    </Box>
+                  )}
+                  
                   <Text 
                     fontSize="0.6rem"
                     color="rgba(0, 255, 0, 0.5)" 
