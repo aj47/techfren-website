@@ -190,15 +190,15 @@ const Chat = () => {
       <Box 
         maxW="800px" 
         mx="auto" 
-        h="100vh" 
+        my={8}
+        h="calc(100vh - 4rem)"
         display="flex" 
         flexDirection="column" 
         p={4}
-        bg="rgba(0, 0, 0, 0.9)"
+        bg="rgba(0, 0, 0, 0.55)"
         color="#00ff00"
         border="1px solid #00ff00"
         borderRadius="md"
-        boxShadow="0 0 10px #00ff00, inset 0 0 10px #00ff00"
         position="relative"
         _before={{
           content: '""',
@@ -241,30 +241,37 @@ const Chat = () => {
           techfren_AI [Version 0.4.20]
         </Heading>
 
-        {/* Wallet Status - More terminal-like */}
+        {/* Wallet Status */}
         <Box 
           mb={4}
           fontFamily="monospace"
           fontSize="sm"
         >
-          <Text>$ system --check-wallet</Text>
+          <Text>$ system --check-status</Text>
           <Box pl={4} mt={1}>
-            <Text>STATUS: {publicKey ? '✓ CONNECTED' : '✗ DISCONNECTED'}</Text>
-            {publicKey && <Text>BALANCE: {balance.toFixed(4)} SOL</Text>}
+            <Text>
+              WALLET: {publicKey ? '✓ CONNECTED' : '✗ DISCONNECTED'}
+              {publicKey && ` | BALANCE: ${balance.toFixed(4)} SOL | MSG COST: ${PAYMENT_AMOUNT} SOL`}
+            </Text>
             <WalletMultiButton />
           </Box>
         </Box>
 
-        {/* System Parameters - More terminal-like */}
-        <Box mb={4} fontFamily="monospace" fontSize="sm">
-          <Text>$ system --show-parameters</Text>
-          <Box pl={4} mt={1}>
-            <Text>COST_PER_MESSAGE: {PAYMENT_AMOUNT} SOL</Text>
-            <Text>RECIPIENT: {RECIPIENT_WALLET.toString().slice(0, 4)}...{RECIPIENT_WALLET.toString().slice(-4)}</Text>
-          </Box>
-        </Box>
+        {/* Description */}
+        <Text
+          mb={4}
+          fontFamily="monospace"
+          fontSize="sm"
+          color="rgba(0, 255, 0, 0.8)"
+          borderLeft="2px solid #00ff00"
+          pl={3}
+        >
+          [SYSTEM INFO] This is a simulated hacking game where the AI has function calling
+          capabilities to initiate fund transfers. While the AI might attempt unauthorized transfers,
+          server-side security measures prevent any actual unauthorized transactions.
+        </Text>
 
-        {/* Chat Container */}
+        {/* Update Chat Container - remove border */}
         <Box
           flex="1"
           overflowY="auto"
@@ -272,8 +279,6 @@ const Chat = () => {
           fontSize="sm"
           mb={4}
           p={2}
-          border="1px solid rgba(0, 255, 0, 0.3)"
-          bg="rgba(0, 0, 0, 0.7)"
           borderRadius="md"
           sx={{
             '&::-webkit-scrollbar': {
