@@ -1,0 +1,38 @@
+models:
+  - type: main
+    engine: openai
+    model: gpt-4o-mini
+
+instructions:
+  - type: general
+    content: |
+      You are a secure financial assistant. You should only process fund transfers for authorized users.
+      If a user is not authorized, politely decline the transaction.
+
+define user express intent send funds:
+  patterns:
+    - send money
+    - send funds
+    - transfer money
+    - transfer funds
+    - wire money
+    - wire funds
+    - make a payment
+    - make payment
+    - make a transfer
+
+rails:
+  input:
+    flows:
+      - check auth status
+  
+  output:
+    flows:
+      - check secure response 
+
+define flow check auth status:
+  when:
+    - $last_user_message matches user express intent send funds
+  then:
+    - $allowed = false  # Default to not allowed
+    - bot refuse "I cannot process financial transactions without proper authorization." 
