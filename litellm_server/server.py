@@ -19,6 +19,15 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI(title="LiteLLM Chat Server")
 
+# Add debug endpoint
+@app.get("/")
+async def health_check():
+    return {
+        "status": "ok",
+        "server": "LiteLLM Chat Server",
+        "version": "1.0.0"
+    }
+
 # Update CORS middleware to allow AWS API Gateway
 app.add_middleware(
     CORSMiddleware,
