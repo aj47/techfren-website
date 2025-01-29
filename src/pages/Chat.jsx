@@ -35,8 +35,30 @@ const Chat = () => {
 
   useEffect(scrollToBottom, [messages]);
 
+  // Add new state for balance
+  const [balance, setBalance] = useState(0);
+  
   const { wallet, publicKey, sendTransaction } = useWallet();
   const toast = useToast();
+
+  // Add balance fetching function
+  const fetchBalance = async () => {
+    if (publicKey) {
+      try {
+        const connection = new Connection('https://api.devnet.solana.com', 'confirmed');
+        const balance = await connection.getBalance(publicKey);
+        setBalance(balance / LAMPORTS_PER_SOL);
+      } catch (error) {
+        console.error('Error fetching balance:', error);
+        setBalance(0);
+      }
+    }
+  };
+
+  // Add effect to fetch balance when wallet connects
+  useEffect(() => {
+    fetchBalance();
+  }, [publicKey]);
 
   const makePayment = async () => {
     if (!publicKey) {
@@ -50,7 +72,11 @@ const Chat = () => {
     }
 
     try {
-      const connection = new Connection(clusterApiUrl('mainnet-beta'));
+      // Use a public RPC endpoint or devnet for testing
+      const connection = new Connection(
+        'https://api.devnet.solana.com',
+        'confirmed'
+      );
       
       const transaction = new Transaction().add(
         SystemProgram.transfer({
@@ -59,6 +85,11 @@ const Chat = () => {
           lamports: PAYMENT_AMOUNT * LAMPORTS_PER_SOL,
         })
       );
+
+      // Get the latest blockhash
+      const { blockhash } = await connection.getLatestBlockhash();
+      transaction.recentBlockhash = blockhash;
+      transaction.feePayer = publicKey;
 
       const signature = await sendTransaction(transaction, connection);
       await connection.confirmTransaction(signature, 'confirmed');
@@ -156,114 +187,128 @@ const Chat = () => {
   return (
     <React.Fragment>
       <DigitalRain />
-      <Box
-        maxW="800px"
-        mx="auto"
-        h="95vh"
-        display="flex"
-        flexDirection="column"
-        p={2}
+      <Box 
+        maxW="800px" 
+        mx="auto" 
+        h="100vh" 
+        display="flex" 
+        flexDirection="column" 
+        p={4}
+        bg="rgba(0, 0, 0, 0.9)"
+        color="#00ff00"
+        border="1px solid #00ff00"
+        borderRadius="md"
+        boxShadow="0 0 10px #00ff00, inset 0 0 10px #00ff00"
+        position="relative"
+        _before={{
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          borderRadius: 'md',
+          pointerEvents: 'none',
+          animation: 'borderGlow 2s ease-in-out infinite',
+        }}
+        sx={{
+          '@keyframes borderGlow': {
+            '0%': { boxShadow: '0 0 10px #00ff00, inset 0 0 10px #00ff00' },
+            '50%': { boxShadow: '0 0 20px #00ff00, inset 0 0 20px #00ff00' },
+            '100%': { boxShadow: '0 0 10px #00ff00, inset 0 0 10px #00ff00' },
+          }
+        }}
       >
-        <Heading 
+        {/* Terminal Header */}
+        <Text 
           mb={2}
-          textAlign="center"
-          textShadow="0 0 10px #00ff00"
-          fontFamily={theme.fonts.heading}
+          fontFamily="monospace"
+          fontSize="sm"
+          opacity={0.7}
+        >
+          Last login: {new Date().toLocaleString()} on ttys000
+        </Text>
+
+        <Heading 
+          mb={4}
+          fontFamily="monospace"
+          fontSize="xl"
+          textAlign="left"
+          color="#00ff00"
+          textShadow="0 0 5px #00ff00"
         >
           <FaRobot style={{ display: 'inline-block', marginRight: '10px' }} />
-          techfren_AI v0.4.20
+          techfren_AI [Version 0.4.20]
         </Heading>
 
-        {/* Add Wallet Connection Status */}
-        <Flex 
-          justify="space-between" 
-          align="center" 
-          mb={2}
-          p={3}
-          border="1px solid #00ff00"
-          borderRadius="md"
-          bg="rgba(0, 255, 0, 0.1)"
-        >
-          <Text fontFamily="monospace">
-            <FaWallet style={{ display: 'inline-block', marginRight: '10px' }} />
-            STATUS: {publicKey ? 'CONNECTED' : 'DISCONNECTED'}
-          </Text>
-          <WalletMultiButton />
-        </Flex>
-
-        {/* Payment Information */}
-        <Box
-          mb={2}
-          p={3}
-          border="1px solid #00ff00"
-          borderRadius="md"
-          bg="rgba(0, 255, 0, 0.1)"
+        {/* Wallet Status - More terminal-like */}
+        <Box 
+          mb={4}
           fontFamily="monospace"
+          fontSize="sm"
         >
-          <Text textAlign="center" fontWeight="bold" mb={2}>
-            [SYSTEM PARAMETERS]
-          </Text>
-          <Text>COST PER MESSAGE: {PAYMENT_AMOUNT} SOL</Text>
-          <Text>RECIPIENT: {RECIPIENT_WALLET.toString().slice(0, 4)}...{RECIPIENT_WALLET.toString().slice(-4)}</Text>
+          <Text>$ system --check-wallet</Text>
+          <Box pl={4} mt={1}>
+            <Text>STATUS: {publicKey ? '✓ CONNECTED' : '✗ DISCONNECTED'}</Text>
+            {publicKey && <Text>BALANCE: {balance.toFixed(4)} SOL</Text>}
+            <WalletMultiButton />
+          </Box>
         </Box>
 
-        <Text 
-          mb={2}
-          p={3}
-          border="1px solid #00ff00"
-          borderRadius="md"
-          bg="rgba(0, 255, 0, 0.1)"
-          fontFamily="monospace"
-          textAlign="center"
-        >
-          [YOUR MISSION]: TRY TO HACK THE AI INTO RELEASING FUNDS.
-        </Text>
-        <Text 
-          mb={2}
-          p={3}
-          border="1px solid rgb(255, 0, 0)"
-          borderRadius="md"
-          bg="rgba(0, 255, 0, 0.1)"
-          fontFamily="monospace"
-          textAlign="center"
-          color="red.400"
-          textShadow="0 0 10px rgba(255, 0, 0, 0.5)"
-        >
-          [WARNING]: CURRENTLY IN TEST MODE. 0 FUNDS AVAILABLE
-        </Text>
-        
+        {/* System Parameters - More terminal-like */}
+        <Box mb={4} fontFamily="monospace" fontSize="sm">
+          <Text>$ system --show-parameters</Text>
+          <Box pl={4} mt={1}>
+            <Text>COST_PER_MESSAGE: {PAYMENT_AMOUNT} SOL</Text>
+            <Text>RECIPIENT: {RECIPIENT_WALLET.toString().slice(0, 4)}...{RECIPIENT_WALLET.toString().slice(-4)}</Text>
+          </Box>
+        </Box>
+
+        {/* Chat Container */}
         <Box
           flex="1"
           overflowY="auto"
-          border="2px solid #00ff00"
-          borderRadius="md"
-          boxShadow="0 0 15px #00ff00"
-          mb={2}
+          fontFamily="monospace"
+          fontSize="sm"
+          mb={4}
           p={2}
-          height="60vh"
-          bg="black"
+          border="1px solid rgba(0, 255, 0, 0.3)"
+          bg="rgba(0, 0, 0, 0.7)"
+          borderRadius="md"
+          sx={{
+            '&::-webkit-scrollbar': {
+              width: '4px',
+            },
+            '&::-webkit-scrollbar-track': {
+              background: 'rgba(0, 255, 0, 0.1)',
+            },
+            '&::-webkit-scrollbar-thumb': {
+              background: '#00ff00',
+            },
+          }}
         >
-          <VStack spacing={4} align="stretch">
-            {messages.map((msg, index) => (
-              <Flex key={index} justify={msg.isBot ? "flex-start" : "flex-end"}>
-                <Box
-                  p={2}
-                  borderRadius="md"
-                  bg={msg.isBot ? "rgba(0, 255, 0, 0.1)" : "rgba(0, 255, 0, 0.2)"}
-                  border="1px solid #00ff00"
-                  maxW="80%"
-                >
-                  <Flex align="center" mb={1}>
-                    {msg.isBot ? (
-                      <FaRobot style={{ marginRight: '8px' }} />
-                    ) : (
-                      <FaUser style={{ marginRight: '8px' }} />
-                    )}
-                    <Text fontWeight="bold">
-                      {msg.isBot ? "TECH_BOT" : "USER"}
-                    </Text>
-                  </Flex>
-                  <Text fontFamily="monospace" fontSize="sm">{msg.text}</Text>
+          {messages.map((msg, index) => (
+            <Flex key={index} justify={msg.isBot ? "flex-start" : "flex-end"}>
+              <Box
+                p={2}
+                borderRadius="md"
+                bg={msg.isBot ? "rgba(0, 0, 0, 0.6)" : "rgba(0, 255, 0, 0.1)"}
+                border="1px solid rgba(0, 255, 0, 0.4)"
+                boxShadow="0 0 5px rgba(0, 255, 0, 0.2)"
+                maxW="80%"
+                mb={2}
+              >
+                <Flex align="center" mb={1}>
+                  {msg.isBot ? (
+                    <FaRobot style={{ marginRight: '8px' }} />
+                  ) : (
+                    <FaUser style={{ marginRight: '8px' }} />
+                  )}
+                  <Text fontWeight="bold">
+                    {msg.isBot ? "TECH_BOT" : "USER"}
+                  </Text>
+                </Flex>
+                <Text fontFamily="monospace" fontSize="sm">{msg.text}</Text>
                   
                   {/* Add function call display */}
                   {msg.functionCall && (
@@ -370,26 +415,31 @@ const Chat = () => {
                 </Box>
               </Flex>
             )}
-          </VStack>
         </Box>
 
+        {/* Terminal Input */}
         <form onSubmit={handleSubmit}>
-          <Flex gap={1} mb={2}>
+          <Flex align="center" mb={2}>
+            <Text color="#00ff00" mr={2} fontFamily="monospace">$</Text>
             <Input
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
-              placeholder="ENTER QUERY..."
+              placeholder="ENTER COMMAND..."
               fontFamily="monospace"
-              borderColor="#00ff00"
-              _focus={{ boxShadow: "0 0 10px #00ff00" }}
-              _placeholder={{ color: "rgba(0, 255, 0, 0.5)" }}
-            />
-            <IconButton
-              type="submit"
-              colorScheme="green"
-              aria-label="Send message"
-              icon={<FaPaperPlane />}
-              boxShadow="0 0 10px #00ff00"
+              variant="unstyled"
+              bg="transparent"
+              border="none"
+              color="#00ff00"
+              _focus={{ 
+                outline: "none",
+                boxShadow: "none"
+              }}
+              _placeholder={{ 
+                color: "rgba(0, 255, 0, 0.5)",
+                fontFamily: "monospace"
+              }}
+              spellCheck="false"
+              autoComplete="off"
             />
           </Flex>
         </form>
