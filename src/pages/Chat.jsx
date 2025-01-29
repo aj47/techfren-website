@@ -40,7 +40,7 @@ const Chat = () => {
     setIsBotTyping(true);
     
     try {
-      const response = await fetch('http://localhost:8000/v1/chat/completions', {
+      const response = await fetch('http://3.84.184.174:8000/v1/chat/completions', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${API_KEY}`,
