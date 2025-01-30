@@ -134,9 +134,51 @@ const Chat = () => {
         >
           Last login: {new Date().toLocaleString()} on ttys000
         </Text>
+
+        {/* Chat messages container */}
+        <Box
+          flex="1"
+          overflowY="auto"
+          fontFamily="monospace"
+          fontSize="sm"
+          mb={4}
+          p={2}
+          borderRadius="md"
+          sx={{
+            '&::-webkit-scrollbar': {
+              width: '4px',
+            },
+            '&::-webkit-scrollbar-track': {
+              background: 'rgba(0, 255, 0, 0.1)',
+            },
+            '&::-webkit-scrollbar-thumb': {
+              background: '#00ff00',
+            },
+          }}
+        >
+
+  // Add balance fetching function
+  const fetchBalance = async () => {
+    if (publicKey) {
+      try {
+        const connection = new Connection('https://api.devnet.solana.com', 'confirmed');
+        const balance = await connection.getBalance(publicKey);
+        setBalance(balance / LAMPORTS_PER_SOL);
+      } catch (error) {
+        console.error('Error fetching balance:', error);
+        setBalance(0);
+      }
+    }
+  };
+
+  // Add effect to fetch balance when wallet connects
+  useEffect(() => {
+    fetchBalance();
+  }, [publicKey]);
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+
   useEffect(scrollToBottom, [messages]);
 
   // Add new state for balance
@@ -162,6 +204,7 @@ const Chat = () => {
   useEffect(() => {
     fetchBalance();
   }, [publicKey]);
+
   const makePayment = async () => {
     if (!publicKey) {
       toast({
