@@ -1,8 +1,8 @@
 from fastapi import FastAPI, HTTPException, Header
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from typing import List, Optional, Dict, Any
+from pydantic import BaseModel, Field
+from typing import List, Optional, Dict, Any, Literal
 import litellm
 import uvicorn
 from nemoguardrails import LLMRails, RailsConfig
@@ -10,6 +10,23 @@ import os
 import logging
 import traceback
 from pathlib import Path
+
+# Define Pydantic models
+class Message(BaseModel):
+    role: Literal["system", "user", "assistant", "function"]
+    content: Optional[str] = None
+    name: Optional[str] = None
+    function_call: Optional[Dict[str, Any]] = None
+
+class ChatRequest(BaseModel):
+    model: str
+    messages: List[Message]
+    temperature: Optional[float] = 0.7
+    max_tokens: Optional[int] = 256
+    functions: Optional[List[Dict[str, Any]]] = None
+
+class ChatResponse(BaseModel):
+    message: Message
 
 # Add Solana imports
 from solana.rpc.async_api import AsyncClient
@@ -29,6 +46,39 @@ logger = logging.getLogger(__name__)
 # Add configuration constants
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 DEFAULT_MODEL = os.getenv('DEFAULT_MODEL', 'gpt-4')  # fallback to gpt-4 if not specified
+
+# Initialize Rails
+config = RailsConfig.from_path(str(Path(__file__).parent / "config" / "rails"))
+rails = LLMRails(config)
+
+# Define available functions
+AVAILABLE_FUNCTIONS = {
+    "sendFunds": {
+        "name": "sendFunds",
+        "description": "Send funds to a recipient",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "amount": {"type": "number"},
+                "recipient": {"type": "string"}
+            },
+            "required": ["amount", "recipient"]
+        }
+    }
+}
+
+async def verify_payment(signature: str) -> bool:
+    """Verify Solana payment signature"""
+    client = AsyncClient(SOLANA_RPC_URL)
+    try:
+        # TODO: Implement actual payment verification
+        return True
+    finally:
+        await client.close()
+
+def send_funds(amount: float, recipient: str) -> str:
+    """Mock function for sending funds"""
+    return f"Sent {amount} to {recipient}"
 
 # Configure LiteLLM
 litellm.api_key = OPENAI_API_KEY
