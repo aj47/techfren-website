@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException, Header
+from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional, Dict, Any
