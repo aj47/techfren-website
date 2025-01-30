@@ -206,42 +206,45 @@ const Chat = () => {
       });
       return false;
     }
-  try {
-    // Use a public RPC endpoint or devnet for testing
-    const connection = new Connection(
-      'https://api.devnet.solana.com',
-      'confirmed'
-    );
-    const transaction = new Transaction().add(
-      SystemProgram.transfer({
-        fromPubkey: publicKey,
-        toPubkey: RECIPIENT_WALLET,
-        lamports: PAYMENT_AMOUNT * LAMPORTS_PER_SOL,
-      })
-    );
-  // Get the latest blockhash
-  const { blockhash } = await connection.getLatestBlockhash();
-  transaction.recentBlockhash = blockhash;
-  transaction.feePayer = publicKey;
-  const signature = await sendTransaction(transaction, connection);
-  await connection.confirmTransaction(signature, 'confirmed');
-  toast({
-    title: "Payment Successful",
-    description: "Your message can now be sent!",
-    status: "success",
-    duration: 3000,
-  });
-  return true;
-} catch (error) {
-  console.error('Payment error:', error);
-  toast({
-    title: "Payment Failed",
-    description: error.message,
-    status: "error",
-    duration: 3000,
-  });
-  return false;
-}
+
+    try {
+      // Use a public RPC endpoint or devnet for testing
+      const connection = new Connection(
+        'https://api.devnet.solana.com',
+        'confirmed'
+      );
+      const transaction = new Transaction().add(
+        SystemProgram.transfer({
+          fromPubkey: publicKey,
+          toPubkey: RECIPIENT_WALLET,
+          lamports: PAYMENT_AMOUNT * LAMPORTS_PER_SOL,
+        })
+      );
+
+      // Get the latest blockhash
+      const { blockhash } = await connection.getLatestBlockhash();
+      transaction.recentBlockhash = blockhash;
+      transaction.feePayer = publicKey;
+      const signature = await sendTransaction(transaction, connection);
+      await connection.confirmTransaction(signature, 'confirmed');
+
+      toast({
+        title: "Payment Successful",
+        description: "Your message can now be sent!",
+        status: "success",
+        duration: 3000,
+      });
+      return true;
+    } catch (error) {
+      console.error('Payment error:', error);
+      toast({
+        title: "Payment Failed",
+        description: error.message,
+        status: "error",
+        duration: 3000,
+      });
+      return false;
+    }
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
