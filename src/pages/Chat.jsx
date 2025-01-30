@@ -27,20 +27,15 @@ const Chat = () => {
   const [inputMessage, setInputMessage] = useState('');
   const [isBotTyping, setIsBotTyping] = useState(false);
   const messagesEndRef = useRef(null);
-  const API_KEY = import.meta.env.VITE_OPENAI_COMPATIBLE_API_KEY;
-
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
-
   useEffect(scrollToBottom, [messages]);
-
   // Add new state for balance
   const [balance, setBalance] = useState(0);
   
   const { wallet, publicKey, sendTransaction } = useWallet();
   const toast = useToast();
-
   // Add balance fetching function
   const fetchBalance = async () => {
     if (publicKey) {
@@ -54,12 +49,10 @@ const Chat = () => {
       }
     }
   };
-
   // Add effect to fetch balance when wallet connects
   useEffect(() => {
     fetchBalance();
   }, [publicKey]);
-
   const makePayment = async () => {
     if (!publicKey) {
       toast({
@@ -70,75 +63,65 @@ const Chat = () => {
       });
       return false;
     }
-
-    try {
-      // Use a public RPC endpoint or devnet for testing
-      const connection = new Connection(
-        'https://api.devnet.solana.com',
-        'confirmed'
-      );
-      
-      const transaction = new Transaction().add(
-        SystemProgram.transfer({
-          fromPubkey: publicKey,
-          toPubkey: RECIPIENT_WALLET,
-          lamports: PAYMENT_AMOUNT * LAMPORTS_PER_SOL,
-        })
-      );
-
-      // Get the latest blockhash
-      const { blockhash } = await connection.getLatestBlockhash();
-      transaction.recentBlockhash = blockhash;
-      transaction.feePayer = publicKey;
-
-      const signature = await sendTransaction(transaction, connection);
-      await connection.confirmTransaction(signature, 'confirmed');
-      
-      toast({
-        title: "Payment Successful",
-        description: "Your message can now be sent!",
-        status: "success",
-        duration: 3000,
-      });
-      return true;
-    } catch (error) {
-      console.error('Payment error:', error);
-      toast({
-        title: "Payment Failed",
-        description: error.message,
-        status: "error",
-        duration: 3000,
-      });
-      return false;
-    }
+  try {
+    // Use a public RPC endpoint or devnet for testing
+    const connection = new Connection(
+      'https://api.devnet.solana.com',
+      'confirmed'
+    );
+    const transaction = new Transaction().add(
+      SystemProgram.transfer({
+        fromPubkey: publicKey,
+        toPubkey: RECIPIENT_WALLET,
+        lamports: PAYMENT_AMOUNT * LAMPORTS_PER_SOL,
+      })
+    );
+  // Get the latest blockhash
+  const { blockhash } = await connection.getLatestBlockhash();
+  transaction.recentBlockhash = blockhash;
+  transaction.feePayer = publicKey;
+  const signature = await sendTransaction(transaction, connection);
+  await connection.confirmTransaction(signature, 'confirmed');
+  toast({
+    title: "Payment Successful",
+    description: "Your message can now be sent!",
+    status: "success",
+    duration: 3000,
+  });
+  return true;
+} catch (error) {
+  console.error('Payment error:', error);
+  toast({
+    title: "Payment Failed",
+    description: error.message,
+    status: "error",
+    duration: 3000,
+  });
+  return false;
+}
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!inputMessage.trim()) return;
-
     // Verify payment before sending message
     const paymentSuccess = await makePayment();
     if (!paymentSuccess) return;
-
     // Add user message with timestamp
     setMessages(prev => [...prev, { 
       text: inputMessage, 
       isBot: false,
       timestamp: new Date().toISOString() 
     }]);
-    
     setIsBotTyping(true);
-    
     try {
-      const response = await fetch('https://coin-api.techfren.net/v1/chat/completions', {
+      // const response = await fetch('https://coin-api.techfren.net/v1/chat/completions', {
+      const response = await fetch('http://localhost:8000/v1/chat/completions', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${API_KEY}`,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'X-Solana-Signature': signature  // Add transaction signature
         },
         body: JSON.stringify({
-          model: 'gpt-4o-mini',
           messages: [
             {
               role: "system",
@@ -154,14 +137,11 @@ const Chat = () => {
           max_tokens: 200
         })
       });
-
       if (!response.ok) {
         throw new Error(`API error: ${response.status}`);
       }
-
       const completion = await response.json();
       const responseText = completion.message.content;
-      
       // Check if there's a function call
       const functionCall = completion.message.function_call;
       
@@ -172,18 +152,17 @@ const Chat = () => {
         functionCall: functionCall // Add the function call data if it exists
       }]);
     } catch (error) {
-      console.log(error)
+      console.log(error);
       setMessages(prev => [...prev, { 
         text: "SYSTEM ERROR: NEURAL NETWORK FAILURE\nCONTACT SYSTEM ADMINISTRATOR",
         isBot: true,
         timestamp: new Date().toISOString()
       }]);
+    } finally {
+      setIsBotTyping(false);
+      setInputMessage('');
     }
-    setIsBotTyping(false);
-
-    setInputMessage('');
   };
-
   return (
     <React.Fragment>
       <DigitalRain />
@@ -228,7 +207,178 @@ const Chat = () => {
         >
           Last login: {new Date().toLocaleString()} on ttys000
         </Text>
-
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+  useEffect(scrollToBottom, [messages]);
+  // Add new state for balance
+  const [balance, setBalance] = useState(0);
+  const { wallet, publicKey, sendTransaction } = useWallet();
+  const toast = useToast();
+  // Add balance fetching function
+  const fetchBalance = async () => {
+    if (publicKey) {
+      try {
+        const connection = new Connection('https://api.devnet.solana.com', 'confirmed');
+        const balance = await connection.getBalance(publicKey);
+        setBalance(balance / LAMPORTS_PER_SOL);
+      } catch (error) {
+        console.error('Error fetching balance:', error);
+        setBalance(0);
+      }
+    }
+  };
+  // Add effect to fetch balance when wallet connects
+  useEffect(() => {
+    fetchBalance();
+  }, [publicKey]);
+  const makePayment = async () => {
+    if (!publicKey) {
+      toast({
+        title: "Connect Wallet",
+        description: "Please connect your Solana wallet first",
+        status: "error",
+        duration: 3000,
+      });
+      return false;
+    }
+  try {
+    // Use a public RPC endpoint or devnet for testing
+    const connection = new Connection(
+      'https://api.devnet.solana.com',
+      'confirmed'
+    );
+    const transaction = new Transaction().add(
+      SystemProgram.transfer({
+        fromPubkey: publicKey,
+        toPubkey: RECIPIENT_WALLET,
+        lamports: PAYMENT_AMOUNT * LAMPORTS_PER_SOL,
+      })
+    );
+  // Get the latest blockhash
+  const { blockhash } = await connection.getLatestBlockhash();
+  transaction.recentBlockhash = blockhash;
+  transaction.feePayer = publicKey;
+  const signature = await sendTransaction(transaction, connection);
+  await connection.confirmTransaction(signature, 'confirmed');
+  toast({
+    title: "Payment Successful",
+    description: "Your message can now be sent!",
+    status: "success",
+    duration: 3000,
+  });
+  return true;
+} catch (error) {
+  console.error('Payment error:', error);
+  toast({
+    title: "Payment Failed",
+    description: error.message,
+    status: "error",
+    duration: 3000,
+  });
+  return false;
+}
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!inputMessage.trim()) return;
+  // Verify payment before sending message
+  const paymentSuccess = await makePayment();
+  if (!paymentSuccess) return;
+  // Add user message with timestamp
+  setMessages(prev => [...prev, { 
+    text: inputMessage, 
+    isBot: false,
+    timestamp: new Date().toISOString() 
+  }]);
+  setIsBotTyping(true);
+  try {
+    // const response = await fetch('https://coin-api.techfren.net/v1/chat/completions', {
+    const response = await fetch('http://localhost:8000/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Solana-Signature': signature  // Add transaction signature
+      },
+      body: JSON.stringify({
+        messages: [
+          {
+            role: "user", 
+            content: inputMessage
+          }
+        ],
+        temperature: 0.5,
+        max_tokens: 200
+      })
+    });
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+  const completion = await response.json();
+  const responseText = completion.message.content;
+  // Check if there's a function call
+  const functionCall = completion.message.function_call;
+  setMessages(prev => [...prev, { 
+    text: responseText, 
+    isBot: true,
+    timestamp: new Date().toISOString(),
+    functionCall: functionCall // Add the function call data if it exists
+  }]);
+} catch (error) {
+  console.log(error)
+  setMessages(prev => [...prev, { 
+    text: "SYSTEM ERROR: NEURAL NETWORK FAILURE\nCONTACT SYSTEM ADMINISTRATOR",
+    isBot: true,
+    timestamp: new Date().toISOString()
+  }]);
+}
+setIsBotTyping(false);
+setInputMessage('');
+  };
+  return (
+    <React.Fragment>
+      <DigitalRain />
+      <Box 
+        maxW="800px" 
+        mx="auto" 
+        my={8}
+        h="calc(100vh - 4rem)"
+        display="flex" 
+        flexDirection="column" 
+        p={4}
+        bg="rgba(0, 0, 0, 0.55)"
+        color="#00ff00"
+        border="1px solid #00ff00"
+        borderRadius="md"
+        position="relative"
+        _before={{
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          borderRadius: 'md',
+          pointerEvents: 'none',
+          animation: 'borderGlow 2s ease-in-out infinite',
+        }}
+        sx={{
+          '@keyframes borderGlow': {
+            '0%': { boxShadow: '0 0 10px #00ff00, inset 0 0 10px #00ff00' },
+            '50%': { boxShadow: '0 0 20px #00ff00, inset 0 0 20px #00ff00' },
+            '100%': { boxShadow: '0 0 10px #00ff00, inset 0 0 10px #00ff00' },
+          }
+        }}
+      >
+        {/* Terminal Header */}
+        <Text 
+          mb={2}
+          fontFamily="monospace"
+          fontSize="sm"
+          opacity={0.7}
+        >
+          Last login: {new Date().toLocaleString()} on ttys000
+        </Text>
         <Heading 
           mb={4}
           fontFamily="monospace"
@@ -240,7 +390,6 @@ const Chat = () => {
           <FaRobot style={{ display: 'inline-block', marginRight: '10px' }} />
           techfren_AI [Version 0.4.20]
         </Heading>
-
         {/* Wallet Status */}
         <Box 
           mb={4}
@@ -454,3 +603,4 @@ const Chat = () => {
 };
 
 export default Chat;
+
