@@ -27,42 +27,6 @@ const Chat = () => {
   const [inputMessage, setInputMessage] = useState('');
   const [isBotTyping, setIsBotTyping] = useState(false);
   const messagesEndRef = useRef(null);
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-  useEffect(scrollToBottom, [messages]);
-  // Add new state for balance
-  const [balance, setBalance] = useState(0);
-  
-  const { wallet, publicKey, sendTransaction } = useWallet();
-  const toast = useToast();
-  // Add balance fetching function
-  const fetchBalance = async () => {
-    if (publicKey) {
-      try {
-        const connection = new Connection('https://api.devnet.solana.com', 'confirmed');
-        const balance = await connection.getBalance(publicKey);
-        setBalance(balance / LAMPORTS_PER_SOL);
-      } catch (error) {
-        console.error('Error fetching balance:', error);
-        setBalance(0);
-      }
-    }
-  };
-  // Add effect to fetch balance when wallet connects
-  useEffect(() => {
-    fetchBalance();
-  }, [publicKey]);
-  const makePayment = async () => {
-    if (!publicKey) {
-      toast({
-        title: "Connect Wallet",
-        description: "Please connect your Solana wallet first",
-        status: "error",
-        duration: 3000,
-      });
-      return false;
-    }
   try {
     // Use a public RPC endpoint or devnet for testing
     const connection = new Connection(
