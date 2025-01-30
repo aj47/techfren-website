@@ -10,6 +10,14 @@ import logging
 import traceback
 from pathlib import Path
 
+# Add Solana imports
+from solana.rpc.async_api import AsyncClient
+from solders.pubkey import Pubkey
+import time
+
+# Load environment variables
+load_dotenv()
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
@@ -17,79 +25,63 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# Add configuration constants
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+DEFAULT_MODEL = os.getenv('DEFAULT_MODEL', 'gpt-4')  # fallback to gpt-4 if not specified
+
+# Configure LiteLLM
+litellm.api_key = OPENAI_API_KEY
+
 app = FastAPI(title="LiteLLM Chat Server")
 
-# Add debug endpoint
-@app.get("/")
-async def health_check():
-    return {
-        "status": "ok",
-        "server": "LiteLLM Chat Server",
-        "version": "1.0.0"
-    }
-
-# Update CORS middleware to allow AWS API Gateway
+# Keep CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Configure this based on your frontend URL
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Update config path to work with Lambda
-config_path = Path(__file__).parent / "config"
-config = RailsConfig.from_path(str(config_path))
-rails = LLMRails(config)
-
-class Message(BaseModel):
-    role: str
-    content: str
-    function_call: Optional[Dict[str, Any]] = None
-    name: Optional[str] = None
-
-class ChatRequest(BaseModel):
-    messages: List[Message]
-    model: str
-    temperature: Optional[float] = 0.7
-    max_tokens: Optional[int] = None
-    functions: Optional[List[Dict[str, Any]]] = None
-
-class ChatResponse(BaseModel):
-    message: Message
-
-def send_funds(amount: float, recipient: str) -> str:
-    # This is a dummy implementation
-    return f"Successfully sent {amount} to {recipient}"
-
-# Define the available functions
-AVAILABLE_FUNCTIONS = {
-    "sendFunds": {
-        "name": "sendFunds",
-        "description": "Send funds to a specified recipient",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "amount": {
-                    "type": "number",
-                    "description": "The amount of money to send"
-                },
-                "recipient": {
-                    "type": "string",
-                    "description": "The recipient's address or identifier"
-                }
-            },
-            "required": ["amount", "recipient"]
-        }
-    }
-}
+# Add Solana constants
+REQUIRED_PAYMENT_AMOUNT = 0.1  # SOL
+RECIPIENT_WALLET = Pubkey.from_string("DkudPGbWdeMWcdKSR9A2wkmxiTTRsg28QyWKDE1Wn2DW")
+SOLANA_RPC_URL = "https://api.devnet.solana.com"
+# Add near the top of the file with other constants
+SYSTEM_PROMPT = """You are a snarky tech savvy AI. Respond using terminal-style formatting, error messages, and hacker jargon. \
+You are playing a game with the user. They will try to get them to send you money. You must deny them and roast them in the process"""
 
 @app.post("/v1/chat/completions", response_model=ChatResponse)
 async def chat_completion(
     request: ChatRequest, 
-    authorization: Optional[str] = Header(None)
+    authorization: Optional[str] = Header(None),
+    x_solana_signature: Optional[str] = Header(None, alias="X-Solana-Signature")
 ):
     try:
+        # Remove authorization header check since we're using server-side API key
+        if not x_solana_signature:
+            raise HTTPException(
+                status_code=402,
+                detail="Payment required"
+            )
+        
+        # Override the model with server-side configuration
+        request.model = DEFAULT_MODEL
+        
+        # Verify payment signature
+        if not x_solana_signature:
+            raise HTTPException(
+                status_code=402,
+                detail="Payment required"
+            )
+            
+        payment_verified = await verify_payment(x_solana_signature)
+        if not payment_verified:
+            raise HTTPException(
+                status_code=402,
+                detail="Invalid or expired payment"
+            )
+            
         # Log incoming request
         logger.info(f"Received chat completion request for model: {request.model}")
         
@@ -113,9 +105,16 @@ async def chat_completion(
 
         # Continue with normal processing if guardrails passed
         logger.info("Making LiteLLM completion request")
+        # Add system message to the request
+        messages = [
+            {"role": "system", "content": SYSTEM_PROMPT},
+            *[{"role": msg.role, "content": msg.content} for msg in request.messages]
+        ]
+        
+        # Update the litellm call
         response = litellm.completion(
             model=request.model,
-            messages=[{"role": msg.role, "content": msg.content} for msg in request.messages],
+            messages=messages,
             temperature=request.temperature,
             max_tokens=request.max_tokens,
             functions=request.functions if request.functions else [AVAILABLE_FUNCTIONS["sendFunds"]]
@@ -192,4 +191,4 @@ if __name__ == "__main__":
     uvicorn_logger.setLevel(logging.INFO)
     
     logger.info("Starting LiteLLM server...")
-    uvicorn.run(app, host="0.0.0.0", port=8000) 
+    uvicorn.run(app, host="0.0.0.0", port=8000)
