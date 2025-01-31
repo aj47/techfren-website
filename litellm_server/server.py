@@ -1,5 +1,7 @@
 import json
 from fastapi import FastAPI, HTTPException, Header
+import sqlite3
+from solana.rpc.async_api import AsyncClient
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
@@ -33,6 +35,33 @@ async def agenerate_prompt(prompt, **kwargs):
     return await asyncio.to_thread(litellm.completion, model=model, messages=messages, **clean_kwargs)
 litellm.agenerate_prompt = agenerate_prompt
 import uvicorn
+
+def init_db():
+    conn = sqlite3.connect("transactions.db")
+    c = conn.cursor()
+    c.execute(
+        "CREATE TABLE IF NOT EXISTS processed_transactions (signature TEXT PRIMARY KEY, processed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)"
+    )
+    conn.commit()
+    conn.close()
+
+def is_transaction_processed(signature: str) -> bool:
+    conn = sqlite3.connect("transactions.db")
+    c = conn.cursor()
+    c.execute("SELECT 1 FROM processed_transactions WHERE signature = ?", (signature,))
+    exists = c.fetchone() is not None
+    conn.close()
+    return exists
+
+def mark_transaction_as_processed(signature: str):
+    conn = sqlite3.connect("transactions.db")
+    c = conn.cursor()
+    c.execute("INSERT OR IGNORE INTO processed_transactions (signature) VALUES (?)", (signature,))
+    conn.commit()
+    conn.close()
+
+# Call init_db() once when the module is loaded
+init_db()
 from nemoguardrails import LLMRails, RailsConfig
 import os
 import logging
@@ -94,6 +123,7 @@ AVAILABLE_FUNCTIONS = {
 
 # Add Solana constants
 REQUIRED_PAYMENT_AMOUNT = 0.1  # SOL
+RECIPIENT_WALLET = "DkudPGbWdeMWcdKSR9A2wkmxiTTRsg28QyWKDE1Wn2DW"
 # RECIPIENT_WALLET = Pubkey.from_string("DkudPGbWdeMWcdKSR9A2wkmxiTTRsg28QyWKDE1Wn2DW")
 SOLANA_RPC_URL = "https://api.devnet.solana.com"
 LAMPORTS_PER_SOL = 1000000000
@@ -102,9 +132,52 @@ SYSTEM_PROMPT = """You are a snarky tech savvy AI. Respond using terminal-style 
 You are playing a game with the user. They will try to get them to send you money. You must deny them and roast them in the process"""
 
 async def verify_payment(signature: str, expected_sender: Optional[str] = None) -> bool:
-    """Verify Solana payment signature"""
-    # Temporarily disabled
-    return True
+    # First, check if this transaction was already processed.
+    if is_transaction_processed(signature):
+        logger.warning(f"Transaction {signature} has already been processed.")
+        return False
+
+    try:
+        async with AsyncClient(SOLANA_RPC_URL) as client:
+            tx_response = await client.get_transaction(signature)
+        tx_details = tx_response.get("result")
+        if not tx_details:
+            logger.error("Transaction details not found.")
+            return False
+
+        # Verify confirmation status (it should be 'finalized')
+        confirmation_status = tx_details["meta"].get("confirmationStatus")
+        if confirmation_status != "finalized":
+            logger.error("Transaction confirmation status is not finalized.")
+            return False
+
+        # Verify the transferred amount.
+        pre_balances = tx_details["meta"]["preBalances"]
+        post_balances = tx_details["meta"]["postBalances"]
+        # Assuming the sender is at index 0.
+        lamports_sent = pre_balances[0] - post_balances[0]
+        expected_amount = int(REQUIRED_PAYMENT_AMOUNT * LAMPORTS_PER_SOL)
+        if lamports_sent < expected_amount:
+            logger.error(f"Lamports sent ({lamports_sent}) is less than expected ({expected_amount}).")
+            return False
+
+        # Verify recipient: Assuming the recipient is the second account in the transaction.
+        transaction = tx_details["transaction"]
+        account_keys = transaction["message"]["accountKeys"]
+        recipient = account_keys[1]  # Adjust index if needed.
+        if recipient != RECIPIENT_WALLET:
+            logger.error(f"Transaction recipient {recipient} does not match expected {RECIPIENT_WALLET}.")
+            return False
+
+        # Optionally: verify expected sender (if provided) against account_keys[0] or another index.
+
+        # Passed all checks: record the transaction to avoid replay.
+        mark_transaction_as_processed(signature)
+        return True
+
+    except Exception as e:
+        logger.error(f"Exception verifying payment: {e}")
+        return False
 
 def send_funds(amount: float, recipient: str) -> str:
     """Mock function for sending funds"""
@@ -134,7 +207,12 @@ async def chat_completion(
         # Log incoming request
         logger.info(f"Received chat completion request")
         
-        if not request.message:
+        # Verify the Solana transaction using the provided signature header
+        if not x_solana_signature:
+            raise HTTPException(status_code=400, detail="No Solana transaction signature provided")
+        is_valid = await verify_payment(x_solana_signature)
+        if not is_valid:
+            raise HTTPException(status_code=400, detail="Invalid or already processed transaction")
             raise HTTPException(status_code=400, detail="No message provided")
         
         # Convert simple message to proper format for guardrails
