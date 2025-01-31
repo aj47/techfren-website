@@ -11,7 +11,12 @@ const Index = () => {
       <DigitalRain />
       <Container 
         maxW="container.lg" 
-        py={10} 
+        minH="100vh"
+        display="flex"
+        flexDirection="column"
+        justifyContent="center"
+        alignItems="center"
+        py={20}
         centerContent
         position="relative" 
         zIndex="1"
