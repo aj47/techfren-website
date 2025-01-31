@@ -103,8 +103,14 @@ const Chat = () => {
     e.preventDefault();
     if (!inputMessage.trim()) return;
 
+    // Show spinner immediately
+    setIsBotTyping(true);
+    
     const { success } = await makePayment();
-    if (!success) return;
+    if (!success) {
+      setIsBotTyping(false);
+      return;
+    }
 
     setMessages(prev => [...prev, { 
       text: inputMessage, 
@@ -112,7 +118,6 @@ const Chat = () => {
       timestamp: new Date().toISOString() 
     }]);
     setIsFirstMessage(false);
-    setIsBotTyping(true);
 
     try {
       const response = await fetch('http://localhost:8000/v1/chat/completions', {
