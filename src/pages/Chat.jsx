@@ -229,8 +229,18 @@ const Chat = () => {
               fontFamily="'Courier New', monospace"
               fontSize="14px"
               letterSpacing="0.05em"
+              color="red.400"
+              whiteSpace="pre-wrap"
+            >
+              {'>'} [WARNING] TEST MODE ACTIVE
+            </Text>
+            <Text
+              fontFamily="'Courier New', monospace"
+              fontSize="14px"
+              letterSpacing="0.05em"
               color="#00ff00"
               whiteSpace="pre-wrap"
+              mt={1}
             >
               {'>'} WALLET: {publicKey ? '✓ CONNECTED' : '✗ DISCONNECTED'}
               {publicKey && `\n${'>'} BALANCE: ${balance.toFixed(4)} SOL\n${'>'} MSG COST: ${PAYMENT_AMOUNT} SOL`}
