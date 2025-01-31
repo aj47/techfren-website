@@ -1,9 +1,9 @@
-import { Container, Heading, Text } from "@chakra-ui/react";
+import { Container, Heading, Text, List, ListItem } from "@chakra-ui/react";
 import React from "react";
 import DigitalRain from "../components/DigitalRain";
 import "@fontsource/press-start-2p";
 import "@fontsource/roboto";
-import Chat from "./Chat";
+import { FaGamepad, FaMoneyBillWave, FaChartLine, FaCode } from "react-icons/fa";
 
 const Index = () => {
   return (
@@ -23,25 +23,27 @@ const Index = () => {
           CA: DsRvcvU1R8fihyZ2B9gcvZdP8FzvLdtkTSLYfrAgpump
         </Text>
 
-        <Heading as="h2" size="md" mb={2}>
+        <Heading as="h2" size="md" mb={4}>
           Phase 1: AI Security Challenge
         </Heading>
-        <Text fontSize="md" mb={2}>
-          - Develop an adversarial agent game where you can attempt to convince
-          an autonomous AI to release a guarded prize pool of funds.
-        </Text>
-        <Text fontSize="md" mb={2}>
-          - Create a system where users pay a fee to send messages to the AI,
-          with a portion of these fees added to the prize pool.
-        </Text>
-        <Text fontSize="md" mb={2}>
-          - Implement escalating query fees that increase exponentially per new
-          message sent.
-        </Text>
-        <Text fontSize="md" mb={2}>
-          - This project is open-source from the start. The community is
-          invited to analyze the AI's smart contract and front-end code.
-        </Text>
+        <List spacing={3} fontSize="md">
+          <ListItem>
+            <FaGamepad style={{ display: 'inline', marginRight: '8px' }} />
+            Adversarial game to convince AI to release prize funds
+          </ListItem>
+          <ListItem>
+            <FaMoneyBillWave style={{ display: 'inline', marginRight: '8px' }} />
+            Pay-to-chat system grows the prize pool
+          </ListItem>
+          <ListItem>
+            <FaChartLine style={{ display: 'inline', marginRight: '8px' }} />
+            Escalating fees per message
+          </ListItem>
+          <ListItem>
+            <FaCode style={{ display: 'inline', marginRight: '8px' }} />
+            Fully open-source for community analysis
+          </ListItem>
+        </List>
         <Text fontSize="lg" mb={4}>
           Follow @techfren_ai on Twitter for official updates.
         </Text>
