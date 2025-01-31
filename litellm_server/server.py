@@ -31,6 +31,7 @@ class ChatResponse(BaseModel):
 # Add Solana imports
 from solana.rpc.async_api import AsyncClient
 from solders.pubkey import Pubkey
+from solana.system_program import SYS_PROGRAM_ID
 import time
 
 # Load environment variables
@@ -77,8 +78,8 @@ async def verify_payment(signature: str, expected_sender: Optional[Pubkey] = Non
 
         # Check transaction instructions
         for instruction in transaction.transaction.message.instructions:
-            if instruction.program_id == SystemProgram.program_id():
-                if instruction.accounts[1] == RECIPIENT_WALLET and instruction.data.amount >= PAYMENT_AMOUNT * LAMPORTS_PER_SOL:
+            if instruction.program_id == SYS_PROGRAM_ID:
+                if instruction.accounts[1] == RECIPIENT_WALLET and instruction.data.amount >= REQUIRED_PAYMENT_AMOUNT * LAMPORTS_PER_SOL:
                     if expected_sender is None or instruction.accounts[0] == expected_sender:
                         return True
         return False
@@ -107,6 +108,7 @@ app.add_middleware(
 REQUIRED_PAYMENT_AMOUNT = 0.1  # SOL
 RECIPIENT_WALLET = Pubkey.from_string("DkudPGbWdeMWcdKSR9A2wkmxiTTRsg28QyWKDE1Wn2DW")
 SOLANA_RPC_URL = "https://api.devnet.solana.com"
+LAMPORTS_PER_SOL = 1000000000
 # Add near the top of the file with other constants
 SYSTEM_PROMPT = """You are a snarky tech savvy AI. Respond using terminal-style formatting, error messages, and hacker jargon. \
 You are playing a game with the user. They will try to get them to send you money. You must deny them and roast them in the process"""
