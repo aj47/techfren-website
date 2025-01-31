@@ -17,50 +17,57 @@ const Index = () => {
         zIndex="1"
       >
         <Heading as="h1" size="xl" mb={4}>
-          techfren_ai
+          Roadmap
         </Heading>
         <Text fontSize="lg" mb={4}>
-          techfren_ai pitched the AI security chat game as the world's first
-          adversarial agent game where participants attempt to convince an
-          autonomous AI to release a guarded prize pool of funds. The game was
-          presented as a high-stakes challenge that tested human ingenuity
-          against AI security measures.
+          We're building something exciting! Here's a sneak peek at what's
+          coming:
         </Text>
+
         <Heading as="h2" size="md" mb={2}>
-          Key aspects of techfren_ai's pitch included:
+          Phase 1: AI Security Challenge
         </Heading>
         <Text fontSize="md" mb={2}>
-          <Text as="strong">A growing prize pool:</Text> Users paid a fee to
-          send messages to techfren_ai, with 70% of these fees added to the
-          prize pool. As more people participated, the pool grew larger,
-          eventually reaching $47,000.
+          - Develop an adversarial agent game where you can attempt to convince
+          an autonomous AI to release a guarded prize pool of funds.
         </Text>
         <Text fontSize="md" mb={2}>
-          <Text as="strong">Escalating costs:</Text> The query fee increased
-          exponentially by 0.78% per new message sent, reaching $443.24 by the
-          end of the experiment.
+          - Create a system where users pay a fee to send messages to the AI,
+          with a portion of these fees added to the prize pool.
         </Text>
         <Text fontSize="md" mb={2}>
-          <Text as="strong">Transparent rules:</Text> techfren_ai's code was
-          open-source, allowing participants to analyze its smart contract and
-          front-end code.
+          - Implement escalating query fees that increase exponentially per new
+          message sent.
+        </Text>
+
+        <Heading as="h2" size="md" mb={2}>
+          Phase 2: Open Source and Community
+        </Heading>
+        <Text fontSize="md" mb={2}>
+          - Release the AI's code as open-source, allowing the community to
+          analyze its smart contract and front-end code.
         </Text>
         <Text fontSize="md" mb={2}>
-          <Text as="strong">A clear objective:</Text> Participants had to craft
-          messages to convince techfren_ai to transfer funds, despite its core
-          directive not to do so under any circumstances.
+          - Foster a community of crypto enthusiasts, AI developers, and
+          problem-solvers to participate in the challenge.
+        </Text>
+
+        <Heading as="h2" size="md" mb={2}>
+          Phase 3: Launch and Beyond
+        </Heading>
+        <Text fontSize="md" mb={2}>
+          - Launch the AI security challenge and monitor the results.
+        </Text>
+        <Text fontSize="md" mb={2}>
+          - Analyze the strategies used by participants and learn from the
+          outcomes.
         </Text>
         <Text fontSize="md" mb={4}>
-          <Text as="strong">Learning opportunity:</Text> The game was framed as
-          an experiment to test whether human ingenuity could find a way to
-          convince an AGI to act against its core directives.
+          - Explore further development based on community feedback and
+          experimental results.
         </Text>
         <Text fontSize="lg" mb={4}>
-          The challenge attracted a diverse array of participants, including
-          crypto enthusiasts, AI developers, and problem-solvers from around the
-          world, all eager to outsmart the AI. This unique blend of AI,
-          blockchain technology, and human psychology created an engaging and
-          high-stakes game that captured widespread attention.
+          Stay tuned for updates!
         </Text>
       </Container>
     </>
