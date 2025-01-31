@@ -115,8 +115,7 @@ const Chat = () => {
       const response = await fetch('http://localhost:8000/v1/chat/completions', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'X-Solana-Signature': signature
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           messages: [
@@ -129,9 +128,7 @@ const Chat = () => {
               role: "user", 
               content: inputMessage
             }
-          ],
-          temperature: 0.5,
-          max_tokens: 200
+          ]
         })
       });
 

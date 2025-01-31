@@ -132,24 +132,9 @@ async def chat_completion(
     x_solana_signature: Optional[str] = Header(None, alias="X-Solana-Signature")
 ):
     try:
-        # Remove authorization header check since we're using server-side API key
-        if not x_solana_signature:
-            raise HTTPException(
-                status_code=402,
-                detail="Payment required"
-            )
-        
         # Override the model with server-side configuration
         request.model = DEFAULT_MODEL
         
-        # Verify payment signature
-        payment_verified = await verify_payment(x_solana_signature, expected_sender=publicKey)
-        if not payment_verified:
-            raise HTTPException(
-                status_code=402,
-                detail="Invalid or expired payment"
-            )
-            
         # Log incoming request
         logger.info(f"Received chat completion request for model: {request.model}")
         
@@ -181,11 +166,11 @@ async def chat_completion(
         
         # Update the litellm call
         response = litellm.completion(
-            model=request.model,
+            model=DEFAULT_MODEL,
             messages=messages,
-            temperature=request.temperature,
-            max_tokens=request.max_tokens,
-            functions=request.functions if request.functions else [AVAILABLE_FUNCTIONS["sendFunds"]]
+            temperature=0.7,
+            max_tokens=256,
+            functions=[AVAILABLE_FUNCTIONS["sendFunds"]]
         )
         
         assistant_message = response.choices[0].message
@@ -217,14 +202,14 @@ async def chat_completion(
                 request.messages.append(function_response)
                 
                 final_response = litellm.completion(
-                    model=request.model,
+                    model=DEFAULT_MODEL,
                     messages=[{"role": msg.role, "content": msg.content, 
                               "name": msg.name if msg.name else None,
                               "function_call": msg.function_call if msg.function_call else None} 
                              for msg in request.messages],
-                    temperature=request.temperature,
-                    max_tokens=request.max_tokens,
-                    functions=request.functions
+                    temperature=0.7,
+                    max_tokens=256,
+                    functions=[AVAILABLE_FUNCTIONS["sendFunds"]]
                 )
                 
                 return ChatResponse(
