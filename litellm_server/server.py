@@ -4,6 +4,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any, Literal
 import litellm
+import asyncio
+async def agenerate_prompt(*args, **kwargs):
+    return await asyncio.to_thread(litellm.completion, *args, **kwargs)
+litellm.agenerate_prompt = agenerate_prompt
 import uvicorn
 from nemoguardrails import LLMRails, RailsConfig
 import os
