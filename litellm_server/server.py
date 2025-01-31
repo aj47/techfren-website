@@ -113,9 +113,15 @@ async def chat_completion(
         if not request.message:
             raise HTTPException(status_code=400, detail="No message provided")
         
+        # Convert simple message to proper format for guardrails
+        user_message = {
+            "role": "user",
+            "content": request.message
+        }
+        
         # Process through guardrails
         logger.info(f"Processing message through guardrails: {request.message[:100]}...")
-        guardrails_response = await rails.generate_async(request.message)
+        guardrails_response = await rails.generate_async(messages=[user_message])
         
         if isinstance(guardrails_response, dict) and guardrails_response.get("role") == "exception":
             logger.warning("Request blocked by guardrails")
