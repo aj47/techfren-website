@@ -16,7 +16,10 @@ async def agenerate_prompt(prompt, **kwargs):
     # Convert prompt to messages format expected by LiteLLM
     messages = [{"role": "user", "content": str(prompt)}]
     
-    return await asyncio.to_thread(litellm.completion, messages=messages, **kwargs)
+    # Remove model from kwargs since we'll pass it directly
+    model = kwargs.pop('model')
+    
+    return await asyncio.to_thread(litellm.completion, model=model, messages=messages, **kwargs)
 litellm.agenerate_prompt = agenerate_prompt
 import uvicorn
 from nemoguardrails import LLMRails, RailsConfig
