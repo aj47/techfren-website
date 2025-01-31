@@ -3,7 +3,7 @@ import React from "react";
 import DigitalRain from "../components/DigitalRain";
 import "@fontsource/press-start-2p";
 import "@fontsource/roboto";
-import { FaGamepad, FaMoneyBillWave, FaChartLine, FaCode } from "react-icons/fa";
+import { FaGamepad, FaMoneyBillWave, FaChartLine, FaCode, FaGithub } from "react-icons/fa";
 
 const Index = () => {
   return (
@@ -46,7 +46,15 @@ const Index = () => {
           </ListItem>
           <ListItem>
             <FaCode style={{ display: 'inline', marginRight: '8px' }} />
-            Fully open-source for community analysis
+            Fully open-source for community analysis {' '}
+            <a 
+              href="https://github.com/aj47/techfren-website/blob/ai_chat/litellm_server/server.py" 
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: '#3182ce', marginLeft: '4px' }}
+            >
+              <FaGithub style={{ display: 'inline', verticalAlign: 'middle' }} />
+            </a>
           </ListItem>
         </List>
         <Text fontSize="lg" mb={4}>
