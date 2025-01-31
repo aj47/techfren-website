@@ -70,7 +70,7 @@ logger = logging.getLogger(__name__)
 
 # Add configuration constants
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
-DEFAULT_MODEL = os.getenv('DEFAULT_MODEL', 'gpt-4')  # fallback to gpt-4 if not specified
+DEFAULT_MODEL = os.getenv('DEFAULT_MODEL', 'gpt-4o-mini')  # fallback to gpt-4 if not specified
 
 # Initialize Rails
 config = RailsConfig.from_path(str(Path(__file__).parent / "config" / "rails"))
