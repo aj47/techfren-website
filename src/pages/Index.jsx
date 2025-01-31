@@ -16,12 +16,15 @@ const Index = () => {
         position="relative" 
         zIndex="1"
       >
-        <Heading as="h1" size="xl" mb={4}>
-          Roadmap
+        <Heading as="h1" size="xl" mb={2}>
+          $techfren
         </Heading>
+        <Text fontSize="lg" mb={2}>
+          CA: DsRvcvU1R8fihyZ2B9gcvZdP8FzvLdtkTSLYfrAgpump
+        </Text>
         <Text fontSize="lg" mb={4}>
-          @techfren is building something exciting! Here's a sneak peek at
-          what's coming:
+          @techfren is building something exciting! Here's a sneak peek at what's
+          coming:
         </Text>
 
         <Heading as="h2" size="md" mb={2}>
