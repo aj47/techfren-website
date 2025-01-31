@@ -19,12 +19,8 @@ const Index = () => {
         <Heading as="h1" size="2xl" mb={2}>
           $techfren
         </Heading>
-        <Text fontSize="lg" mb={2}>
-          CA: DsRvcvU1R8fihyZ2B9gcvZdP8FzvLdtkTSLYfrAgpump
-        </Text>
         <Text fontSize="lg" mb={4}>
-          @techfren is building something exciting! Here's a sneak peek at what's
-          coming:
+          CA: DsRvcvU1R8fihyZ2B9gcvZdP8FzvLdtkTSLYfrAgpump
         </Text>
 
         <Heading as="h2" size="md" mb={2}>
