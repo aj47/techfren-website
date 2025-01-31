@@ -1,3 +1,4 @@
+import json
 from fastapi import FastAPI, HTTPException, Header
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
@@ -19,7 +20,17 @@ async def agenerate_prompt(prompt, **kwargs):
     # Remove model from kwargs since we'll pass it directly
     model = kwargs.pop('model')
     
-    return await asyncio.to_thread(litellm.completion, model=model, messages=messages, **kwargs)
+    # Remove any non-serializable objects from kwargs
+    clean_kwargs = {}
+    for key, value in kwargs.items():
+        try:
+            json.dumps(value)
+            clean_kwargs[key] = value
+        except TypeError:
+            logger.warning(f"Removing non-serializable parameter: {key}")
+            continue
+    
+    return await asyncio.to_thread(litellm.completion, model=model, messages=messages, **clean_kwargs)
 litellm.agenerate_prompt = agenerate_prompt
 import uvicorn
 from nemoguardrails import LLMRails, RailsConfig
