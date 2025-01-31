@@ -10,7 +10,7 @@ const Index = () => {
     <>
       <DigitalRain />
       <Container 
-        maxW="container.xl" 
+        maxW="container.lg" 
         py={10} 
         centerContent
         position="relative" 
