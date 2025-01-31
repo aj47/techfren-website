@@ -188,24 +188,28 @@ const Chat = () => {
         }}
       >
         {/* Terminal Header */}
-        <Text 
-          mb={2}
-          fontFamily="'Courier New', monospace"
-          fontSize="14px"
-          opacity={0.7}
-          letterSpacing="0.05em"
-        >
-          Last login: {new Date().toLocaleString()} on ttys000
-        </Text>
-        <Text 
-          mb={4}
-          fontFamily="'Courier New', monospace"
-          fontSize="14px"
-          color="#00ff00"
-          letterSpacing="0.05em"
-        >
-          techfren_AI [Version 0.4.20]
-        </Text>
+        {isFirstMessage && (
+          <>
+            <Text 
+              mb={2}
+              fontFamily="'Courier New', monospace"
+              fontSize="14px"
+              opacity={0.7}
+              letterSpacing="0.05em"
+            >
+              Last login: {new Date().toLocaleString()} on ttys000
+            </Text>
+            <Text 
+              mb={4}
+              fontFamily="'Courier New', monospace"
+              fontSize="14px"
+              color="#00ff00"
+              letterSpacing="0.05em"
+            >
+              techfren_AI [Version 0.4.20]
+            </Text>
+          </>
+        )}
 
         {/* Wallet Status */}
         <Box mb={4}>
@@ -268,28 +272,6 @@ const Chat = () => {
           </Box>
         )}
 
-        {/* Loading Spinner */}
-        {isBotTyping && (
-          <Box pl={4} mb={4}>
-            <Spinner 
-              size="sm" 
-              color="#00ff00"
-              thickness="2px"
-              speed="0.65s"
-              emptyColor="gray.600"
-            />
-            <Text
-              color="rgba(0, 255, 0, 0.7)"
-              fontFamily="'Courier New', monospace"
-              fontSize="14px"
-              letterSpacing="0.05em"
-              display="inline"
-              ml={2}
-            >
-              Processing message...
-            </Text>
-          </Box>
-        )}
 
         {/* Chat Container */}
         <Box
@@ -397,6 +379,29 @@ const Chat = () => {
             />
           </Flex>
         </form>
+
+        {/* Loading Spinner at Bottom */}
+        {isBotTyping && (
+          <Box pl={4} mt={2}>
+            <Spinner 
+              size="sm" 
+              color="#00ff00"
+              thickness="2px"
+              speed="0.65s"
+              emptyColor="gray.600"
+            />
+            <Text
+              color="rgba(0, 255, 0, 0.7)"
+              fontFamily="'Courier New', monospace"
+              fontSize="14px"
+              letterSpacing="0.05em"
+              display="inline"
+              ml={2}
+            >
+              Processing message...
+            </Text>
+          </Box>
+        )}
       </Box>
     </React.Fragment>
   );
