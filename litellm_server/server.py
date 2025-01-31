@@ -46,7 +46,7 @@ DEFAULT_MODEL = os.getenv('DEFAULT_MODEL', 'gpt-4')  # fallback to gpt-4 if not 
 
 # Initialize Rails
 config = RailsConfig.from_path(str(Path(__file__).parent / "config" / "rails"))
-rails = LLMRails(config)
+rails = LLMRails(config, llm=litellm)
 
 # Define available functions
 AVAILABLE_FUNCTIONS = {
