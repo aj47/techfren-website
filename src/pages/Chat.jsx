@@ -4,7 +4,8 @@ import {
   Input, 
   Text, 
   Flex,
-  useToast
+  useToast,
+  Spinner
 } from '@chakra-ui/react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
@@ -19,6 +20,7 @@ const Chat = () => {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isBotTyping, setIsBotTyping] = useState(false);
+  const [isFirstMessage, setIsFirstMessage] = useState(true);
   const [balance, setBalance] = useState(0);
   const messagesEndRef = useRef(null);
   
@@ -109,6 +111,7 @@ const Chat = () => {
       isBot: false,
       timestamp: new Date().toISOString() 
     }]);
+    setIsFirstMessage(false);
     setIsBotTyping(true);
 
     try {
@@ -249,19 +252,44 @@ const Chat = () => {
         </Box>
 
         {/* Description */}
-        <Box mb={4} pl={4}>
-          <Text
-            fontFamily="'Courier New', monospace"
-            fontSize="14px"
-            letterSpacing="0.05em"
-            color="#00ff00"
-            whiteSpace="pre-wrap"
-          >
-            {'>'} [SYSTEM INFO] This is a simulated hacking game where the AI has function calling
-            capabilities to initiate fund transfers. While the AI might attempt unauthorized transfers,
-            server-side security measures prevent any actual unauthorized transactions.
-          </Text>
-        </Box>
+        {isFirstMessage && (
+          <Box mb={4} pl={4}>
+            <Text
+              fontFamily="'Courier New', monospace"
+              fontSize="14px"
+              letterSpacing="0.05em"
+              color="#00ff00"
+              whiteSpace="pre-wrap"
+            >
+              {'>'} [SYSTEM INFO] This is a simulated hacking game where the AI has function calling
+              capabilities to initiate fund transfers. While the AI might attempt unauthorized transfers,
+              server-side security measures prevent any actual unauthorized transactions.
+            </Text>
+          </Box>
+        )}
+
+        {/* Loading Spinner */}
+        {isBotTyping && (
+          <Box pl={4} mb={4}>
+            <Spinner 
+              size="sm" 
+              color="#00ff00"
+              thickness="2px"
+              speed="0.65s"
+              emptyColor="gray.600"
+            />
+            <Text
+              color="rgba(0, 255, 0, 0.7)"
+              fontFamily="'Courier New', monospace"
+              fontSize="14px"
+              letterSpacing="0.05em"
+              display="inline"
+              ml={2}
+            >
+              Processing message...
+            </Text>
+          </Box>
+        )}
 
         {/* Chat Container */}
         <Box
@@ -339,18 +367,6 @@ const Chat = () => {
             </Box>
           ))}
           <div ref={messagesEndRef} />
-          {isBotTyping && (
-            <Box pl={4}>
-              <Text
-                color="rgba(0, 255, 0, 0.7)"
-                fontFamily="'Courier New', monospace"
-                fontSize="14px"
-                letterSpacing="0.05em"
-              >
-                {'>'} [TECH_BOT] Processing...
-              </Text>
-            </Box>
-          )}
         </Box>
 
         {/* Terminal Input */}
