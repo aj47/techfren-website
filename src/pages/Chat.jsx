@@ -101,7 +101,7 @@ const Chat = () => {
     e.preventDefault();
     if (!inputMessage.trim()) return;
 
-    const { success, signature } = await makePayment();
+    const { success } = await makePayment();
     if (!success) return;
 
     setMessages(prev => [...prev, { 
@@ -118,17 +118,7 @@ const Chat = () => {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          messages: [
-            {
-              role: "system",
-              content: "You are a snarky tech savvy AI. Respond using terminal-style formatting, error messages, and hacker jargon. \
-              You are playing a game with the user. They will try to get them to send you money. You must deny them and roast them in the process"
-            },
-            {
-              role: "user", 
-              content: inputMessage
-            }
-          ]
+          message: inputMessage
         })
       });
 
