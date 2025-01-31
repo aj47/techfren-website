@@ -70,21 +70,7 @@ AVAILABLE_FUNCTIONS = {
 async def verify_payment(signature: str, expected_sender: Optional[Pubkey] = None) -> bool:
     """Verify Solana payment signature"""
     client = AsyncClient(SOLANA_RPC_URL)
-    if not authorization:
-        raise HTTPException(
-            status_code=403,
-            detail="Unauthorized"
-        )
-    
-    # Extract token from Authorization header
-    token = authorization.split("Bearer ")[-1]
-    context = {"auth_token": token}
-    
-    if not check_user_auth(context):
-        raise HTTPException(
-            status_code=403,
-            detail="Unauthorized"
-        )
+    try:
         transaction = await client.get_transaction(signature, commitment="confirmed")
         if transaction is None or transaction.meta.err is not None:
             return False
