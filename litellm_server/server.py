@@ -5,14 +5,18 @@ from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any, Literal
 import litellm
 import asyncio
-async def agenerate_prompt(*args, **kwargs):
+async def agenerate_prompt(prompt, **kwargs):
     # Ensure model is properly set from DEFAULT_MODEL if not provided
     if 'model' not in kwargs:
         kwargs['model'] = DEFAULT_MODEL
     # If model is a list, take the first element
     if isinstance(kwargs.get('model'), list):
         kwargs['model'] = kwargs['model'][0]
-    return await asyncio.to_thread(litellm.completion, *args, **kwargs)
+    
+    # Convert prompt to messages format expected by LiteLLM
+    messages = [{"role": "user", "content": str(prompt)}]
+    
+    return await asyncio.to_thread(litellm.completion, messages=messages, **kwargs)
 litellm.agenerate_prompt = agenerate_prompt
 import uvicorn
 from nemoguardrails import LLMRails, RailsConfig
