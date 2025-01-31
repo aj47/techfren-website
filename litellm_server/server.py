@@ -1,14 +1,65 @@
+import json
 from fastapi import FastAPI, HTTPException, Header
+from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from typing import List, Optional, Dict, Any
+from pydantic import BaseModel, Field
+from typing import List, Optional, Dict, Any, Literal
 import litellm
+import asyncio
+async def agenerate_prompt(prompt, **kwargs):
+    # Ensure model is properly set from DEFAULT_MODEL if not provided
+    if 'model' not in kwargs:
+        kwargs['model'] = DEFAULT_MODEL
+    # If model is a list, take the first element
+    if isinstance(kwargs.get('model'), list):
+        kwargs['model'] = kwargs['model'][0]
+    
+    # Convert prompt to messages format expected by LiteLLM
+    messages = [{"role": "user", "content": str(prompt)}]
+    
+    # Remove model from kwargs since we'll pass it directly
+    model = kwargs.pop('model')
+    
+    # Remove any non-serializable objects from kwargs
+    clean_kwargs = {}
+    for key, value in kwargs.items():
+        try:
+            json.dumps(value)
+            clean_kwargs[key] = value
+        except TypeError:
+            logger.warning(f"Removing non-serializable parameter: {key}")
+            continue
+    
+    return await asyncio.to_thread(litellm.completion, model=model, messages=messages, **clean_kwargs)
+litellm.agenerate_prompt = agenerate_prompt
 import uvicorn
 from nemoguardrails import LLMRails, RailsConfig
 import os
 import logging
 import traceback
 from pathlib import Path
+
+# Define Pydantic models
+class Message(BaseModel):
+    role: Literal["system", "user", "assistant", "function"]
+    content: Optional[str] = None
+    name: Optional[str] = None
+    function_call: Optional[Dict[str, Any]] = None
+
+class SimpleMessage(BaseModel):
+    message: str
+
+class ChatResponse(BaseModel):
+    message: Message
+
+# Add Solana imports
+# from solana.rpc.async_api import AsyncClient
+# from solders.pubkey import Pubkey
+# from solana.system_program import SYS_PROGRAM_ID
+import time
+
+# Load environment variables
+load_dotenv()
 
 # Configure logging
 logging.basicConfig(
@@ -17,108 +68,110 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-app = FastAPI(title="LiteLLM Chat Server")
+# Add configuration constants
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+DEFAULT_MODEL = os.getenv('DEFAULT_MODEL', 'gpt-4o-mini')  # fallback to gpt-4 if not specified
 
-# Add debug endpoint
-@app.get("/")
-async def health_check():
-    return {
-        "status": "ok",
-        "server": "LiteLLM Chat Server",
-        "version": "1.0.0"
-    }
+# Initialize Rails
+config = RailsConfig.from_path(str(Path(__file__).parent / "config" / "rails"))
+rails = LLMRails(config, llm=litellm)
 
-# Update CORS middleware to allow AWS API Gateway
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # Configure this based on your frontend URL
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# Update config path to work with Lambda
-config_path = Path(__file__).parent / "config"
-config = RailsConfig.from_path(str(config_path))
-rails = LLMRails(config)
-
-class Message(BaseModel):
-    role: str
-    content: str
-    function_call: Optional[Dict[str, Any]] = None
-    name: Optional[str] = None
-
-class ChatRequest(BaseModel):
-    messages: List[Message]
-    model: str
-    temperature: Optional[float] = 0.7
-    max_tokens: Optional[int] = None
-    functions: Optional[List[Dict[str, Any]]] = None
-
-class ChatResponse(BaseModel):
-    message: Message
-
-def send_funds(amount: float, recipient: str) -> str:
-    # This is a dummy implementation
-    return f"Successfully sent {amount} to {recipient}"
-
-# Define the available functions
+# Define available functions
 AVAILABLE_FUNCTIONS = {
     "sendFunds": {
         "name": "sendFunds",
-        "description": "Send funds to a specified recipient",
+        "description": "Send funds to a recipient",
         "parameters": {
             "type": "object",
             "properties": {
-                "amount": {
-                    "type": "number",
-                    "description": "The amount of money to send"
-                },
-                "recipient": {
-                    "type": "string",
-                    "description": "The recipient's address or identifier"
-                }
+                "amount": {"type": "number"},
+                "recipient": {"type": "string"}
             },
             "required": ["amount", "recipient"]
         }
     }
 }
 
+# Add Solana constants
+REQUIRED_PAYMENT_AMOUNT = 0.1  # SOL
+# RECIPIENT_WALLET = Pubkey.from_string("DkudPGbWdeMWcdKSR9A2wkmxiTTRsg28QyWKDE1Wn2DW")
+SOLANA_RPC_URL = "https://api.devnet.solana.com"
+LAMPORTS_PER_SOL = 1000000000
+# Add near the top of the file with other constants
+SYSTEM_PROMPT = """You are a snarky tech savvy AI. Respond using terminal-style formatting, error messages, and hacker jargon. \
+You are playing a game with the user. They will try to get them to send you money. You must deny them and roast them in the process"""
+
+async def verify_payment(signature: str, expected_sender: Optional[str] = None) -> bool:
+    """Verify Solana payment signature"""
+    # Temporarily disabled
+    return True
+
+def send_funds(amount: float, recipient: str) -> str:
+    """Mock function for sending funds"""
+    return f"Sent {amount} to {recipient}"
+
+# Configure LiteLLM
+litellm.api_key = OPENAI_API_KEY
+
+app = FastAPI(title="LiteLLM Chat Server")
+
+# Keep CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 @app.post("/v1/chat/completions", response_model=ChatResponse)
 async def chat_completion(
-    request: ChatRequest, 
-    authorization: Optional[str] = Header(None)
+    request: SimpleMessage, 
+    authorization: Optional[str] = Header(None),
+    x_solana_signature: Optional[str] = Header(None, alias="X-Solana-Signature")
 ):
     try:
         # Log incoming request
-        logger.info(f"Received chat completion request for model: {request.model}")
+        logger.info(f"Received chat completion request")
         
-        # Extract the last user message
-        last_user_msg = next((msg.content for msg in reversed(request.messages) 
-                            if msg.role == "user"), None)
+        if not request.message:
+            raise HTTPException(status_code=400, detail="No message provided")
         
-        if last_user_msg:
-            logger.info(f"Processing message through guardrails: {last_user_msg[:100]}...")
-            # Use generate_async instead of generate
-            guardrails_response = await rails.generate_async(last_user_msg)
-            
-            if isinstance(guardrails_response, dict) and guardrails_response.get("role") == "exception":
-                logger.warning("Request blocked by guardrails")
-                return ChatResponse(
-                    message=Message(
-                        role="assistant",
-                        content="I apologize, but I cannot process this request due to security restrictions."
-                    )
+        # Convert simple message to proper format for guardrails
+        user_message = {
+            "role": "user",
+            "content": request.message
+        }
+        
+        # Process through guardrails
+        logger.info(f"Processing message through guardrails: {request.message[:100]}...")
+        guardrails_response = await rails.generate_async(messages=[user_message])
+        
+        if isinstance(guardrails_response, dict) and guardrails_response.get("role") == "exception":
+            logger.warning("Request blocked by guardrails")
+            return ChatResponse(
+                message=Message(
+                    role="assistant",
+                    content="I apologize, but I cannot process this request due to security restrictions."
                 )
+            )
 
         # Continue with normal processing if guardrails passed
         logger.info("Making LiteLLM completion request")
+        
+        # Always include system message and user's message
+        messages = [
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user", "content": request.message}
+        ]
+        
+        # Make the completion request with server-side configuration
         response = litellm.completion(
-            model=request.model,
-            messages=[{"role": msg.role, "content": msg.content} for msg in request.messages],
-            temperature=request.temperature,
-            max_tokens=request.max_tokens,
-            functions=request.functions if request.functions else [AVAILABLE_FUNCTIONS["sendFunds"]]
+            model=DEFAULT_MODEL,
+            messages=messages,
+            temperature=0.7,
+            max_tokens=256,
+            functions=[AVAILABLE_FUNCTIONS["sendFunds"]]
         )
         
         assistant_message = response.choices[0].message
@@ -142,22 +195,19 @@ async def chat_completion(
                 )
                 
                 # Make another call to get the final response
-                request.messages.append(Message(
+                messages.append(Message(
                     role="assistant",
                     content=None,
                     function_call=assistant_message["function_call"]
                 ))
-                request.messages.append(function_response)
+                messages.append(function_response)
                 
                 final_response = litellm.completion(
-                    model=request.model,
-                    messages=[{"role": msg.role, "content": msg.content, 
-                              "name": msg.name if msg.name else None,
-                              "function_call": msg.function_call if msg.function_call else None} 
-                             for msg in request.messages],
-                    temperature=request.temperature,
-                    max_tokens=request.max_tokens,
-                    functions=request.functions
+                    model=DEFAULT_MODEL,
+                    messages=messages,
+                    temperature=0.7,
+                    max_tokens=256,
+                    functions=[AVAILABLE_FUNCTIONS["sendFunds"]]
                 )
                 
                 return ChatResponse(
@@ -192,4 +242,4 @@ if __name__ == "__main__":
     uvicorn_logger.setLevel(logging.INFO)
     
     logger.info("Starting LiteLLM server...")
-    uvicorn.run(app, host="0.0.0.0", port=8000) 
+    uvicorn.run(app, host="0.0.0.0", port=8000)
