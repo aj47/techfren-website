@@ -20,8 +20,8 @@ const Index = () => {
           Roadmap
         </Heading>
         <Text fontSize="lg" mb={4}>
-          We're building something exciting! Here's a sneak peek at what's
-          coming:
+          @techfren is building something exciting! Here's a sneak peek at
+          what's coming:
         </Text>
 
         <Heading as="h2" size="md" mb={2}>
@@ -39,35 +39,12 @@ const Index = () => {
           - Implement escalating query fees that increase exponentially per new
           message sent.
         </Text>
-
-        <Heading as="h2" size="md" mb={2}>
-          Phase 2: Open Source and Community
-        </Heading>
         <Text fontSize="md" mb={2}>
-          - Release the AI's code as open-source, allowing the community to
-          analyze its smart contract and front-end code.
-        </Text>
-        <Text fontSize="md" mb={2}>
-          - Foster a community of crypto enthusiasts, AI developers, and
-          problem-solvers to participate in the challenge.
-        </Text>
-
-        <Heading as="h2" size="md" mb={2}>
-          Phase 3: Launch and Beyond
-        </Heading>
-        <Text fontSize="md" mb={2}>
-          - Launch the AI security challenge and monitor the results.
-        </Text>
-        <Text fontSize="md" mb={2}>
-          - Analyze the strategies used by participants and learn from the
-          outcomes.
-        </Text>
-        <Text fontSize="md" mb={4}>
-          - Explore further development based on community feedback and
-          experimental results.
+          - This project is open-source from the start. The community is
+          invited to analyze the AI's smart contract and front-end code.
         </Text>
         <Text fontSize="lg" mb={4}>
-          Stay tuned for updates!
+          Follow @techfren_ai on Twitter for official updates.
         </Text>
       </Container>
     </>
