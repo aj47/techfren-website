@@ -16,7 +16,7 @@ const Index = () => {
         position="relative" 
         zIndex="1"
       >
-        <Heading as="h1" size="xl" mb={2}>
+        <Heading as="h1" size="2xl" mb={2}>
           $techfren
         </Heading>
         <Text fontSize="lg" mb={2}>
