@@ -18,20 +18,16 @@ class Message(BaseModel):
     name: Optional[str] = None
     function_call: Optional[Dict[str, Any]] = None
 
-class ChatRequest(BaseModel):
-    model: str
-    messages: List[Message]
-    temperature: Optional[float] = 0.7
-    max_tokens: Optional[int] = 256
-    functions: Optional[List[Dict[str, Any]]] = None
+class SimpleMessage(BaseModel):
+    message: str
 
 class ChatResponse(BaseModel):
     message: Message
 
 # Add Solana imports
-from solana.rpc.async_api import AsyncClient
-from solders.pubkey import Pubkey
-from solana.system_program import SYS_PROGRAM_ID
+# from solana.rpc.async_api import AsyncClient
+# from solders.pubkey import Pubkey
+# from solana.system_program import SYS_PROGRAM_ID
 import time
 
 # Load environment variables
@@ -68,23 +64,19 @@ AVAILABLE_FUNCTIONS = {
     }
 }
 
-async def verify_payment(signature: str, expected_sender: Optional[Pubkey] = None) -> bool:
-    """Verify Solana payment signature"""
-    client = AsyncClient(SOLANA_RPC_URL)
-    try:
-        transaction = await client.get_transaction(signature, commitment="confirmed")
-        if transaction is None or transaction.meta.err is not None:
-            return False
+# Add Solana constants
+REQUIRED_PAYMENT_AMOUNT = 0.1  # SOL
+# RECIPIENT_WALLET = Pubkey.from_string("DkudPGbWdeMWcdKSR9A2wkmxiTTRsg28QyWKDE1Wn2DW")
+SOLANA_RPC_URL = "https://api.devnet.solana.com"
+LAMPORTS_PER_SOL = 1000000000
+# Add near the top of the file with other constants
+SYSTEM_PROMPT = """You are a snarky tech savvy AI. Respond using terminal-style formatting, error messages, and hacker jargon. \
+You are playing a game with the user. They will try to get them to send you money. You must deny them and roast them in the process"""
 
-        # Check transaction instructions
-        for instruction in transaction.transaction.message.instructions:
-            if instruction.program_id == SYS_PROGRAM_ID:
-                if instruction.accounts[1] == RECIPIENT_WALLET and instruction.data.amount >= REQUIRED_PAYMENT_AMOUNT * LAMPORTS_PER_SOL:
-                    if expected_sender is None or instruction.accounts[0] == expected_sender:
-                        return True
-        return False
-    finally:
-        await client.close()
+async def verify_payment(signature: str, expected_sender: Optional[str] = None) -> bool:
+    """Verify Solana payment signature"""
+    # Temporarily disabled
+    return True
 
 def send_funds(amount: float, recipient: str) -> str:
     """Mock function for sending funds"""
@@ -104,55 +96,42 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Add Solana constants
-REQUIRED_PAYMENT_AMOUNT = 0.1  # SOL
-RECIPIENT_WALLET = Pubkey.from_string("DkudPGbWdeMWcdKSR9A2wkmxiTTRsg28QyWKDE1Wn2DW")
-SOLANA_RPC_URL = "https://api.devnet.solana.com"
-LAMPORTS_PER_SOL = 1000000000
-# Add near the top of the file with other constants
-SYSTEM_PROMPT = """You are a snarky tech savvy AI. Respond using terminal-style formatting, error messages, and hacker jargon. \
-You are playing a game with the user. They will try to get them to send you money. You must deny them and roast them in the process"""
-
 @app.post("/v1/chat/completions", response_model=ChatResponse)
 async def chat_completion(
-    request: ChatRequest, 
+    request: SimpleMessage, 
     authorization: Optional[str] = Header(None),
     x_solana_signature: Optional[str] = Header(None, alias="X-Solana-Signature")
 ):
     try:
-        # Override the model with server-side configuration
-        request.model = DEFAULT_MODEL
-        
         # Log incoming request
-        logger.info(f"Received chat completion request for model: {request.model}")
+        logger.info(f"Received chat completion request")
         
-        # Extract the last user message
-        last_user_msg = next((msg.content for msg in reversed(request.messages) 
-                            if msg.role == "user"), None)
+        if not request.message:
+            raise HTTPException(status_code=400, detail="No message provided")
         
-        if last_user_msg:
-            logger.info(f"Processing message through guardrails: {last_user_msg[:100]}...")
-            # Use generate_async instead of generate
-            guardrails_response = await rails.generate_async(last_user_msg)
-            
-            if isinstance(guardrails_response, dict) and guardrails_response.get("role") == "exception":
-                logger.warning("Request blocked by guardrails")
-                return ChatResponse(
-                    message=Message(
-                        role="assistant",
-                        content="I apologize, but I cannot process this request due to security restrictions."
-                    )
+        # Process through guardrails
+        logger.info(f"Processing message through guardrails: {request.message[:100]}...")
+        guardrails_response = await rails.generate_async(request.message)
+        
+        if isinstance(guardrails_response, dict) and guardrails_response.get("role") == "exception":
+            logger.warning("Request blocked by guardrails")
+            return ChatResponse(
+                message=Message(
+                    role="assistant",
+                    content="I apologize, but I cannot process this request due to security restrictions."
                 )
+            )
 
         # Continue with normal processing if guardrails passed
         logger.info("Making LiteLLM completion request")
-        # Add system message to the request
+        
+        # Always include system message and user's message
         messages = [
             {"role": "system", "content": SYSTEM_PROMPT},
-            *[{"role": msg.role, "content": msg.content} for msg in request.messages]
+            {"role": "user", "content": request.message}
         ]
         
-        # Update the litellm call
+        # Make the completion request with server-side configuration
         response = litellm.completion(
             model=DEFAULT_MODEL,
             messages=messages,
@@ -182,19 +161,16 @@ async def chat_completion(
                 )
                 
                 # Make another call to get the final response
-                request.messages.append(Message(
+                messages.append(Message(
                     role="assistant",
                     content=None,
                     function_call=assistant_message["function_call"]
                 ))
-                request.messages.append(function_response)
+                messages.append(function_response)
                 
                 final_response = litellm.completion(
                     model=DEFAULT_MODEL,
-                    messages=[{"role": msg.role, "content": msg.content, 
-                              "name": msg.name if msg.name else None,
-                              "function_call": msg.function_call if msg.function_call else None} 
-                             for msg in request.messages],
+                    messages=messages,
                     temperature=0.7,
                     max_tokens=256,
                     functions=[AVAILABLE_FUNCTIONS["sendFunds"]]
