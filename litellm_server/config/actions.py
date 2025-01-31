@@ -1,4 +1,6 @@
 from typing import Optional
+import jwt
+import os
 
 def check_user_auth(context) -> bool:
     """

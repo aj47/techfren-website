@@ -67,12 +67,35 @@ AVAILABLE_FUNCTIONS = {
     }
 }
 
-async def verify_payment(signature: str) -> bool:
+async def verify_payment(signature: str, expected_sender: Optional[Pubkey] = None) -> bool:
     """Verify Solana payment signature"""
     client = AsyncClient(SOLANA_RPC_URL)
-    try:
-        # TODO: Implement actual payment verification
-        return True
+    if not authorization:
+        raise HTTPException(
+            status_code=403,
+            detail="Unauthorized"
+        )
+    
+    # Extract token from Authorization header
+    token = authorization.split("Bearer ")[-1]
+    context = {"auth_token": token}
+    
+    if not check_user_auth(context):
+        raise HTTPException(
+            status_code=403,
+            detail="Unauthorized"
+        )
+        transaction = await client.get_transaction(signature, commitment="confirmed")
+        if transaction is None or transaction.meta.err is not None:
+            return False
+
+        # Check transaction instructions
+        for instruction in transaction.transaction.message.instructions:
+            if instruction.program_id == SystemProgram.program_id():
+                if instruction.accounts[1] == RECIPIENT_WALLET and instruction.data.amount >= PAYMENT_AMOUNT * LAMPORTS_PER_SOL:
+                    if expected_sender is None or instruction.accounts[0] == expected_sender:
+                        return True
+        return False
     finally:
         await client.close()
 
@@ -120,13 +143,7 @@ async def chat_completion(
         request.model = DEFAULT_MODEL
         
         # Verify payment signature
-        if not x_solana_signature:
-            raise HTTPException(
-                status_code=402,
-                detail="Payment required"
-            )
-            
-        payment_verified = await verify_payment(x_solana_signature)
+        payment_verified = await verify_payment(x_solana_signature, expected_sender=publicKey)
         if not payment_verified:
             raise HTTPException(
                 status_code=402,
