@@ -145,20 +145,20 @@ async def verify_payment(signature_str: str, expected_sender: Optional[str] = No
         
         async with AsyncClient(SOLANA_RPC_URL) as client:
             tx_response = await client.get_transaction(signature)
-        tx_details = tx_response.get("result")
-        if not tx_details:
+            
+        if not tx_response.value:
             logger.error("Transaction details not found.")
             return False
 
         # Verify confirmation status (it should be 'finalized')
-        confirmation_status = tx_details["meta"].get("confirmationStatus")
+        confirmation_status = tx_response.value.transaction.meta.confirmation_status
         if confirmation_status != "finalized":
             logger.error("Transaction confirmation status is not finalized.")
             return False
 
         # Verify the transferred amount.
-        pre_balances = tx_details["meta"]["preBalances"]
-        post_balances = tx_details["meta"]["postBalances"]
+        pre_balances = tx_response.value.transaction.meta.pre_balances
+        post_balances = tx_response.value.transaction.meta.post_balances
         # Assuming the sender is at index 0.
         lamports_sent = pre_balances[0] - post_balances[0]
         expected_amount = int(REQUIRED_PAYMENT_AMOUNT * LAMPORTS_PER_SOL)
@@ -167,9 +167,8 @@ async def verify_payment(signature_str: str, expected_sender: Optional[str] = No
             return False
 
         # Verify recipient: Assuming the recipient is the second account in the transaction.
-        transaction = tx_details["transaction"]
-        account_keys = transaction["message"]["accountKeys"]
-        recipient = account_keys[1]  # Adjust index if needed.
+        account_keys = tx_response.value.transaction.transaction.message.account_keys
+        recipient = str(account_keys[1])  # Adjust index if needed.
         if recipient != RECIPIENT_WALLET:
             logger.error(f"Transaction recipient {recipient} does not match expected {RECIPIENT_WALLET}.")
             return False
