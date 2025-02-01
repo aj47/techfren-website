@@ -229,8 +229,8 @@ async def chat_completion(
         is_valid = await verify_payment(x_solana_signature)
         if not is_valid:
             raise HTTPException(status_code=400, detail="Invalid or already processed transaction")
-        if not is_valid:
-            raise HTTPException(status_code=400, detail="Invalid or already processed transaction")
+        
+        if not request.message:
             raise HTTPException(status_code=400, detail="No message provided")
         
         # Convert simple message to proper format for guardrails
