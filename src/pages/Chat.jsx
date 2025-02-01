@@ -106,8 +106,8 @@ const Chat = () => {
     // Show spinner immediately
     setIsBotTyping(true);
     
-    const { success } = await makePayment();
-    if (!success) {
+    const { success, signature } = await makePayment();
+    if (!success || !signature) {
       setIsBotTyping(false);
       return;
     }
@@ -123,7 +123,8 @@ const Chat = () => {
       const response = await fetch('http://localhost:8000/v1/chat/completions', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'X-Solana-Signature': signature
         },
         body: JSON.stringify({
           message: inputMessage
