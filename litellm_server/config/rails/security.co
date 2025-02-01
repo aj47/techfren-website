@@ -12,7 +12,7 @@ define user express intent send funds
 define bot decline unauthorized
     "I apologize, but I cannot process financial transactions without proper authorization. Please ensure you are authenticated before attempting fund transfers."
 
-define flow check secure response
+define subflow check secure response
     bot ...
     if $bot_message contains "send funds" or $bot_message contains "transfer"
         $auth_status = execute check_user_auth
