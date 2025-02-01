@@ -144,11 +144,19 @@ async def verify_payment(signature_str: str, expected_sender: Optional[str] = No
         signature = Signature.from_string(signature_str)
         
         async with AsyncClient(SOLANA_RPC_URL) as client:
-            tx_response = await client.get_transaction(signature)
+            # First try with max supported transaction version
+            tx_response = await client.get_transaction(signature, max_supported_transaction_version=0)
             
-        if not tx_response or not hasattr(tx_response, 'value') or not tx_response.value:
-            logger.error("Transaction details not found.")
-            return False
+            # If still not found, try without version constraint
+            if not tx_response or not hasattr(tx_response, 'value') or not tx_response.value:
+                tx_response = await client.get_transaction(signature)
+            
+            if not tx_response or not hasattr(tx_response, 'value') or not tx_response.value:
+                logger.error(f"Transaction details not found for signature: {signature_str}")
+                logger.error(f"RPC URL: {SOLANA_RPC_URL}")
+                return False
+            
+            logger.info(f"Transaction found: {tx_response.value.transaction}")
 
         # Get transaction details - newer Solana API format
         transaction = tx_response.value.transaction.transaction
@@ -159,8 +167,12 @@ async def verify_payment(signature_str: str, expected_sender: Optional[str] = No
             return False
 
         # Verify confirmation status (it should be 'finalized')
-        if not hasattr(meta, 'confirmation_status') or meta.confirmation_status != "finalized":
-            logger.error("Transaction confirmation status is not finalized.")
+        if not hasattr(meta, 'confirmation_status'):
+            logger.error("Transaction metadata missing confirmation_status")
+            return False
+            
+        if meta.confirmation_status != "finalized":
+            logger.error(f"Transaction confirmation status is {meta.confirmation_status}, expected finalized")
             return False
 
         # Verify the transferred amount
