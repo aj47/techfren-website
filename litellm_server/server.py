@@ -241,15 +241,15 @@ async def chat_completion(
                     name=function_name,
                     content=result
                 )
-                messages.append(Message(
+                conversation = [user_message, Message(
                     role="assistant",
                     content=None,
                     function_call=assistant_message["function_call"]
-                ))
-                messages.append(function_response)
+                )]
+                conversation.append(function_response)
                 final_response = litellm.completion(
                     model=DEFAULT_MODEL,
-                    messages=messages,
+                    messages=conversation,
                     temperature=0.7,
                     max_tokens=256,
                     functions=[AVAILABLE_FUNCTIONS["sendFunds"]]
