@@ -83,6 +83,11 @@ init_db()
 
 # Define Solana-related constants and imports
 from solana.rpc.async_api import AsyncClient
+import logging
+
+# Configure Solana client logging
+solana_logger = logging.getLogger("solana")
+solana_logger.setLevel(logging.DEBUG)
 from solders.signature import Signature
 
 REQUIRED_PAYMENT_AMOUNT = 0.1  # SOL
