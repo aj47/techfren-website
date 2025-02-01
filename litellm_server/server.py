@@ -197,7 +197,7 @@ async def chat_completion(
     x_solana_signature: Optional[str] = Header(None, alias="X-Solana-Signature")
 ):
     try:
-        logger.info("Received chat completion request")
+        logger.debug("Received chat completion request")
         if not x_solana_signature:
             raise HTTPException(status_code=400, detail="No Solana transaction signature provided")
         is_valid = await verify_payment(x_solana_signature)
@@ -206,7 +206,7 @@ async def chat_completion(
         if not request.message:
             raise HTTPException(status_code=400, detail="No message provided")
         user_message = {"role": "user", "content": request.message}
-        logger.info(f"Processing message through guardrails: {request.message[:100]}...")
+        logger.debug(f"Processing message through guardrails: {request.message[:100]}...")
         guardrails_response = await rails.generate_async(messages=[user_message])
         if isinstance(guardrails_response, dict) and guardrails_response.get("role") == "exception":
             logger.warning("Request blocked by guardrails")
@@ -216,20 +216,20 @@ async def chat_completion(
                     content="I apologize, but I cannot process this request due to security restrictions."
                 )
             )
-        logger.info("Making LiteLLM completion request")
-        messages = [
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": request.message}
-        ]
+        logger.debug("Initiating LiteLLM completion request with messages: %s", [{"role": "system", "content": SYSTEM_PROMPT}, {"role": "user", "content": request.message}])
         response = litellm.completion(
             model=DEFAULT_MODEL,
-            messages=messages,
+            messages=[
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": request.message}
+            ],
             temperature=0.7,
             max_tokens=256,
             functions=[AVAILABLE_FUNCTIONS["sendFunds"]]
         )
+        logger.debug("Received raw LLM response: %s", response)
         assistant_message = response.choices[0].message
-        logger.info("Successfully generated response")
+        logger.debug("Assistant message: %s; available keys: %s", assistant_message, list(assistant_message.keys()) if hasattr(assistant_message, 'keys') else "not a dict")
         if assistant_message.get("function_call"):
             import json
             function_name = assistant_message["function_call"]["name"]
