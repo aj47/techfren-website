@@ -150,9 +150,9 @@ async def verify_payment(signature_str: str, expected_sender: Optional[str] = No
             logger.error("Transaction details not found.")
             return False
 
-        # Get transaction details
-        transaction = tx_response.value.transaction
-        meta = transaction.meta
+        # Get transaction details - newer Solana API format
+        transaction = tx_response.value.transaction.transaction
+        meta = tx_response.value.meta
         
         if not meta:
             logger.error("Transaction metadata not found.")
@@ -192,6 +192,7 @@ async def verify_payment(signature_str: str, expected_sender: Optional[str] = No
 
     except Exception as e:
         logger.error(f"Exception verifying payment: {e}")
+        logger.error(f"Transaction response: {tx_response}")
         return False
 
 def send_funds(amount: float, recipient: str) -> str:
