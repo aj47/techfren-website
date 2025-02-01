@@ -111,8 +111,13 @@ async def verify_payment(signature_str: str, expected_sender: Optional[str] = No
             if not tx_response or not tx_response.value:
                 logger.error(f"Transaction details not found for signature: {signature_str}")
                 return False
-            meta = tx_response.value.meta
-            if not meta or meta.err is not None:
+            # Access meta through the transaction object
+            transaction = tx_response.value.transaction
+            if not transaction or not transaction.meta:
+                logger.error(f"Transaction {signature_str} has no metadata.")
+                return False
+            meta = transaction.meta
+            if meta.err is not None:
                 logger.error(f"Transaction {signature_str} failed or has errors.")
                 return False
             pre_balances = meta.pre_balances
