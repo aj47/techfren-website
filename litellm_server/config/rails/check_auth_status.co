@@ -1,0 +1,2 @@
+define subflow check auth status
+    $auth_status = execute check_user_auth
