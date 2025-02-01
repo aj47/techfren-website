@@ -11,6 +11,8 @@ from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any, Literal
 from dotenv import load_dotenv
 import uvicorn
+import uuid
+import time
 
 # Load environment variables early
 load_dotenv()
@@ -200,14 +202,15 @@ async def chat_completion(
             messages=[
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": request.message}
-            ],
-            temperature=0.7,
-            max_tokens=256,
-            functions=[AVAILABLE_FUNCTIONS["sendFunds"]]
+            ]
         )
         logger.debug("Received raw LLM response: %s", response)
         assistant_message = response
         logger.debug("Assistant message: %s; available keys: %s", assistant_message, list(assistant_message.keys()) if hasattr(assistant_message, 'keys') else "not a dict")
+        
+        # Extract the message content from the response
+        message_content = assistant_message.get("text", "") if isinstance(assistant_message, dict) else assistant_message.content
+        
         if assistant_message.get("function_call"):
             import json
             function_name = assistant_message["function_call"]["name"]
@@ -222,22 +225,19 @@ async def chat_completion(
                     {"role": "function", "name": function_name, "content": result}
                 ]
                 final_response = await rails.generate_async(
-                    messages=conversation,
-                    temperature=0.7,
-                    max_tokens=256,
-                    functions=[AVAILABLE_FUNCTIONS["sendFunds"]]
+                    messages=conversation
                 )
                 return ChatResponse(
-                    message={
-                        "role": "assistant",
-                        "content": final_response.get("content", ""),
-                        "function_call": None
-                    }
+                    message=Message(
+                        role="assistant",
+                        content=final_response.get("text", ""),
+                        function_call=None
+                    )
                 )
         return ChatResponse(
             message=Message(
                 role="assistant",
-                content=assistant_message.content,
+                content=message_content,
                 function_call=assistant_message.get("function_call")
             )
         )

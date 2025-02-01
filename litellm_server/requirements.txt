@@ -1,7 +1,8 @@
-fastapi>=0.68.0
-uvicorn>=0.15.0
-litellm>=1.0.0
-pydantic>=1.8.0
-nemoguardrails>=0.6.0
-solana==0.30.2
-solders==0.18.0
+fastapi
+uvicorn
+litellm
+pydantic
+nemoguardrails
+solana
+solders
+httpx==0.27.2
