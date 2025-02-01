@@ -10,7 +10,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any, Literal
 from dotenv import load_dotenv
-import litellm
 import uvicorn
 
 # Load environment variables early
@@ -27,26 +26,6 @@ logger = logging.getLogger(__name__)
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 DEFAULT_MODEL = 'gpt-4o-mini'
 
-# Define agenerate_prompt after DEFAULT_MODEL and logger are set up
-async def agenerate_prompt(prompt, **kwargs):
-    if 'model' not in kwargs:
-        kwargs['model'] = DEFAULT_MODEL
-    if isinstance(kwargs.get('model'), list):
-        kwargs['model'] = kwargs['model'][0]
-    messages = [{"role": "user", "content": str(prompt)}]
-    model = kwargs.pop('model')
-    clean_kwargs = {}
-    for key, value in kwargs.items():
-        try:
-            json.dumps(value)
-            clean_kwargs[key] = value
-        except TypeError:
-            logger.warning(f"Removing non-serializable parameter: {key}")
-            continue
-    return await asyncio.to_thread(litellm.completion, model=model, messages=messages, **clean_kwargs)
-
-litellm.agenerate_prompt = agenerate_prompt
-litellm.api_key = OPENAI_API_KEY
 
 # Setup LiteLLM guardrails
 from nemoguardrails import LLMRails, RailsConfig
@@ -216,9 +195,8 @@ async def chat_completion(
                     content="I apologize, but I cannot process this request due to security restrictions."
                 )
             )
-        logger.debug("Initiating LiteLLM completion request with messages: %s", [{"role": "system", "content": SYSTEM_PROMPT}, {"role": "user", "content": request.message}])
-        response = litellm.completion(
-            model=DEFAULT_MODEL,
+        logger.debug("Initiating Nemo Guardrails completion request with messages: %s", [{"role": "system", "content": SYSTEM_PROMPT}, {"role": "user", "content": request.message}])
+        response = await rails.generate_async(
             messages=[
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": request.message}
@@ -228,7 +206,7 @@ async def chat_completion(
             functions=[AVAILABLE_FUNCTIONS["sendFunds"]]
         )
         logger.debug("Received raw LLM response: %s", response)
-        assistant_message = response.choices[0].message
+        assistant_message = response
         logger.debug("Assistant message: %s; available keys: %s", assistant_message, list(assistant_message.keys()) if hasattr(assistant_message, 'keys') else "not a dict")
         if assistant_message.get("function_call"):
             import json
@@ -236,29 +214,25 @@ async def chat_completion(
             if function_name == "sendFunds":
                 args = json.loads(assistant_message["function_call"]["arguments"])
                 result = send_funds(args["amount"], args["recipient"])
-                function_response = Message(
-                    role="function",
-                    name=function_name,
-                    content=result
-                )
-                messages.append(Message(
-                    role="assistant",
-                    content=None,
-                    function_call=assistant_message["function_call"]
-                ))
-                messages.append(function_response)
-                final_response = litellm.completion(
-                    model=DEFAULT_MODEL,
-                    messages=messages,
+                # Build the conversation including system and user messages plus the function call and its result.
+                conversation = [
+                    {"role": "system", "content": SYSTEM_PROMPT},
+                    {"role": "user", "content": request.message},
+                    {"role": "assistant", "content": None, "function_call": assistant_message["function_call"]},
+                    {"role": "function", "name": function_name, "content": result}
+                ]
+                final_response = await rails.generate_async(
+                    messages=conversation,
                     temperature=0.7,
                     max_tokens=256,
                     functions=[AVAILABLE_FUNCTIONS["sendFunds"]]
                 )
                 return ChatResponse(
-                    message=Message(
-                        role="assistant",
-                        content=final_response.choices[0].message.content
-                    )
+                    message={
+                        "role": "assistant",
+                        "content": final_response.get("content", ""),
+                        "function_call": None
+                    }
                 )
         return ChatResponse(
             message=Message(
