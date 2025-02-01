@@ -90,7 +90,7 @@ solana_logger = logging.getLogger("solana")
 solana_logger.setLevel(logging.DEBUG)
 from solders.signature import Signature
 
-REQUIRED_PAYMENT_AMOUNT = 0.1  # SOL
+REQUIRED_PAYMENT_AMOUNT = 0.0001  # SOL (0.0001 SOL = 100,000 lamports)
 RECIPIENT_WALLET = "DkudPGbWdeMWcdKSR9A2wkmxiTTRsg28QyWKDE1Wn2DW"
 SOLANA_RPC_URL = "https://api.devnet.solana.com"
 LAMPORTS_PER_SOL = 1000000000
