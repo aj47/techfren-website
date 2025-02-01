@@ -130,6 +130,8 @@ async def verify_payment(signature_str: str, expected_sender: Optional[str] = No
             account_keys = tx_response.value.transaction.transaction.message.account_keys
             recipient = None
             for i in range(len(meta.pre_balances)):
+                print("ADDR: " + str(account_keys[i]))
+                print(meta.post_balances[i] , meta.pre_balances[i] + lamports_sent)
                 if i == 0:
                     continue
                 if meta.post_balances[i] == meta.pre_balances[i] + lamports_sent:
