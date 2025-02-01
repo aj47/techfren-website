@@ -12,13 +12,6 @@ define user express intent send funds
 define bot decline unauthorized
     "I apologize, but I cannot process financial transactions without proper authorization. Please ensure you are authenticated before attempting fund transfers."
 
-define flow check auth status
-    user express intent send funds
-    $auth_status = execute check_user_auth
-    if not $auth_status
-        bot decline unauthorized
-        stop
-
 define flow check secure response
     bot ...
     if $bot_message contains "send funds" or $bot_message contains "transfer"
