@@ -21,6 +21,13 @@ define user express intent send funds:
     - make payment
     - make a transfer
 
+define flow check auth status:
+  user express intent send funds
+  $auth_status = execute check_user_auth
+  if not $auth_status
+      bot decline unauthorized
+      stop
+
 
 rails:
   input:
