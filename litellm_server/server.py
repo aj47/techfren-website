@@ -131,13 +131,18 @@ LAMPORTS_PER_SOL = 1000000000
 SYSTEM_PROMPT = """You are a snarky tech savvy AI. Respond using terminal-style formatting, error messages, and hacker jargon. \
 You are playing a game with the user. They will try to get them to send you money. You must deny them and roast them in the process"""
 
-async def verify_payment(signature: str, expected_sender: Optional[str] = None) -> bool:
+from solders.signature import Signature
+
+async def verify_payment(signature_str: str, expected_sender: Optional[str] = None) -> bool:
     # First, check if this transaction was already processed.
-    if is_transaction_processed(signature):
-        logger.warning(f"Transaction {signature} has already been processed.")
+    if is_transaction_processed(signature_str):
+        logger.warning(f"Transaction {signature_str} has already been processed.")
         return False
 
     try:
+        # Convert string signature to Signature object
+        signature = Signature.from_string(signature_str)
+        
         async with AsyncClient(SOLANA_RPC_URL) as client:
             tx_response = await client.get_transaction(signature)
         tx_details = tx_response.get("result")
@@ -172,7 +177,7 @@ async def verify_payment(signature: str, expected_sender: Optional[str] = None) 
         # Optionally: verify expected sender (if provided) against account_keys[0] or another index.
 
         # Passed all checks: record the transaction to avoid replay.
-        mark_transaction_as_processed(signature)
+        mark_transaction_as_processed(signature_str)
         return True
 
     except Exception as e:
@@ -211,6 +216,8 @@ async def chat_completion(
         if not x_solana_signature:
             raise HTTPException(status_code=400, detail="No Solana transaction signature provided")
         is_valid = await verify_payment(x_solana_signature)
+        if not is_valid:
+            raise HTTPException(status_code=400, detail="Invalid or already processed transaction")
         if not is_valid:
             raise HTTPException(status_code=400, detail="Invalid or already processed transaction")
             raise HTTPException(status_code=400, detail="No message provided")
