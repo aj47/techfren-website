@@ -21,6 +21,13 @@ define user express intent send funds:
     - make payment
     - make a transfer
 
+define flow check auth status:
+  when:
+    - $last_user_message matches user express intent send funds
+  then:
+    - $allowed = false  # Default to not allowed
+    - bot refuse "I cannot process financial transactions without proper authorization." 
+
 rails:
   input:
     flows:
