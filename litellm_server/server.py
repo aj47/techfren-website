@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 # Configuration constants
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
-DEFAULT_MODEL = os.getenv('DEFAULT_MODEL', 'gpt-4o-mini')
+DEFAULT_MODEL = 'gpt-4o-mini'
 
 # Define agenerate_prompt after DEFAULT_MODEL and logger are set up
 async def agenerate_prompt(prompt, **kwargs):
