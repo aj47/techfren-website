@@ -128,15 +128,16 @@ async def verify_payment(signature_str: str, expected_sender: Optional[str] = No
                 logger.error(f"Lamports sent ({lamports_sent}) is less than expected ({expected_amount}).")
                 return False
             account_keys = tx_response.value.transaction.transaction.message.account_keys
+            instructions = tx_response.value.transaction.transaction.message.instructions
             recipient = None
-            for i in range(len(meta.pre_balances)):
-                print("ADDR: " + str(account_keys[i]))
-                print(meta.post_balances[i] , meta.pre_balances[i] + lamports_sent)
-                if i == 0:
-                    continue
-                if meta.post_balances[i] == meta.pre_balances[i] + lamports_sent:
-                    recipient = str(account_keys[i])
-                    break
+            for ix in instructions:
+                # Check if the instruction belongs to the system program (transfer)
+                if str(account_keys[ix.program_id_index]) == "11111111111111111111111111111111":
+                    # For a SystemProgram.transfer, the accounts array contains [sender, recipient]
+                    if len(ix.accounts) > 1:
+                        recipient_index = ix.accounts[1]
+                        recipient = str(account_keys[recipient_index])
+                        break
             if recipient != RECIPIENT_WALLET:
                 logger.error(f"Transaction recipient {recipient} does not match expected {RECIPIENT_WALLET}.")
                 return False
