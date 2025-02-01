@@ -146,19 +146,30 @@ async def verify_payment(signature_str: str, expected_sender: Optional[str] = No
         async with AsyncClient(SOLANA_RPC_URL) as client:
             tx_response = await client.get_transaction(signature)
             
-        if not tx_response.value:
+        if not tx_response or not hasattr(tx_response, 'value') or not tx_response.value:
             logger.error("Transaction details not found.")
             return False
 
+        # Get transaction details
+        transaction = tx_response.value.transaction
+        meta = transaction.meta
+        
+        if not meta:
+            logger.error("Transaction metadata not found.")
+            return False
+
         # Verify confirmation status (it should be 'finalized')
-        confirmation_status = tx_response.value.transaction.meta.confirmation_status
-        if confirmation_status != "finalized":
+        if not hasattr(meta, 'confirmation_status') or meta.confirmation_status != "finalized":
             logger.error("Transaction confirmation status is not finalized.")
             return False
 
-        # Verify the transferred amount.
-        pre_balances = tx_response.value.transaction.meta.pre_balances
-        post_balances = tx_response.value.transaction.meta.post_balances
+        # Verify the transferred amount
+        if not hasattr(meta, 'pre_balances') or not hasattr(meta, 'post_balances'):
+            logger.error("Transaction balance data not found.")
+            return False
+            
+        pre_balances = meta.pre_balances
+        post_balances = meta.post_balances
         # Assuming the sender is at index 0.
         lamports_sent = pre_balances[0] - post_balances[0]
         expected_amount = int(REQUIRED_PAYMENT_AMOUNT * LAMPORTS_PER_SOL)
