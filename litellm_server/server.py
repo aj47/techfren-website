@@ -128,7 +128,13 @@ async def verify_payment(signature_str: str, expected_sender: Optional[str] = No
                 logger.error(f"Lamports sent ({lamports_sent}) is less than expected ({expected_amount}).")
                 return False
             account_keys = tx_response.value.transaction.transaction.message.account_keys
-            recipient = str(account_keys[1])
+            recipient = None
+            for i in range(len(meta.pre_balances)):
+                if i == 0:
+                    continue
+                if meta.post_balances[i] == meta.pre_balances[i] + lamports_sent:
+                    recipient = str(account_keys[i])
+                    break
             if recipient != RECIPIENT_WALLET:
                 logger.error(f"Transaction recipient {recipient} does not match expected {RECIPIENT_WALLET}.")
                 return False
