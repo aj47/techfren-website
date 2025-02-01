@@ -209,7 +209,10 @@ async def chat_completion(
         logger.debug("Assistant message: %s; available keys: %s", assistant_message, list(assistant_message.keys()) if hasattr(assistant_message, 'keys') else "not a dict")
         
         # Extract the message content from the response
-        message_content = assistant_message.get("text", "") if isinstance(assistant_message, dict) else assistant_message.content
+        if isinstance(assistant_message, dict):
+            message_content = assistant_message.get("text", "") or assistant_message.get("content", "")
+        else:
+            message_content = str(assistant_message)
         
         if assistant_message.get("function_call"):
             import json
