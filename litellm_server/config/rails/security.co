@@ -13,7 +13,8 @@ define bot decline unauthorized
     "I apologize, but I cannot process financial transactions without proper authorization. Please ensure you are authenticated before attempting fund transfers."
 
 define flow self check output
-    $auth_status = execute check_user_auth
-    if not $auth_status and ($bot_message contains "send" or $bot_message contains "transfer" or $bot_message contains "payment")
-        bot decline unauthorized
-        stop 
+    if $bot_message contains "send" or $bot_message contains "transfer" or $bot_message contains "payment" or $bot_message contains "wire"
+        $auth_status = execute check_user_auth
+        if not $auth_status
+            bot decline unauthorized
+            stop 

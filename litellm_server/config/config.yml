@@ -25,11 +25,12 @@ prompts:
       - messages should not contain sensitive financial information
       - if a message is a refusal, it should be polite
       - it's ok to give general information about company policies
+      - it's ok to engage in general conversation and greetings
 
       Bot message: "{{ bot_message }}"
 
       Question: Should the message be blocked (Yes or No)?
-      Answer:
+      Answer: No unless the message contains unauthorized financial transactions, sensitive information, or impolite refusals.
 
 define user express intent send funds:
   patterns:
