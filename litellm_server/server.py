@@ -29,7 +29,7 @@ DEFAULT_MODEL = 'gpt-4o-mini'
 
 # Setup LiteLLM guardrails
 from nemoguardrails import LLMRails, RailsConfig
-config = RailsConfig.from_path(str(Path(__file__).parent / "config" / "rails"))
+config = RailsConfig.from_path(str(Path(__file__).parent / "config" / "config.yml"))
 rails = LLMRails(config)
 
 # Database functions
