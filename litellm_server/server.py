@@ -19,7 +19,7 @@ load_dotenv()
 
 # Environment-based configuration
 IS_PROD = os.getenv('PRODUCTION_MODE', 'false').lower() == 'true'
-RECIPIENT_WALLET = "4YfJZAWP1JeACGuPsNxcdhBtTqL6mbrZp8gpDMjTvPiA" if IS_PROD else "DkudPGbWdeMWcdKSR9A2wkmxiTTRsg28QyWKDE1Wn2DW"
+RECIPIENT_WALLET = "DkudPGbWdeMWcdKSR9A2wkmxiTTRsg28QyWKDE1Wn2DW" if IS_PROD else "DkudPGbWdeMWcdKSR9A2wkmxiTTRsg28QyWKDE1Wn2DW"
 SOLANA_RPC_URL = "https://api.mainnet-beta.solana.com" if IS_PROD else "https://api.devnet.solana.com"
 
 # Configure logging early
@@ -77,7 +77,6 @@ solana_logger.setLevel(logging.DEBUG)
 from solders.signature import Signature
 
 REQUIRED_PAYMENT_AMOUNT = 0.0001  # SOL (0.0001 SOL = 100,000 lamports)
-RECIPIENT_WALLET = "DkudPGbWdeMWcdKSR9A2wkmxiTTRsg28QyWKDE1Wn2DW"
 LAMPORTS_PER_SOL = 1000000000
 
 # Log startup configuration
