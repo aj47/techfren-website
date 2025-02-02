@@ -19,7 +19,7 @@ load_dotenv()
 
 # Environment-based configuration
 IS_PROD = os.getenv('PRODUCTION_MODE', 'false').lower() == 'true'
-RECIPIENT_WALLET = "4YfJZAWP1JeACGuPsNxcdhBtTqL6mbrZp8gpDMjTvPiA"
+RECIPIENT_WALLET = "4YfJZAWP1JeACGuPsNxcdhBtTqL6mbrZp8gpDMjTvPiA" if IS_PROD else "DkudPGbWdeMWcdKSR9A2wkmxiTTRsg28QyWKDE1Wn2DW"
 SOLANA_RPC_URL = "https://api.mainnet-beta.solana.com" if IS_PROD else "https://api.devnet.solana.com"
 
 # Configure logging early
