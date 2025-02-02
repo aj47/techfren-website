@@ -13,7 +13,7 @@ import { Connection, PublicKey, Transaction, SystemProgram, LAMPORTS_PER_SOL } f
 
 import DigitalRain from '../components/DigitalRain';
 
-const IS_PROD = process.env.REACT_APP_PRODUCTION_MODE === 'true';
+const IS_PROD = import.meta.env.VITE_PRODUCTION_MODE === 'true';
 const SOLANA_RPC_URL = IS_PROD 
   ? 'https://api.mainnet-beta.solana.com' 
   : 'https://api.devnet.solana.com';
