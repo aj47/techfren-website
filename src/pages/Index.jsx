@@ -4,6 +4,8 @@ import DigitalRain from "../components/DigitalRain";
 import "@fontsource/press-start-2p";
 import "@fontsource/roboto";
 import { FaGamepad, FaMoneyBillWave, FaChartLine, FaCode, FaGithub } from "react-icons/fa";
+import { Link as RouterLink } from "react-router-dom";
+import { Link } from "@chakra-ui/react";
 
 const Index = () => {
   return (
