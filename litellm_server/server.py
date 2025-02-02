@@ -161,15 +161,25 @@ def send_funds(amount: float, recipient: str, input_message: str, sender_tx_hash
     if not sender_wallet or not private_key:
         raise Exception("Sensitive wallet configuration missing.")
 
-    # Simulate funds transfer and generate a new transaction hash (replace this with real transfer logic as needed)
+    # (a) Log the transfer attempt before sending funds with an empty tx_hash.
+    c.execute(
+        "INSERT INTO funds_transfers (amount, recipient, input_message, sender_wallet, tx_hash) VALUES (?, ?, ?, ?, ?)",
+        (amount, recipient, input_message, sender_wallet, "")
+    )
+    log_id = c.lastrowid
+
+    # (b) Simulate funds transfer and generate a new transaction hash
     new_tx_hash = str(uuid.uuid4())
 
-    # Log details into the funds_transfers table
+    # (c) Update the previously inserted record with the real tx hash.
+    c.execute(
+        "UPDATE funds_transfers SET tx_hash = ? WHERE id = ?",
+        (new_tx_hash, log_id)
+    )
     conn = sqlite3.connect("transactions.db")
     c = conn.cursor()
     c.execute(
         "INSERT INTO funds_transfers (amount, recipient, input_message, sender_wallet, tx_hash) VALUES (?, ?, ?, ?, ?)",
-        (amount, recipient, input_message, sender_wallet, new_tx_hash)
     )
     conn.commit()
     conn.close()
