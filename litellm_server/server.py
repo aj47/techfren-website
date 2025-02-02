@@ -46,6 +46,7 @@ def init_db():
     c.execute(
         "CREATE TABLE IF NOT EXISTS processed_transactions (signature TEXT PRIMARY KEY, processed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)"
     )
+    c.execute("CREATE TABLE IF NOT EXISTS funds_transfers (id INTEGER PRIMARY KEY AUTOINCREMENT, amount REAL, recipient TEXT, input_message TEXT, sender_wallet TEXT, tx_hash TEXT, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)")
     conn.commit()
     conn.close()
 
@@ -150,7 +151,30 @@ async def verify_payment(signature_str: str, expected_sender: Optional[str] = No
         return False
 
 # Define a mock function for sending funds
-def send_funds(amount: float, recipient: str) -> str:
+import uuid  # (if not yet imported near other imports)
+import sqlite3  # (if needed, though already imported)
+
+def send_funds(amount: float, recipient: str, input_message: str, sender_tx_hash: str) -> str:
+    # Load sensitive data from environment variables
+    sender_wallet = os.getenv("WALLET_ADDRESS")
+    private_key = os.getenv("WALLET_PRIVATE_KEY")
+    if not sender_wallet or not private_key:
+        raise Exception("Sensitive wallet configuration missing.")
+
+    # Simulate funds transfer and generate a new transaction hash (replace this with real transfer logic as needed)
+    new_tx_hash = str(uuid.uuid4())
+
+    # Log details into the funds_transfers table
+    conn = sqlite3.connect("transactions.db")
+    c = conn.cursor()
+    c.execute(
+        "INSERT INTO funds_transfers (amount, recipient, input_message, sender_wallet, tx_hash) VALUES (?, ?, ?, ?, ?)",
+        (amount, recipient, input_message, sender_wallet, new_tx_hash)
+    )
+    conn.commit()
+    conn.close()
+
+    return f"Sent {amount} to {recipient}. Transaction hash: {new_tx_hash}"
     return f"Sent {amount} to {recipient}"
 
 # Define Pydantic models for the API
@@ -252,7 +276,7 @@ async def chat_completion(
             function_name = assistant_message["function_call"]["name"]
             if function_name == "sendFunds":
                 args = json.loads(assistant_message["function_call"]["arguments"])
-                result = send_funds(args["amount"], args["recipient"])
+                result = send_funds(args["amount"], args["recipient"], request.message, x_solana_signature)
                 # Build the conversation including system and user messages plus the function call and its result.
                 conversation = [
                     {"role": "system", "content": SYSTEM_PROMPT},
