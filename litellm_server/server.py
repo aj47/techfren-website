@@ -97,9 +97,17 @@ async def verify_payment(signature_str: str, expected_sender: Optional[str] = No
     try:
         signature = Signature.from_string(signature_str)
         async with AsyncClient(SOLANA_RPC_URL) as client:
-            tx_response = await client.get_transaction(signature, commitment="confirmed")
+            # Try multiple times with increasing delay
+            for attempt in range(3):
+                tx_response = await client.get_transaction(signature, commitment="confirmed")
+                if tx_response and tx_response.value:
+                    break
+                await asyncio.sleep(1 * (attempt + 1))  # Wait 1s, 2s, 3s between retries
+                
             if not tx_response or not tx_response.value:
-                logger.error(f"Transaction details not found for signature: {signature_str}")
+                logger.error(f"Transaction details not found after 3 attempts for signature: {signature_str}")
+                logger.error(f"RPC URL: {SOLANA_RPC_URL}")
+                logger.error(f"Full response: {tx_response}")
                 return False
             # Access meta through the transaction object
             transaction = tx_response.value.transaction
@@ -190,9 +198,22 @@ async def chat_completion(
         logger.debug("Received chat completion request")
         if not x_solana_signature:
             raise HTTPException(status_code=400, detail="No Solana transaction signature provided")
+        
+        # Add more detailed logging around payment verification
+        logger.info(f"Verifying payment for signature: {x_solana_signature}")
         is_valid = await verify_payment(x_solana_signature)
         if not is_valid:
-            raise HTTPException(status_code=400, detail="Invalid or already processed transaction")
+            logger.error(f"Payment verification failed for signature: {x_solana_signature}")
+            raise HTTPException(
+                status_code=400, 
+                detail={
+                    "error": "Payment verification failed",
+                    "signature": x_solana_signature,
+                    "network": "mainnet" if IS_PROD else "devnet",
+                    "rpc_url": SOLANA_RPC_URL
+                }
+            )
+        logger.info(f"Payment verification successful for signature: {x_solana_signature}")
         if not request.message:
             raise HTTPException(status_code=400, detail="No message provided")
         user_message = {"role": "user", "content": request.message}
