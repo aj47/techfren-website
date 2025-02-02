@@ -28,7 +28,12 @@ const Index = () => {
           CA: DsRvcvU1R8fihyZ2B9gcvZdP8FzvLdtkTSLYfrAgpump
         </Text>
 
-        <Heading as="h2" size="md" mb={4}>
+        <Heading 
+          as="h2" 
+          size="md" 
+          mb={4} 
+          textShadow="0 0 5px rgba(0, 255, 0, 0.3)"
+        >
           Phase 1: AI Security Challenge
         </Heading>
         <List spacing={3} fontSize="md">
@@ -60,6 +65,26 @@ const Index = () => {
         <Text fontSize="lg" mb={4}>
           Follow @techfren_ai on Twitter for official updates.
         </Text>
+        <Link 
+          to="/chat" 
+          as={RouterLink}
+          display="inline-block"
+          mt={4}
+          px={6}
+          py={3}
+          bg="green.500"
+          color="white"
+          fontWeight="bold"
+          borderRadius="md"
+          _hover={{
+            bg: "green.600",
+            transform: "scale(1.05)",
+          }}
+          transition="all 0.3s ease"
+          boxShadow="0 0 10px rgba(0, 255, 0, 0.3)"
+        >
+          ENTER AI CHALLENGE
+        </Link>
       </Container>
     </>
   );
