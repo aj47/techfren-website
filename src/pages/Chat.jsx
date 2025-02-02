@@ -22,7 +22,7 @@ const HELIUS_API_KEY = import.meta.env.VITE_HELIUS_API_KEY;
 const SOLANA_RPC_URL = IS_PROD
   ? `https://mainnet.helius-rpc.com/?api-key=${HELIUS_API_KEY}`
   : `https://api.devnet.solana.com?api-key=${HELIUS_API_KEY}`;
-const PAYMENT_AMOUNT = 0.1; // 0.1 SOL per message
+const PAYMENT_AMOUNT = 0.0001; // 0.0001 SOL per message
 const RECIPIENT_WALLET = new PublicKey(
   IS_PROD 
     ? '4YfJZAWP1JeACGuPsNxcdhBtTqL6mbrZp8gpDMjTvPiA' 
