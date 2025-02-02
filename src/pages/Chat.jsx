@@ -18,9 +18,10 @@ import { Connection, PublicKey, Transaction, SystemProgram, LAMPORTS_PER_SOL } f
 import DigitalRain from '../components/DigitalRain';
 
 const IS_PROD = import.meta.env.VITE_PRODUCTION_MODE === 'true';
-const SOLANA_RPC_URL = IS_PROD 
-  ? 'https://mainnet.helius-rpc.com' 
-  : 'https://api.devnet.solana.com';
+const HELIUS_API_KEY = import.meta.env.VITE_HELIUS_API_KEY;
+const SOLANA_RPC_URL = IS_PROD
+  ? `https://mainnet.helius-rpc.com/?api-key=${HELIUS_API_KEY}`
+  : `https://api.devnet.solana.com?api-key=${HELIUS_API_KEY}`;
 const PAYMENT_AMOUNT = 0.1; // 0.1 SOL per message
 const RECIPIENT_WALLET = new PublicKey(
   IS_PROD 
@@ -48,9 +49,30 @@ const Chat = () => {
   const fetchBalance = async () => {
     if (publicKey) {
       try {
-        const connection = new Connection('https://api.devnet.solana.com', 'confirmed');
-        const balance = await connection.getBalance(publicKey);
-        setBalance(balance / LAMPORTS_PER_SOL);
+        const response = await fetch(SOLANA_RPC_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            jsonrpc: '2.0',
+            id: 1,
+            method: 'getAccountInfo',
+            params: [
+              publicKey.toBase58(),
+              {
+                encoding: 'base64',
+              },
+            ],
+          }),
+        });
+
+        const { result } = await response.json();
+        if (result && result.value) {
+          setBalance(result.value.lamports / LAMPORTS_PER_SOL);
+        } else {
+          setBalance(0);
+        }
       } catch (error) {
         console.error('Error fetching balance:', error);
         setBalance(0);
