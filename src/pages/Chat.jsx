@@ -13,8 +13,16 @@ import { Connection, PublicKey, Transaction, SystemProgram, LAMPORTS_PER_SOL } f
 
 import DigitalRain from '../components/DigitalRain';
 
+const IS_PROD = process.env.REACT_APP_PRODUCTION_MODE === 'true';
+const SOLANA_RPC_URL = IS_PROD 
+  ? 'https://api.mainnet-beta.solana.com' 
+  : 'https://api.devnet.solana.com';
 const PAYMENT_AMOUNT = 0.1; // 0.1 SOL per message
-const RECIPIENT_WALLET = new PublicKey('DkudPGbWdeMWcdKSR9A2wkmxiTTRsg28QyWKDE1Wn2DW');
+const RECIPIENT_WALLET = new PublicKey(
+  IS_PROD 
+    ? '4YfJZAWP1JeACGuPsNxcdhBtTqL6mbrZp8gpDMjTvPiA' 
+    : 'DkudPGbWdeMWcdKSR9A2wkmxiTTRsg28QyWKDE1Wn2DW'
+);
 
 const Chat = () => {
   const [messages, setMessages] = useState([]);
@@ -62,10 +70,7 @@ const Chat = () => {
     }
 
     try {
-      const connection = new Connection(
-        'https://api.devnet.solana.com',
-        'confirmed'
-      );
+      const connection = new Connection(SOLANA_RPC_URL, 'confirmed');
       const transaction = new Transaction().add(
         SystemProgram.transfer({
           fromPubkey: publicKey,
@@ -243,6 +248,7 @@ const Chat = () => {
               whiteSpace="pre-wrap"
               mt={1}
             >
+              {'>'} MODE: {IS_PROD ? 'MAINNET PRODUCTION' : 'DEVNET SANDBOX'}
               {'>'} WALLET: {publicKey ? '✓ CONNECTED' : '✗ DISCONNECTED'}
               {publicKey && `\n${'>'} BALANCE: ${balance.toFixed(4)} SOL\n${'>'} MSG COST: ${PAYMENT_AMOUNT} SOL`}
             </Text>

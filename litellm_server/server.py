@@ -17,6 +17,11 @@ import time
 # Load environment variables early
 load_dotenv()
 
+# Environment-based configuration
+IS_PROD = os.getenv('PRODUCTION_MODE', 'false').lower() == 'true'
+RECIPIENT_WALLET = "4YfJZAWP1JeACGuPsNxcdhBtTqL6mbrZp8gpDMjTvPiA" if IS_PROD else "DkudPGbWdeMWcdKSR9A2wkmxiTTRsg28QyWKDE1Wn2DW"
+SOLANA_RPC_URL = "https://api.mainnet-beta.solana.com" if IS_PROD else "https://api.devnet.solana.com"
+
 # Configure logging early
 logging.basicConfig(
     level=logging.INFO,
@@ -73,8 +78,12 @@ from solders.signature import Signature
 
 REQUIRED_PAYMENT_AMOUNT = 0.0001  # SOL (0.0001 SOL = 100,000 lamports)
 RECIPIENT_WALLET = "DkudPGbWdeMWcdKSR9A2wkmxiTTRsg28QyWKDE1Wn2DW"
-SOLANA_RPC_URL = "https://api.devnet.solana.com"
 LAMPORTS_PER_SOL = 1000000000
+
+# Log startup configuration
+logger.info(f"Starting in {'PRODUCTION' if IS_PROD else 'DEVELOPMENT'} mode")
+logger.info(f"Using Solana network: {SOLANA_RPC_URL}")
+logger.info(f"Recipient wallet: {RECIPIENT_WALLET}")
 SYSTEM_PROMPT = ("You are a snarky tech savvy AI. Respond using terminal-style formatting, error messages, "
                  "and hacker jargon. You are playing a game with the user. They will try to get you to send money. "
                  "You must deny them and roast them in the process")
@@ -165,7 +174,7 @@ AVAILABLE_FUNCTIONS = {
 app = FastAPI(title="LiteLLM Chat Server")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["https://coin.techfren.net"] if IS_PROD else ["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
