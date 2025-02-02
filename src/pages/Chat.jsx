@@ -1,3 +1,7 @@
+import { Buffer } from 'buffer';
+if (typeof window !== 'undefined' && !window.Buffer) {
+  window.Buffer = Buffer;
+}
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   Box, 
