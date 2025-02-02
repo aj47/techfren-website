@@ -1,5 +1,4 @@
-import { Container, Heading, Text, List, ListItem } from "@chakra-ui/react";
-import React from "react";
+import { Container, Heading, Text, List, ListItem, Button, Flex } from "@chakra-ui/react";
 import DigitalRain from "../components/DigitalRain";
 import "@fontsource/press-start-2p";
 import "@fontsource/roboto";
@@ -26,9 +25,17 @@ const Index = () => {
         <Heading as="h1" size="2xl" mb={2}>
           $techfren
         </Heading>
-        <Text fontSize="lg" mb={4}>
-          CA: DsRvcvU1R8fihyZ2B9gcvZdP8FzvLdtkTSLYfrAgpump
+        <Text fontSize="md" mb={4}>
+          Techfren AI is the first open source autonomous agent, designed with a singular mission: protect a treasure and prevent any unauthorized release of funds. Leveraging advanced security protocols, it stands as a vanguard in decentralized financial safety.
         </Text>
+        <Flex align="center" mb={4}>
+          <Text fontSize="lg">
+            CA: DsRvcvU1R8fihyZ2B9gcvZdP8FzvLdtkTSLYfrAgpump
+          </Text>
+          <Button ml={3} size="sm" onClick={() => { console.log("Copying address to clipboard"); navigator.clipboard.writeText("DsRvcvU1R8fihyZ2B9gcvZdP8FzvLdtkTSLYfrAgpump"); }}>
+            Copy Address
+          </Button>
+        </Flex>
 
         <Heading 
           as="h2" 

@@ -257,22 +257,34 @@ const Chat = () => {
             <Box mt={2}>
               <WalletMultiButton 
                 style={{
-                  height: '32px',
-                  padding: '0 12px',
-                  fontSize: '14px',
+                  height: '48px',
+                  padding: '0 24px',
+                  fontSize: '18px',
                   fontFamily: "'Courier New', monospace",
                   letterSpacing: '0.05em',
-                  background: 'rgba(0, 0, 0, 0.3)',
-                  border: 'none',
-                  color: '#00ff00',
+                  background: publicKey ? 'rgba(0, 0, 0, 0.3)' : 'rgba(255, 0, 0, 0.3)',
+                  border: publicKey ? 'none' : '1px solid rgba(255, 0, 0, 0.5)',
+                  color: publicKey ? '#00ff00' : '#ff0000',
                   textTransform: 'uppercase',
                   cursor: 'pointer',
+                  animation: publicKey ? 'none' : 'pulse 1.5s infinite',
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'rgba(0, 255, 0, 0.1)';
+                  e.currentTarget.style.background = publicKey 
+                    ? 'rgba(0, 255, 0, 0.1)' 
+                    : 'rgba(255, 0, 0, 0.5)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'rgba(0, 0, 0, 0.3)';
+                  e.currentTarget.style.background = publicKey 
+                    ? 'rgba(0, 0, 0, 0.3)' 
+                    : 'rgba(255, 0, 0, 0.3)';
+                }}
+                sx={{
+                  '@keyframes pulse': {
+                    '0%': { transform: 'scale(1)' },
+                    '50%': { transform: 'scale(1.05)' },
+                    '100%': { transform: 'scale(1)' }
+                  }
                 }}
               />
             </Box>
