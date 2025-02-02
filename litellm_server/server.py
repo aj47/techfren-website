@@ -137,6 +137,10 @@ async def verify_payment(signature_str: str, expected_sender: Optional[str] = No
                         break
             if recipient != RECIPIENT_WALLET:
                 logger.error(f"Transaction recipient {recipient} does not match expected {RECIPIENT_WALLET}.")
+                logger.error("Please send payment to the correct wallet address.")
+                return False
+            if str(account_keys[ix.accounts[0]]) == str(account_keys[ix.accounts[1]]):
+                logger.error("Self-transfers are not allowed. Please send payment to the correct wallet address.")
                 return False
             mark_transaction_as_processed(signature_str)
             return True
