@@ -19,7 +19,7 @@ import DigitalRain from '../components/DigitalRain';
 
 const IS_PROD = import.meta.env.VITE_PRODUCTION_MODE === 'true';
 const SOLANA_RPC_URL = IS_PROD 
-  ? 'https://api.mainnet-beta.solana.com' 
+  ? 'https://mainnet.helius-rpc.com' 
   : 'https://api.devnet.solana.com';
 const PAYMENT_AMOUNT = 0.1; // 0.1 SOL per message
 const RECIPIENT_WALLET = new PublicKey(
