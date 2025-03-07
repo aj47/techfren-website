@@ -142,9 +142,21 @@ const Index = () => {
         </CollapsibleSection>
         <CollapsibleSection title="My Open Source Projects">
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
-            {projects.map((project, index) => (
-              <ProjectCard key={index} project={project} />
-            ))}
+            {projects
+              .filter(project => !project.name.includes("Contributor"))
+              .map((project, index) => (
+                <ProjectCard key={index} project={project} />
+              ))}
+          </SimpleGrid>
+        </CollapsibleSection>
+        
+        <CollapsibleSection title="Open Source Contributions">
+          <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
+            {projects
+              .filter(project => project.name.includes("Contributor"))
+              .map((project, index) => (
+                <ProjectCard key={index} project={project} />
+              ))}
           </SimpleGrid>
         </CollapsibleSection>
       </Container>

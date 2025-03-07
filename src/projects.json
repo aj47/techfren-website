@@ -1,10 +1,17 @@
 [
   {
-    "name": "Coding AI Tools Tested",
-    "description": "A spreadsheet with the results of my testing of AI tools",
-    "image": "/aitools.png",
-    "github": "",
-    "live": "https://docs.google.com/spreadsheets/d/19uE7EzGv-uqH7JyjG0FpC4mD21HPTeP6SWXpVhvNcxI/edit#gid=1353307486"
+    "name": "Awaken Ambience",
+    "description": "A Python application for having voice, video, and screen sharing conversations with Google's Gemini 2.0 model. Features real-time multimodal input with audio responses.",
+    "image": "/placeholder2.png",
+    "github": "https://github.com/aj47/awaken-ambience",
+    "live": ""
+  },
+  {
+    "name": "Chaos Coder",
+    "description": "A Next.js application that generates five variations of web applications simultaneously using AI, helping developers quickly explore different implementation possibilities.",
+    "image": "/placeholder3.png",
+    "github": "https://github.com/aj47/chaos-coder",
+    "live": "https://chaoscoder.net"
   },
   {
     "name": "Clickolas Cage",
@@ -33,5 +40,26 @@
     "image": "/berigame.png",
     "github": "https://github.com/aj47/berigame",
     "live": "https://alpha.berigame.com"
+  },
+  {
+    "name": "big-AGI (Contributor)",
+    "description": "An AI suite for professionals powered by state-of-the-art models. Features AI personas, multi-model chats, text-to-image, voice, code highlighting and execution, PDF import, and more with a polished UX.",
+    "image": "/big-agi.png",
+    "github": "https://github.com/enricoros/big-AGI",
+    "live": "https://big-agi.com"
+  },
+  {
+    "name": "Open Interpreter (Contributor)",
+    "description": "A natural language interface that lets LLMs run code locally. Provides a ChatGPT-like terminal interface that can create and edit files, control browsers, analyze data, and more through natural language commands.",
+    "image": "/placeholder2.png",
+    "github": "https://github.com/OpenInterpreter/open-interpreter",
+    "live": "https://openinterpreter.com"
+  },
+  {
+    "name": "OpenHands (Contributor)",
+    "description": "A platform for software development agents powered by AI. OpenHands agents can modify code, run commands, browse the web, call APIs, and perform tasks just like human developers.",
+    "image": "/placeholder3.png",
+    "github": "https://github.com/All-Hands-AI/OpenHands",
+    "live": "https://all-hands.dev"
   }
 ]

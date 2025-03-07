@@ -9,6 +9,7 @@ import {
   IconButton,
   Image,
   Flex,
+  Badge,
 } from "@chakra-ui/react";
 import { FaGithub, FaExternalLinkAlt, FaCode, FaCalendarAlt, FaDollarSign } from "react-icons/fa";
 
@@ -24,6 +25,8 @@ const ProjectCard = ({ project, isQuickLink = false }) => {
   };
 
   const linkUrl = project.live || project.github;
+  const isContributor = project.name.includes("(Contributor)");
+  const displayName = isContributor ? project.name.replace(" (Contributor)", "") : project.name;
 
   return (
     <Link href={linkUrl} isExternal _hover={{ textDecoration: 'none' }}>
@@ -49,9 +52,16 @@ const ProjectCard = ({ project, isQuickLink = false }) => {
             />
           )}
           <VStack align="start" spacing={2} flex={1}>
-            <Heading size={isQuickLink ? "sm" : "md"} fontSize={isQuickLink ? "sm" : "md"} wordBreak="break-word" color="#00ff00">
-              {project.name}
-            </Heading>
+            <Flex width="100%" justifyContent="space-between" alignItems="center">
+              <Heading size={isQuickLink ? "sm" : "md"} fontSize={isQuickLink ? "sm" : "md"} wordBreak="break-word" color="#00ff00">
+                {displayName}
+              </Heading>
+              {isContributor && (
+                <Badge colorScheme="green" ml={2}>
+                  Contributor
+                </Badge>
+              )}
+            </Flex>
             <Text fontSize={isQuickLink ? "xs" : "sm"} wordBreak="break-word" color="#00ff00">
               {project.description}
             </Text>
