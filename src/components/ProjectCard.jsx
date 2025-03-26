@@ -11,6 +11,7 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { FaGithub, FaExternalLinkAlt } from "react-icons/fa";
+import LinkPreview from "./LinkPreview";
 
 const ProjectCard = ({ project, isQuickLink = false }) => {
   const linkUrl = project.live || project.github;
@@ -21,6 +22,36 @@ const ProjectCard = ({ project, isQuickLink = false }) => {
     if (linkUrl) {
       window.open(linkUrl, '_blank');
     }
+  };
+
+  const renderImage = () => {
+    if (!isQuickLink) {
+      return (
+        <Image 
+          src={project.image} 
+          alt={`Screenshot of ${project.name}`} 
+          borderRadius="lg" 
+          objectFit="cover"
+          h="200px"
+          w="100%"
+        />
+      );
+    }
+
+    if (project.image && project.image !== "/consultation.png") {
+      return (
+        <Image 
+          src={project.image} 
+          alt={`Screenshot of ${project.name}`} 
+          borderRadius="lg" 
+          objectFit="cover"
+          h="200px"
+          w="100%"
+        />
+      );
+    }
+
+    return null;
   };
 
   return (
@@ -42,31 +73,27 @@ const ProjectCard = ({ project, isQuickLink = false }) => {
       whiteSpace="normal"
     >
       <VStack h="100%" spacing={4} align="stretch" justify="space-between">
-        {!isQuickLink && (
-          <Image 
-            src={project.image} 
-            alt={`Screenshot of ${project.name}`} 
-            borderRadius="lg" 
-            objectFit="cover"
-            h="200px"
-            w="100%"
-          />
-        )}
+        {renderImage()}
         <VStack align="start" spacing={2} flex={1}>
-          <Flex width="100%" justifyContent="space-between" alignItems="flex-start">
-            <Heading 
-              size={isQuickLink ? "sm" : "md"} 
-              fontSize={isQuickLink ? "sm" : "md"} 
-              color="#00ff00"
-              style={{ 
-                wordBreak: "break-word",
-                whiteSpace: "normal",
-                overflowWrap: "break-word",
-                width: isContributor ? "85%" : "100%"
-              }}
-            >
-              {displayName}
-            </Heading>
+          <Flex width="100%" justifyContent="space-between" alignItems="center">
+            <HStack spacing={2} flex={1}>
+              {isQuickLink && (!project.image || project.image === "/consultation.png") && (
+                <LinkPreview url={linkUrl} />
+              )}
+              <Heading 
+                size={isQuickLink ? "sm" : "md"} 
+                fontSize={isQuickLink ? "sm" : "md"} 
+                color="#00ff00"
+                style={{ 
+                  wordBreak: "break-word",
+                  whiteSpace: "normal",
+                  overflowWrap: "break-word",
+                  width: isContributor ? "85%" : "100%"
+                }}
+              >
+                {displayName}
+              </Heading>
+            </HStack>
             {isContributor && (
               <Badge colorScheme="green" ml={2} flexShrink={0}>
                 Contributor
