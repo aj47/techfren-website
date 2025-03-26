@@ -2,16 +2,23 @@
   {
     "name": "Awaken Ambience",
     "description": "A Python application for having voice, video, and screen sharing conversations with Google's Gemini 2.0 model. Features real-time multimodal input with audio responses.",
-    "image": "/placeholder2.png",
+    "image": "/awaken-ambience.png",
     "github": "https://github.com/aj47/awaken-ambience",
-    "live": ""
+    "live": "https://awakenambience.com/"
   },
   {
     "name": "Chaos Coder",
-    "description": "A Next.js application that generates five variations of web applications simultaneously using AI, helping developers quickly explore different implementation possibilities.",
-    "image": "/placeholder3.png",
+    "description": "A Next.js application that generates multiple variations of web applications simultaneously using AI. Each variation is unique in its implementation, styling, and features, helping developers explore different possibilities and approaches to building web applications.",
+    "image": "/chaos-coder.gif",
     "github": "https://github.com/aj47/chaos-coder",
     "live": "https://chaoscoder.net"
+  },
+  {
+    "name": "Landscape to Portrait Video",
+    "description": "A Python tool that automatically detects faces in landscape (16:9) videos and creates portrait (9:16) versions optimized for social media platforms. The tool intelligently positions faces at the bottom of the frame while maintaining visual quality.",
+    "image": "/landscape-portrait.png",
+    "github": "https://github.com/aj47/landscape-vid-to-portrait",
+    "live": ""
   },
   {
     "name": "Clickolas Cage",

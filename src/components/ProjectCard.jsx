@@ -12,6 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { FaGithub, FaExternalLinkAlt } from "react-icons/fa";
 import LinkPreview from "./LinkPreview";
+import GitHubStats from "./GitHubStats";
 
 const ProjectCard = ({ project, isQuickLink = false }) => {
   const linkUrl = project.live || project.github;
@@ -111,6 +112,9 @@ const ProjectCard = ({ project, isQuickLink = false }) => {
           >
             {project.description}
           </Text>
+          {!isQuickLink && project.github && (
+            <GitHubStats repoUrl={project.github} />
+          )}
         </VStack>
         {!isQuickLink && (
           <HStack justify="space-between" onClick={(e) => e.stopPropagation()}>
