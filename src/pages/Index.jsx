@@ -101,6 +101,24 @@ const Index = () => {
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
             <ProjectCard
               project={{
+                name: "Rosebud: Vibe Code Games",
+                description: "Create games with no coding knowledge on rosebud",
+                live: "https://lab.rosebud.ai/techfren1",
+                image: "/consultation.png",
+              }}
+              isQuickLink={true}
+            />
+            <ProjectCard
+              project={{
+                name: "Try my Flight Sim",
+                description: "vibe coded with rosebud",
+                live: "https://lab.rosebud.ai/techfren-flight-sim",
+                image: "/consultation.png",
+              }}
+              isQuickLink={true}
+            />
+            <ProjectCard
+              project={{
                 name: "Links from videos",
                 description: "List of links that I've referred to in videos",
                 live: "https://github.com/aj47/techfren-vids/blob/main/links.md",
