@@ -51,22 +51,29 @@
   {
     "name": "big-AGI (Contributor)",
     "description": "An AI suite for professionals powered by state-of-the-art models. Features AI personas, multi-model chats, text-to-image, voice, code highlighting and execution, PDF import, and more with a polished UX.",
-    "image": "/big-agi.png",
+    "image": "https://opengraph.githubassets.com/1/enricoros/big-AGI",
     "github": "https://github.com/enricoros/big-AGI",
     "live": "https://big-agi.com"
   },
   {
     "name": "Open Interpreter (Contributor)",
     "description": "A natural language interface that lets LLMs run code locally. Provides a ChatGPT-like terminal interface that can create and edit files, control browsers, analyze data, and more through natural language commands.",
-    "image": "/placeholder2.png",
+    "image": "https://opengraph.githubassets.com/1/OpenInterpreter/open-interpreter",
     "github": "https://github.com/OpenInterpreter/open-interpreter",
     "live": "https://openinterpreter.com"
   },
   {
     "name": "OpenHands (Contributor)",
     "description": "A platform for software development agents powered by AI. OpenHands agents can modify code, run commands, browse the web, call APIs, and perform tasks just like human developers.",
-    "image": "/placeholder3.png",
+    "image": "https://opengraph.githubassets.com/1/All-Hands-AI/OpenHands",
     "github": "https://github.com/All-Hands-AI/OpenHands",
     "live": "https://all-hands.dev"
+  },
+  {
+    "name": "Aider-AI (Contributor)",
+    "description": "AI pair programming in your terminal. Aider lets you pair program with LLMs to start a new project or build on your existing codebase, supporting 100+ programming languages and multiple LLM providers.",
+    "image": "https://opengraph.githubassets.com/1/Aider-AI/aider",
+    "github": "https://github.com/Aider-AI/aider",
+    "live": "https://aider.chat"
   }
 ]
