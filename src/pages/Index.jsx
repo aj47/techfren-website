@@ -101,6 +101,16 @@ const Index = () => {
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
             <ProjectCard
               project={{
+                name: "Codebuff",
+                description:
+                  "Simple and powerful AI coding agent",
+                live: "https://codebuff.com/referrals/ref-4249865f-06c9-4b66-90f0-753508bad6fe",
+                image: "/consultation.png",
+              }}
+              isQuickLink={true}
+            />
+            <ProjectCard
+              project={{
                 name: "Links from videos",
                 description: "List of links that I've referred to in videos",
                 live: "https://github.com/aj47/techfren-vids/blob/main/links.md",
@@ -149,7 +159,7 @@ const Index = () => {
               ))}
           </SimpleGrid>
         </CollapsibleSection>
-        
+
         <CollapsibleSection title="Open Source Contributions">
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
             {projects
