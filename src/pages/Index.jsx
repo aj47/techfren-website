@@ -104,7 +104,7 @@ const Index = () => {
                 name: "Codebuff",
                 description:
                   "Simple and powerful AI coding agent",
-                live: "https://codebuff.com/referrals/ref-4249865f-06c9-4b66-90f0-753508bad6fe",
+                live: "https://codebuff.com/techfren",
                 image: "/consultation.png",
               }}
               isQuickLink={true}
