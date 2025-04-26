@@ -1,5 +1,12 @@
 [
   {
+    "name": "techfren-leaderboard",
+    "description": "An interactive leaderboard showcasing unofficial Aider polyglot benchmarks for various LLM models, including smaller and lesser-known models that don't appear on the official leaderboard.",
+    "image": "/leaderboard.png",
+    "github": "https://github.com/aj47/techfren-leaderboard",
+    "live": ""
+  },
+  {
     "name": "Awaken Ambience",
     "description": "A Python application for having voice, video, and screen sharing conversations with Google's Gemini 2.0 model. Features real-time multimodal input with audio responses.",
     "image": "/awaken-ambience.png",
@@ -70,10 +77,17 @@
     "live": "https://all-hands.dev"
   },
   {
-    "name": "Aider-AI (Contributor)",
+    "name": "Aider (Contributor)",
     "description": "AI pair programming in your terminal. Aider lets you pair program with LLMs to start a new project or build on your existing codebase, supporting 100+ programming languages and multiple LLM providers.",
-    "image": "https://opengraph.githubassets.com/1/Aider-AI/aider",
+    "image": "https://opengraph.githubassets.com/1/aider-chat/aider",
     "github": "https://github.com/Aider-AI/aider",
     "live": "https://aider.chat"
+  },
+  {
+    "name": "Transcribe-Anything (Contributor)",
+    "description": "Multi-backend whisper app. Blazing fast. Mac-arm optimized. Easy install. Input a local file or url and this service will transcribe it using Whisper AI. Completely private and Free.",
+    "image": "https://opengraph.githubassets.com/1/zackees/transcribe-anything",
+    "github": "https://github.com/zackees/transcribe-anything",
+    "live": "https://github.com/zackees/transcribe-anything"
   }
 ]

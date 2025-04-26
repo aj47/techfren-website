@@ -11,6 +11,7 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { FaGithub, FaExternalLinkAlt } from "react-icons/fa";
+import { useState } from "react";
 import LinkPreview from "./LinkPreview";
 import GitHubStats from "./GitHubStats";
 
@@ -25,29 +26,59 @@ const ProjectCard = ({ project, isQuickLink = false }) => {
     }
   };
 
+  const [imageError, setImageError] = useState(false);
+
+  const handleImageError = () => {
+    setImageError(true);
+  };
+
   const renderImage = () => {
+    if (imageError) {
+      // Return a placeholder or styled box when image fails to load
+      return (
+        <Box
+          borderRadius="lg"
+          bg="rgba(0, 255, 0, 0.1)"
+          h="200px"
+          w="100%"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          color="#00ff00"
+          fontSize="lg"
+          fontWeight="bold"
+        >
+          {displayName}
+        </Box>
+      );
+    }
+
     if (!isQuickLink) {
       return (
-        <Image 
-          src={project.image} 
-          alt={`Screenshot of ${project.name}`} 
-          borderRadius="lg" 
+        <Image
+          src={project.image}
+          alt={`Screenshot of ${project.name}`}
+          borderRadius="lg"
           objectFit="cover"
           h="200px"
           w="100%"
+          onError={handleImageError}
+          fallbackSrc="/placeholder.png"
         />
       );
     }
 
     if (project.image && project.image !== "/consultation.png") {
       return (
-        <Image 
-          src={project.image} 
-          alt={`Screenshot of ${project.name}`} 
-          borderRadius="lg" 
+        <Image
+          src={project.image}
+          alt={`Screenshot of ${project.name}`}
+          borderRadius="lg"
           objectFit="cover"
           h="200px"
           w="100%"
+          onError={handleImageError}
+          fallbackSrc="/placeholder.png"
         />
       );
     }
@@ -81,11 +112,11 @@ const ProjectCard = ({ project, isQuickLink = false }) => {
               {isQuickLink && (!project.image || project.image === "/consultation.png") && (
                 <LinkPreview url={linkUrl} />
               )}
-              <Heading 
-                size={isQuickLink ? "sm" : "md"} 
-                fontSize={isQuickLink ? "sm" : "md"} 
+              <Heading
+                size={isQuickLink ? "sm" : "md"}
+                fontSize={isQuickLink ? "sm" : "md"}
                 color="#00ff00"
-                style={{ 
+                style={{
                   wordBreak: "break-word",
                   whiteSpace: "normal",
                   overflowWrap: "break-word",
@@ -101,8 +132,8 @@ const ProjectCard = ({ project, isQuickLink = false }) => {
               </Badge>
             )}
           </Flex>
-          <Text 
-            fontSize={isQuickLink ? "xs" : "sm"} 
+          <Text
+            fontSize={isQuickLink ? "xs" : "sm"}
             color="#00ff00"
             style={{
               wordBreak: "break-word",
