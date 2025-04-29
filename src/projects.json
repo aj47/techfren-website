@@ -4,7 +4,7 @@
     "description": "An interactive leaderboard showcasing unofficial Aider polyglot benchmarks for various LLM models, including smaller and lesser-known models that don't appear on the official leaderboard.",
     "image": "/leaderboard.png",
     "github": "https://github.com/aj47/techfren-leaderboard",
-    "live": ""
+    "live": "https://leaderboard.techfren.net/"
   },
   {
     "name": "Awaken Ambience",

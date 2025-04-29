@@ -9,6 +9,7 @@ import {
   Flex,
   Badge,
   Button,
+  Icon,
 } from "@chakra-ui/react";
 import { FaGithub, FaExternalLinkAlt } from "react-icons/fa";
 import { useState } from "react";
@@ -33,27 +34,28 @@ const ProjectCard = ({ project, isQuickLink = false }) => {
   };
 
   const renderImage = () => {
-    if (imageError) {
-      // Return a placeholder or styled box when image fails to load
-      return (
-        <Box
-          borderRadius="lg"
-          bg="rgba(0, 255, 0, 0.1)"
-          h="200px"
-          w="100%"
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          color="#00ff00"
-          fontSize="lg"
-          fontWeight="bold"
-        >
-          {displayName}
-        </Box>
-      );
-    }
-
+    // For regular projects (not quick links)
     if (!isQuickLink) {
+      if (imageError) {
+        // Return a placeholder or styled box when image fails to load
+        return (
+          <Box
+            borderRadius="lg"
+            bg="rgba(0, 255, 0, 0.1)"
+            h="200px"
+            w="100%"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            color="#00ff00"
+            fontSize="lg"
+            fontWeight="bold"
+          >
+            {displayName}
+          </Box>
+        );
+      }
+
       return (
         <Image
           src={project.image}
@@ -68,21 +70,8 @@ const ProjectCard = ({ project, isQuickLink = false }) => {
       );
     }
 
-    if (project.image && project.image !== "/consultation.png") {
-      return (
-        <Image
-          src={project.image}
-          alt={`Screenshot of ${project.name}`}
-          borderRadius="lg"
-          objectFit="cover"
-          h="200px"
-          w="100%"
-          onError={handleImageError}
-          fallbackSrc="/placeholder.png"
-        />
-      );
-    }
-
+    // For quick links, we don't render an image here
+    // The icon will be rendered inline with the title
     return null;
   };
 
@@ -90,8 +79,8 @@ const ProjectCard = ({ project, isQuickLink = false }) => {
     <Box
       as={Button}
       variant="unstyled"
-      h="100%"
-      p={4}
+      h={isQuickLink ? "auto" : "100%"}
+      p={isQuickLink ? 3 : 4}
       boxShadow="0 0 10px #00ff00"
       borderWidth="2px"
       borderColor="#00ff00"
@@ -104,23 +93,33 @@ const ProjectCard = ({ project, isQuickLink = false }) => {
       width="100%"
       whiteSpace="normal"
     >
-      <VStack h="100%" spacing={4} align="stretch" justify="space-between">
+      <VStack h="100%" spacing={isQuickLink ? 2 : 4} align="stretch" justify="space-between">
         {renderImage()}
-        <VStack align="start" spacing={2} flex={1}>
-          <Flex width="100%" justifyContent="space-between" alignItems="center">
-            <HStack spacing={2} flex={1}>
-              {isQuickLink && (!project.image || project.image === "/consultation.png") && (
-                <LinkPreview url={linkUrl} />
+        <VStack align={isQuickLink ? "center" : "start"} spacing={2} flex={1}>
+          <Flex
+            width="100%"
+            justifyContent={isQuickLink ? "center" : "space-between"}
+            alignItems="center"
+          >
+            <HStack spacing={2} flex={1} justifyContent={isQuickLink ? "center" : "flex-start"}>
+              {isQuickLink && project.icon && (
+                <Icon
+                  as={project.icon}
+                  boxSize={6}
+                  color="#00ff00"
+                  mr={1}
+                />
               )}
               <Heading
-                size={isQuickLink ? "sm" : "md"}
-                fontSize={isQuickLink ? "sm" : "md"}
+                size={isQuickLink ? "md" : "md"}
+                fontSize={isQuickLink ? "lg" : "md"}
                 color="#00ff00"
                 style={{
                   wordBreak: "break-word",
                   whiteSpace: "normal",
                   overflowWrap: "break-word",
-                  width: isContributor ? "85%" : "100%"
+                  width: isContributor ? "85%" : "100%",
+                  textAlign: isQuickLink ? "center" : "left"
                 }}
               >
                 {displayName}
@@ -133,12 +132,13 @@ const ProjectCard = ({ project, isQuickLink = false }) => {
             )}
           </Flex>
           <Text
-            fontSize={isQuickLink ? "xs" : "sm"}
+            fontSize={isQuickLink ? "sm" : "sm"}
             color="#00ff00"
             style={{
               wordBreak: "break-word",
               whiteSpace: "normal",
-              overflowWrap: "break-word"
+              overflowWrap: "break-word",
+              textAlign: isQuickLink ? "center" : "left"
             }}
           >
             {project.description}
