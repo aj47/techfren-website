@@ -125,6 +125,14 @@ const Index = () => {
               }}
               isQuickLink={true}
             />
+            <ProjectCard
+              project={{
+                name: "Unlock 4500+ Connections via Apify MCP server",
+                description: "Your full‑stack platform for web scraping",
+                live: "https://www.apify.com?fpr=appricot",
+              }}
+              isQuickLink={true}
+            />
 
           </SimpleGrid>
         </CollapsibleSection>
