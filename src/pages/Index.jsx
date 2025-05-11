@@ -102,7 +102,7 @@ const Index = () => {
     name: "Discord",
     description:
       "Join my Discord community. Writing a message in the #general chat and tagging me is the best chance of me replying to it compared to any other method.",
-    live: "https://discord.gg/techfren"
+    live: "https://discord.gg/cK9WeQ7jPq"
   }}
   isQuickLink={true}
 />
