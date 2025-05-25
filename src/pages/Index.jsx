@@ -8,6 +8,7 @@ import {
   ChakraProvider,
 } from "@chakra-ui/react";
 import React, { useState, useEffect } from "react";
+import { FaTiktok, FaYoutube, FaTwitch, FaInstagram, FaTwitter, FaDiscord } from "react-icons/fa";
 import projects from "../projects.json";
 import Socials from "./Socials";
 import CollapsibleSection from "../components/CollapsibleSection";
@@ -95,17 +96,66 @@ const Index = () => {
   </p>
 </Box>
         </Box>
+        <CollapsibleSection title="Social Links" defaultOpen={false}>
+          <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
+            <ProjectCard
+              project={{
+                name: "TikTok",
+                description: "Follow me on TikTok for tech content",
+                live: "https://tiktok.com/@techfren",
+                icon: FaTiktok
+              }}
+              isQuickLink={true}
+            />
+            <ProjectCard
+              project={{
+                name: "Instagram",
+                description: "Follow me on Instagram",
+                live: "https://instagram.com/techfren",
+                icon: FaInstagram
+              }}
+              isQuickLink={true}
+            />
+            <ProjectCard
+              project={{
+                name: "YouTube",
+                description: "Subscribe to my YouTube channel",
+                live: "https://youtube.com/@techfren",
+                icon: FaYoutube
+              }}
+              isQuickLink={true}
+            />
+            <ProjectCard
+              project={{
+                name: "Twitch",
+                description: "Watch me live on Twitch",
+                live: "https://twitch.tv/techfren",
+                icon: FaTwitch
+              }}
+              isQuickLink={true}
+            />
+            <ProjectCard
+              project={{
+                name: "Twitter",
+                description: "Follow me on Twitter",
+                live: "https://twitter.com/techfrenAJ",
+                icon: FaTwitter
+              }}
+              isQuickLink={true}
+            />
+            <ProjectCard
+              project={{
+                name: "Discord",
+                description: "Join my Discord community",
+                live: "https://discord.gg/cK9WeQ7jPq",
+                icon: FaDiscord
+              }}
+              isQuickLink={true}
+            />
+          </SimpleGrid>
+        </CollapsibleSection>
         <CollapsibleSection title="Quick Links" defaultOpen>
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
-<ProjectCard
-  project={{
-    name: "Discord",
-    description:
-      "Join my Discord community. Writing a message in the #general chat and tagging me is the best chance of me replying to it compared to any other method.",
-    live: "https://discord.gg/cK9WeQ7jPq"
-  }}
-  isQuickLink={true}
-/>
             <ProjectCard
               project={{
                 name: "Links from videos",
@@ -125,15 +175,6 @@ const Index = () => {
               }}
               isQuickLink={true}
             />
-            <ProjectCard
-              project={{
-                name: "Unlock 4500+ Connections via Apify MCP server",
-                description: "Your full‑stack platform for web scraping",
-                live: "https://www.apify.com?fpr=appricot",
-              }}
-              isQuickLink={true}
-            />
-
           </SimpleGrid>
         </CollapsibleSection>
         <CollapsibleSection title="My Open Source Projects">
