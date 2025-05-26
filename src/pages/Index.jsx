@@ -167,6 +167,15 @@ const Index = () => {
             />
             <ProjectCard
               project={{
+                name: "Bright Data MCP",
+                description: "'Unblockable' web access",
+                live: "https://github.com/brightdata-com/brightdata-mcp",
+                image: "/consultation.png",
+              }}
+              isQuickLink={true}
+            />
+            <ProjectCard
+              project={{
                 name: "Links from videos",
                 description: "List of links that I've referred to in videos",
                 live: "https://github.com/aj47/techfren-vids/blob/main/links.md",
