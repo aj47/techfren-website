@@ -89,5 +89,12 @@
     "image": "https://opengraph.githubassets.com/1/zackees/transcribe-anything",
     "github": "https://github.com/zackees/transcribe-anything",
     "live": "https://github.com/zackees/transcribe-anything"
+  },
+  {
+    "name": "Lightning Whisper MLX (Contributor)",
+    "description": "An incredibly fast implementation of Whisper optimized for Apple Silicon. Features batched decoding, distilled models, and quantized models - 10x faster than Whisper CPP and 4x faster than current MLX Whisper implementation.",
+    "image": "https://opengraph.githubassets.com/1/aj47/lightning-whisper-mlx",
+    "github": "https://github.com/aj47/lightning-whisper-mlx",
+    "live": "https://github.com/aj47/lightning-whisper-mlx"
   }
 ]
