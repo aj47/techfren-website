@@ -16,7 +16,6 @@ import {
   Switch,
 } from '@chakra-ui/react';
 import { FaSearch, FaSun, FaMoon } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
 import BlogCard from '../components/BlogCard';
 import DigitalRain from '../components/DigitalRain';
 import SEO from '../components/SEO';
@@ -115,27 +114,13 @@ const Blog = () => {
   return (
     <ChakraProvider theme={currentTheme}>
       <SEO
-        title="Blog | techfren"
+        title="Techfren's Blog | techfren"
         description="Insights on software engineering, AI technology, and the future of development. Read the latest thoughts from techfren on tech trends and innovations."
         url="/blog"
         tags={['blog', 'technology', 'software engineering', 'AI', 'programming']}
       />
       {!isMediumStyle && <DigitalRain />}
       <Container maxW="container.xl" py={10}>
-        {/* Theme Toggle */}
-        <HStack justify="flex-end" mb={6}>
-          <HStack spacing={3}>
-            <FaSun color={isMediumStyle ? "#292929" : "#00ff00"} />
-            <Switch
-              isChecked={isMediumStyle}
-              onChange={toggleTheme}
-              colorScheme={isMediumStyle ? "blue" : "green"}
-              size="lg"
-            />
-            <FaMoon color={isMediumStyle ? "#292929" : "#00ff00"} />
-          </HStack>
-        </HStack>
-
         {/* Header */}
         <VStack spacing={6} align="center" mb={10}>
           <Heading
@@ -146,7 +131,7 @@ const Blog = () => {
             textAlign="center"
             fontWeight={isMediumStyle ? "400" : "normal"}
           >
-            {isMediumStyle ? "Tech Blog" : "TECH BLOG"}
+            {isMediumStyle ? "Techfren's Blog" : "TECHFREN'S BLOG"}
           </Heading>
           <Text
             fontSize={isMediumStyle ? "xl" : "lg"}
@@ -159,26 +144,17 @@ const Blog = () => {
             Insights on AI, technology, and open source development
           </Text>
 
-          {/* Back to Home Link */}
-          <Button
-            as={Link}
-            to="/"
-            variant={isMediumStyle ? "solid" : "outline"}
-            colorScheme={isMediumStyle ? "blue" : "green"}
-            color={isMediumStyle ? "white" : "#00ff00"}
-            borderColor={isMediumStyle ? "transparent" : "#00ff00"}
-            bg={isMediumStyle ? "#007acc" : "rgba(0, 0, 0, 0.8)"}
-            _hover={isMediumStyle ? {
-              bg: "#005a99"
-            } : {
-              bg: "rgba(0, 255, 0, 0.1)",
-              boxShadow: "0 0 10px rgba(0, 255, 0, 0.5)"
-            }}
-            size="sm"
-            borderRadius={isMediumStyle ? "full" : "md"}
-          >
-            ← Back to Home
-          </Button>
+          {/* Theme Toggle */}
+          <HStack spacing={3}>
+            <FaSun color={isMediumStyle ? "#292929" : "#00ff00"} />
+            <Switch
+              isChecked={isMediumStyle}
+              onChange={toggleTheme}
+              colorScheme={isMediumStyle ? "blue" : "green"}
+              size="lg"
+            />
+            <FaMoon color={isMediumStyle ? "#292929" : "#00ff00"} />
+          </HStack>
         </VStack>
 
         {/* Search and Filter Controls */}

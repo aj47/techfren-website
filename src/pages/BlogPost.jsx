@@ -160,20 +160,6 @@ const BlogPost = () => {
       />
       {!isMediumStyle && <DigitalRain />}
       <Container maxW="container.lg" py={10}>
-        {/* Theme Toggle */}
-        <HStack justify="flex-end" mb={6}>
-          <HStack spacing={3}>
-            <FaSun color={isMediumStyle ? "#292929" : "#00ff00"} />
-            <Switch
-              isChecked={isMediumStyle}
-              onChange={toggleTheme}
-              colorScheme={isMediumStyle ? "blue" : "green"}
-              size="lg"
-            />
-            <FaMoon color={isMediumStyle ? "#292929" : "#00ff00"} />
-          </HStack>
-        </HStack>
-
         {/* Navigation */}
         <VStack spacing={6} mb={8}>
           <HStack spacing={4} w="100%" justify="space-between">
@@ -198,25 +184,17 @@ const BlogPost = () => {
               Back to Blog
             </Button>
 
-            <Button
-              as={Link}
-              to="/"
-              variant={isMediumStyle ? "solid" : "outline"}
-              colorScheme={isMediumStyle ? "blue" : "green"}
-              color={isMediumStyle ? "white" : "#00ff00"}
-              borderColor={isMediumStyle ? "transparent" : "#00ff00"}
-              bg={isMediumStyle ? "#007acc" : "rgba(0, 0, 0, 0.8)"}
-              _hover={isMediumStyle ? {
-                bg: "#005a99"
-              } : {
-                bg: "rgba(0, 255, 0, 0.1)",
-                boxShadow: "0 0 10px rgba(0, 255, 0, 0.5)"
-              }}
-              size="sm"
-              borderRadius={isMediumStyle ? "full" : "md"}
-            >
-              Home
-            </Button>
+            {/* Theme Toggle */}
+            <HStack spacing={3}>
+              <FaSun color={isMediumStyle ? "#292929" : "#00ff00"} />
+              <Switch
+                isChecked={isMediumStyle}
+                onChange={toggleTheme}
+                colorScheme={isMediumStyle ? "blue" : "green"}
+                size="lg"
+              />
+              <FaMoon color={isMediumStyle ? "#292929" : "#00ff00"} />
+            </HStack>
           </HStack>
         </VStack>
 
