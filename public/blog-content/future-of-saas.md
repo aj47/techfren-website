@@ -8,7 +8,7 @@ description: "A viral tweet, a tech celebrity's stark warning, and a mountain of
 
 A viral tweet, a tech celebrity's stark warning, and a mountain of venture capital all point to the biggest debate in tech right now: **Is software as we know it completely doomed?**
 
-Let's start with the poster child of the current AI boom: **Cursor**. It's arguably the most valuable AI coding software in the world, boasting a staggering **$9.9 billion valuation** after a recent $900 million Series C funding round. To top it off, they're reportedly pulling in **$500 million in Annual Recurring Revenue (ARR)**.
+Let's start with the poster child for AI coding software: **Cursor**. It's the most valuable AI coding software in the world, boasting a staggering **$9.9 billion valuation** after a recent $900 million Series C funding round. To top it off, they're reportedly pulling in **$500 million in Annual Recurring Revenue (ARR)**.
 
 By all traditional metrics, this is a titan in the making. Yet, a growing and influential chorus of voices is arguing that its future value, along with the entire SaaS industry, is headed straight to zero.
 
@@ -17,6 +17,8 @@ Let's break down the argument.
 ### The Doomsday Prophecy: The Last Human Medium
 
 The recent firestorm was ignited by a [tweet from Jacob](https://x.com/jsnnsa/status/1934427228856611004) that amassed over a million views. In it, and in his accompanying essay, ["The Last Human Medium,"](https://www.workbyjacob.com/thoughts/the-last-human-medium) he lays out a radical vision for the future.
+
+![Jacob's viral tweet about "The Last Human Medium"](/blog-content/future-of-saas/jacob-tweet.png)
 
 He argues that:
 
@@ -30,6 +32,8 @@ It’s a compelling vision. It's also worth noting that this serves as a setup f
 
 This sentiment isn't isolated. It's echoed by one of the most respected and iconoclastic minds in tech, George "GeoHotz" Hotz. In a [talk with TBPN](https://x.com/tbpn/status/1935072881425400016?s=46), he broke down the AI value stack into five tiers:
 
+![GeoHotz's AI value stack from the TBPN talk](/blog-content/future-of-saas/geohotz.png)
+
 1.  **Energy Providers:** The fundamental power source.
 2.  **Fab Manufacturers:** The creators of the physical chips (e.g., TSMC).
 3.  **Firmware:** The low-level code that makes the hardware run (e.g., NVIDIA's CUDA).
@@ -40,9 +44,13 @@ His conclusion? Tier 5 is, in the grand scheme of things, **"worthless."** The r
 
 ### The Rebuttal: The Last Mile Problem
 
-The argument that AI writing code makes SaaS worthless misunderstands where the value of software lies. It's not in the raw code, but in the **productisation**: the user experience, the integrations, ahe reliability, and the solution to a specific, messy business problem. This is the "last mile," and it's where companies are built.
+The argument that AI writing code makes SaaS worthless misunderstands where the value of software lies. It's not in the raw code, but in the **productisation**: the user experience, the integrations, the reliability, and the solution to a specific, messy business problem. This is the "last mile," and it's where companies are built.
 
-This is precisely why GeoHotz's "worthless" Tier 5 is where so much vital innovation is happening. For example, innovators like [Exo Labs](https://x.com/exolabs/status/1935189970593137018) are focusing on building a better user experience on top of powerful local models, proving that the application layer is far from dead; it's essential for making powerful technology usable. An AI might be able to generate the code for a CRM, but it doesn't automatically create Salesforce.
+This is precisely why GeoHotz's "worthless" Tier 5 is where so much vital innovation is happening. For example, innovators like [Exo Labs](https://x.com/exolabs/status/1935189970593137018) are focusing on building a better user experience on top of powerful local models, proving that the application layer is far from dead; it's essential for making powerful technology usable.
+
+![Screenshot from Exo Labs showing their focus on user experience](/blog-content/future-of-saas/exo.png)
+
+An AI might be able to generate the code for a CRM, but it doesn't automatically create Salesforce.
 
 ### My Take: The Great Job Race and the World After Work
 
