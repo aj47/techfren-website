@@ -8,7 +8,7 @@ import {
   ChakraProvider,
 } from "@chakra-ui/react";
 import React, { useState, useEffect } from "react";
-import { FaTiktok, FaYoutube, FaTwitch, FaInstagram, FaTwitter, FaDiscord } from "react-icons/fa";
+import { FaTiktok, FaYoutube, FaTwitch, FaInstagram, FaTwitter, FaDiscord, FaBlog } from "react-icons/fa";
 import projects from "../projects.json";
 import Socials from "./Socials";
 import CollapsibleSection from "../components/CollapsibleSection";
@@ -156,6 +156,16 @@ const Index = () => {
         </CollapsibleSection>
         <CollapsibleSection title="Quick Links" defaultOpen>
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
+            <ProjectCard
+              project={{
+                name: "Tech Blog",
+                description: "Read my latest insights on AI, technology, and development",
+                live: "/blog",
+                icon: FaBlog,
+                isInternal: true
+              }}
+              isQuickLink={true}
+            />
             <ProjectCard
               project={{
                 name: "Links from videos",

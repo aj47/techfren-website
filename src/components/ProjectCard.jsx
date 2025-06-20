@@ -13,17 +13,23 @@ import {
 } from "@chakra-ui/react";
 import { FaGithub, FaExternalLinkAlt } from "react-icons/fa";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import LinkPreview from "./LinkPreview";
 import GitHubStats from "./GitHubStats";
 
 const ProjectCard = ({ project, isQuickLink = false }) => {
+  const navigate = useNavigate();
   const linkUrl = project.live || project.github;
   const isContributor = project.name.includes("(Contributor)");
   const displayName = isContributor ? project.name.replace(" (Contributor)", "") : project.name;
 
   const handleCardClick = () => {
     if (linkUrl) {
-      window.open(linkUrl, '_blank');
+      if (project.isInternal) {
+        navigate(linkUrl);
+      } else {
+        window.open(linkUrl, '_blank');
+      }
     }
   };
 
