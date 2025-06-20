@@ -1,13 +1,92 @@
-import matter from 'gray-matter';
+// Simple frontmatter parser for browser environment
+const parseFrontmatter = (content) => {
+  const frontmatterRegex = /^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$/;
+  const match = content.match(frontmatterRegex);
 
-// Load blog posts index
+  if (!match) {
+    return { data: {}, content };
+  }
+
+  const [, frontmatterStr, bodyContent] = match;
+  const data = {};
+
+  // Parse YAML-like frontmatter
+  const lines = frontmatterStr.split('\n');
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith('#')) continue;
+
+    const colonIndex = trimmed.indexOf(':');
+    if (colonIndex === -1) continue;
+
+    const key = trimmed.substring(0, colonIndex).trim();
+    let value = trimmed.substring(colonIndex + 1).trim();
+
+    // Remove quotes if present
+    if ((value.startsWith('"') && value.endsWith('"')) ||
+        (value.startsWith("'") && value.endsWith("'"))) {
+      value = value.slice(1, -1);
+    }
+
+    // Handle arrays (simple format: ["item1", "item2"])
+    if (value.startsWith('[') && value.endsWith(']')) {
+      try {
+        value = JSON.parse(value);
+      } catch (e) {
+        // If JSON parsing fails, keep as string
+      }
+    }
+
+    data[key] = value;
+  }
+
+  return { data, content: bodyContent };
+};
+
+// List of blog post slugs - add new blog post filenames here (without .md extension)
+const BLOG_POST_SLUGS = [
+  'future-of-saas'
+];
+
+// Load blog posts index by fetching each markdown file
 export const loadBlogIndex = async () => {
   try {
-    const response = await fetch('/blog-content/index.json');
-    if (!response.ok) {
-      throw new Error('Failed to load blog index');
+    const posts = [];
+
+    // Fetch each blog post and extract metadata
+    for (const slug of BLOG_POST_SLUGS) {
+      try {
+        const response = await fetch(`/blog-content/${slug}.md`);
+        if (!response.ok) {
+          console.warn(`Failed to load blog post: ${slug}`);
+          continue;
+        }
+
+        const markdown = await response.text();
+        const { data: frontmatter } = parseFrontmatter(markdown);
+
+        // Validate required fields
+        if (!frontmatter.title || !frontmatter.date || !frontmatter.description) {
+          console.warn(`Skipping ${slug}: Missing required frontmatter (title, date, or description)`);
+          continue;
+        }
+
+        // Create blog post entry
+        const post = {
+          slug,
+          title: frontmatter.title,
+          date: frontmatter.date,
+          description: frontmatter.description,
+          // Include other frontmatter fields if they exist
+          ...frontmatter
+        };
+
+        posts.push(post);
+      } catch (error) {
+        console.error(`Error loading blog post ${slug}:`, error);
+      }
     }
-    const posts = await response.json();
+
     // Sort posts by date (newest first)
     return posts.sort((a, b) => new Date(b.date) - new Date(a.date));
   } catch (error) {
@@ -24,7 +103,7 @@ export const loadBlogPost = async (slug) => {
       throw new Error(`Failed to load blog post: ${slug}`);
     }
     const markdown = await response.text();
-    const { data: frontmatter, content } = matter(markdown);
+    const { data: frontmatter, content } = parseFrontmatter(markdown);
 
     return {
       slug,
@@ -67,34 +146,14 @@ export const generateExcerpt = (content, maxLength = 150) => {
   return plainText.substring(0, maxLength).trim() + '...';
 };
 
-// Filter posts by tag
-export const filterPostsByTag = (posts, tag) => {
-  if (!tag) return posts;
-  return posts.filter(post => 
-    post.tags && post.tags.includes(tag)
-  );
-};
-
 // Search posts by title or description
 export const searchPosts = (posts, query) => {
   if (!query) return posts;
   const lowercaseQuery = query.toLowerCase();
-  return posts.filter(post => 
+  return posts.filter(post =>
     post.title.toLowerCase().includes(lowercaseQuery) ||
-    post.description.toLowerCase().includes(lowercaseQuery) ||
-    (post.tags && post.tags.some(tag => tag.toLowerCase().includes(lowercaseQuery)))
+    post.description.toLowerCase().includes(lowercaseQuery)
   );
-};
-
-// Get all unique tags from posts
-export const getAllTags = (posts) => {
-  const tagSet = new Set();
-  posts.forEach(post => {
-    if (post.tags) {
-      post.tags.forEach(tag => tagSet.add(tag));
-    }
-  });
-  return Array.from(tagSet).sort();
 };
 
 // Get reading time estimate

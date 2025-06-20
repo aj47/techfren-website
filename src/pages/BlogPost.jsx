@@ -16,20 +16,21 @@ import {
   Divider,
   SimpleGrid,
   ChakraProvider,
+  Switch,
 } from '@chakra-ui/react';
-import { FaCalendar, FaClock, FaTag, FaArrowLeft, FaArrowRight } from 'react-icons/fa';
+import { FaCalendar, FaClock, FaArrowLeft, FaArrowRight, FaSun, FaMoon } from 'react-icons/fa';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import MarkdownRenderer from '../components/MarkdownRenderer';
 import BlogCard from '../components/BlogCard';
 import DigitalRain from '../components/DigitalRain';
-import { 
-  loadBlogPost, 
-  loadBlogIndex, 
-  formatDate, 
-  getReadingTime, 
-  getRelatedPosts 
+import {
+  loadBlogPost,
+  loadBlogIndex,
+  formatDate,
+  getReadingTime,
+  getRelatedPosts
 } from '../utils/blogUtils';
-import theme from '../theme';
+import { cyberpunkTheme, mediumTheme } from '../themes';
 
 const BlogPost = () => {
   const { slug } = useParams();
@@ -38,6 +39,7 @@ const BlogPost = () => {
   const [relatedPosts, setRelatedPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isMediumStyle, setIsMediumStyle] = useState(true);
 
   useEffect(() => {
     const loadPost = async () => {
@@ -79,19 +81,25 @@ const BlogPost = () => {
     window.scrollTo(0, 0);
   }, [slug]);
 
+  const toggleTheme = () => {
+    setIsMediumStyle(!isMediumStyle);
+  };
+
+  const currentTheme = isMediumStyle ? mediumTheme : cyberpunkTheme;
+
   if (loading) {
     return (
-      <ChakraProvider theme={theme}>
-        <DigitalRain />
+      <ChakraProvider theme={currentTheme}>
+        {!isMediumStyle && <DigitalRain />}
         <Container maxW="container.xl" py={10}>
           <VStack spacing={8} align="center" minH="50vh" justify="center">
             <Spinner
               size="xl"
-              color="#00ff00"
+              color={isMediumStyle ? "#007acc" : "#00ff00"}
               thickness="4px"
               speed="0.65s"
             />
-            <Text color="#00ff00" textShadow="0 0 5px #00ff00">
+            <Text color={isMediumStyle ? "#292929" : "#00ff00"} textShadow={isMediumStyle ? "none" : "0 0 5px #00ff00"}>
               Loading blog post...
             </Text>
           </VStack>
@@ -102,26 +110,29 @@ const BlogPost = () => {
 
   if (error || !post) {
     return (
-      <ChakraProvider theme={theme}>
-        <DigitalRain />
+      <ChakraProvider theme={currentTheme}>
+        {!isMediumStyle && <DigitalRain />}
         <Container maxW="container.xl" py={10}>
           <VStack spacing={6}>
-            <Alert status="error" bg="rgba(255, 0, 0, 0.1)" borderColor="red.500">
+            <Alert status="error" bg={isMediumStyle ? "rgba(255, 0, 0, 0.05)" : "rgba(255, 0, 0, 0.1)"} borderColor="red.500">
               <AlertIcon color="red.500" />
               <Text color="red.500">{error || 'Blog post not found'}</Text>
             </Alert>
             <Button
               as={Link}
               to="/blog"
-              variant="outline"
-              colorScheme="green"
-              color="#00ff00"
-              borderColor="#00ff00"
-              bg="rgba(0, 0, 0, 0.8)"
-              _hover={{
+              variant={isMediumStyle ? "solid" : "outline"}
+              colorScheme={isMediumStyle ? "blue" : "green"}
+              color={isMediumStyle ? "white" : "#00ff00"}
+              borderColor={isMediumStyle ? "transparent" : "#00ff00"}
+              bg={isMediumStyle ? "#007acc" : "rgba(0, 0, 0, 0.8)"}
+              _hover={isMediumStyle ? {
+                bg: "#005a99"
+              } : {
                 bg: "rgba(0, 255, 0, 0.1)"
               }}
               leftIcon={<FaArrowLeft />}
+              borderRadius={isMediumStyle ? "full" : "md"}
             >
               Back to Blog
             </Button>
@@ -134,43 +145,63 @@ const BlogPost = () => {
   const readingTime = getReadingTime(post.content);
 
   return (
-    <ChakraProvider theme={theme}>
-      <DigitalRain />
+    <ChakraProvider theme={currentTheme}>
+      {!isMediumStyle && <DigitalRain />}
       <Container maxW="container.lg" py={10}>
+        {/* Theme Toggle */}
+        <HStack justify="flex-end" mb={6}>
+          <HStack spacing={3}>
+            <FaSun color={isMediumStyle ? "#292929" : "#00ff00"} />
+            <Switch
+              isChecked={isMediumStyle}
+              onChange={toggleTheme}
+              colorScheme={isMediumStyle ? "blue" : "green"}
+              size="lg"
+            />
+            <FaMoon color={isMediumStyle ? "#292929" : "#00ff00"} />
+          </HStack>
+        </HStack>
+
         {/* Navigation */}
         <VStack spacing={6} mb={8}>
           <HStack spacing={4} w="100%" justify="space-between">
             <Button
               as={Link}
               to="/blog"
-              variant="outline"
-              colorScheme="green"
-              color="#00ff00"
-              borderColor="#00ff00"
-              bg="rgba(0, 0, 0, 0.8)"
-              _hover={{
+              variant={isMediumStyle ? "solid" : "outline"}
+              colorScheme={isMediumStyle ? "blue" : "green"}
+              color={isMediumStyle ? "white" : "#00ff00"}
+              borderColor={isMediumStyle ? "transparent" : "#00ff00"}
+              bg={isMediumStyle ? "#007acc" : "rgba(0, 0, 0, 0.8)"}
+              _hover={isMediumStyle ? {
+                bg: "#005a99"
+              } : {
                 bg: "rgba(0, 255, 0, 0.1)",
                 boxShadow: "0 0 10px rgba(0, 255, 0, 0.5)"
               }}
               leftIcon={<FaArrowLeft />}
               size="sm"
+              borderRadius={isMediumStyle ? "full" : "md"}
             >
               Back to Blog
             </Button>
-            
+
             <Button
               as={Link}
               to="/"
-              variant="outline"
-              colorScheme="green"
-              color="#00ff00"
-              borderColor="#00ff00"
-              bg="rgba(0, 0, 0, 0.8)"
-              _hover={{
+              variant={isMediumStyle ? "solid" : "outline"}
+              colorScheme={isMediumStyle ? "blue" : "green"}
+              color={isMediumStyle ? "white" : "#00ff00"}
+              borderColor={isMediumStyle ? "transparent" : "#00ff00"}
+              bg={isMediumStyle ? "#007acc" : "rgba(0, 0, 0, 0.8)"}
+              _hover={isMediumStyle ? {
+                bg: "#005a99"
+              } : {
                 bg: "rgba(0, 255, 0, 0.1)",
                 boxShadow: "0 0 10px rgba(0, 255, 0, 0.5)"
               }}
               size="sm"
+              borderRadius={isMediumStyle ? "full" : "md"}
             >
               Home
             </Button>
@@ -180,120 +211,80 @@ const BlogPost = () => {
         {/* Article Header */}
         <VStack spacing={6} mb={10} align="stretch">
           <Heading
-            size="xl"
-            color="#00ff00"
-            textShadow="0 0 15px #00ff00"
-            fontFamily="'Press Start 2P', cursive"
-            lineHeight="1.3"
+            size={isMediumStyle ? "2xl" : "lg"}
+            color={isMediumStyle ? "#292929" : "#00ff00"}
+            textShadow={isMediumStyle ? "none" : "0 0 15px #00ff00"}
+            fontFamily={isMediumStyle ? "Georgia, serif" : "'Press Start 2P', cursive"}
+            lineHeight={isMediumStyle ? "1.2" : "1.3"}
             textAlign="center"
+            fontWeight={isMediumStyle ? "600" : "normal"}
           >
             {post.title}
           </Heading>
-          
+
           <VStack spacing={4}>
             <HStack spacing={6} justify="center" flexWrap="wrap">
               <HStack spacing={2}>
-                <FaCalendar color="#00ff00" />
+                <FaCalendar color={isMediumStyle ? "#6b6b6b" : "#00ff00"} />
                 <Text
                   fontSize="sm"
-                  color="#00ff00"
-                  textShadow="0 0 3px #00ff00"
+                  color={isMediumStyle ? "#6b6b6b" : "#00ff00"}
+                  textShadow={isMediumStyle ? "none" : "0 0 3px #00ff00"}
                 >
                   {formatDate(post.date)}
                 </Text>
               </HStack>
-              
+
               <HStack spacing={2}>
-                <FaClock color="#00ff00" />
+                <FaClock color={isMediumStyle ? "#6b6b6b" : "#00ff00"} />
                 <Text
                   fontSize="sm"
-                  color="#00ff00"
-                  textShadow="0 0 3px #00ff00"
+                  color={isMediumStyle ? "#6b6b6b" : "#00ff00"}
+                  textShadow={isMediumStyle ? "none" : "0 0 3px #00ff00"}
                 >
                   {readingTime}
                 </Text>
               </HStack>
             </HStack>
-
-            {/* Tags */}
-            {post.tags && post.tags.length > 0 && (
-              <VStack spacing={2}>
-                <HStack spacing={2} align="center">
-                  <FaTag color="#00ff00" />
-                  <Text
-                    fontSize="sm"
-                    color="#00ff00"
-                    textShadow="0 0 3px #00ff00"
-                    fontWeight="bold"
-                  >
-                    Tags:
-                  </Text>
-                </HStack>
-                <Wrap spacing={2} justify="center">
-                  {post.tags.map((tag, index) => (
-                    <WrapItem key={index}>
-                      <Badge
-                        variant="outline"
-                        colorScheme="green"
-                        fontSize="sm"
-                        px={3}
-                        py={1}
-                        borderColor="#00ff00"
-                        color="#00ff00"
-                        bg="rgba(0, 255, 0, 0.1)"
-                        textShadow="0 0 3px #00ff00"
-                        borderRadius="full"
-                        cursor="pointer"
-                        _hover={{
-                          bg: "rgba(0, 255, 0, 0.2)",
-                          boxShadow: "0 0 8px rgba(0, 255, 0, 0.5)"
-                        }}
-                        onClick={() => navigate(`/blog?tag=${encodeURIComponent(tag)}`)}
-                      >
-                        {tag}
-                      </Badge>
-                    </WrapItem>
-                  ))}
-                </Wrap>
-              </VStack>
-            )}
           </VStack>
         </VStack>
 
         {/* Article Content */}
         <Box
-          bg="rgba(0, 0, 0, 0.6)"
+          bg={isMediumStyle ? "white" : "rgba(0, 0, 0, 0.6)"}
           p={8}
-          borderRadius="lg"
-          border="2px solid #00ff00"
-          boxShadow="0 0 20px rgba(0, 255, 0, 0.3)"
+          borderRadius={isMediumStyle ? "12px" : "lg"}
+          border={isMediumStyle ? "1px solid #e2e8f0" : "2px solid #00ff00"}
+          boxShadow={isMediumStyle ? "0 2px 8px rgba(0, 0, 0, 0.1)" : "0 0 20px rgba(0, 255, 0, 0.3)"}
           mb={10}
         >
-          <MarkdownRenderer content={post.content} />
+          <MarkdownRenderer content={post.content} isMediumStyle={isMediumStyle} />
         </Box>
 
         {/* Related Posts */}
         {relatedPosts.length > 0 && (
           <VStack spacing={6} mt={12}>
-            <Divider borderColor="#00ff00" borderWidth="1px" />
-            
+            <Divider borderColor={isMediumStyle ? "#e2e8f0" : "#00ff00"} borderWidth="1px" />
+
             <Heading
-              size="lg"
-              color="#00ff00"
-              textShadow="0 0 10px #00ff00"
-              fontFamily="'Press Start 2P', cursive"
+              size={isMediumStyle ? "xl" : "lg"}
+              color={isMediumStyle ? "#292929" : "#00ff00"}
+              textShadow={isMediumStyle ? "none" : "0 0 10px #00ff00"}
+              fontFamily={isMediumStyle ? "Georgia, serif" : "'Press Start 2P', cursive"}
               textAlign="center"
+              fontWeight={isMediumStyle ? "600" : "normal"}
             >
               Related Posts
             </Heading>
-            
+
             <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6} w="100%">
               {relatedPosts.map((relatedPost) => (
-                <BlogCard 
-                  key={relatedPost.slug} 
-                  post={relatedPost} 
+                <BlogCard
+                  key={relatedPost.slug}
+                  post={relatedPost}
                   isCompact={true}
                   showExcerpt={false}
+                  isMediumStyle={isMediumStyle}
                 />
               ))}
             </SimpleGrid>
@@ -302,21 +293,24 @@ const BlogPost = () => {
 
         {/* Navigation Footer */}
         <VStack spacing={4} mt={12}>
-          <Divider borderColor="#00ff00" borderWidth="1px" />
+          <Divider borderColor={isMediumStyle ? "#e2e8f0" : "#00ff00"} borderWidth="1px" />
           <HStack spacing={4}>
             <Button
               as={Link}
               to="/blog"
-              variant="outline"
-              colorScheme="green"
-              color="#00ff00"
-              borderColor="#00ff00"
-              bg="rgba(0, 0, 0, 0.8)"
-              _hover={{
+              variant={isMediumStyle ? "solid" : "outline"}
+              colorScheme={isMediumStyle ? "blue" : "green"}
+              color={isMediumStyle ? "white" : "#00ff00"}
+              borderColor={isMediumStyle ? "transparent" : "#00ff00"}
+              bg={isMediumStyle ? "#007acc" : "rgba(0, 0, 0, 0.8)"}
+              _hover={isMediumStyle ? {
+                bg: "#005a99"
+              } : {
                 bg: "rgba(0, 255, 0, 0.1)",
                 boxShadow: "0 0 10px rgba(0, 255, 0, 0.5)"
               }}
               leftIcon={<FaArrowLeft />}
+              borderRadius={isMediumStyle ? "full" : "md"}
             >
               Back to Blog
             </Button>

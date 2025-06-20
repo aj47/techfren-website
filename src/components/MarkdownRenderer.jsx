@@ -23,7 +23,7 @@ import {
   useTheme
 } from '@chakra-ui/react';
 
-const MarkdownRenderer = ({ content }) => {
+const MarkdownRenderer = ({ content, isMediumStyle = false }) => {
   const theme = useTheme();
 
   // Custom syntax highlighter theme with cyberpunk colors
@@ -31,15 +31,15 @@ const MarkdownRenderer = ({ content }) => {
     ...tomorrow,
     'pre[class*="language-"]': {
       ...tomorrow['pre[class*="language-"]'],
-      background: 'rgba(0, 0, 0, 0.9)',
-      border: '2px solid #00ff00',
+      background: isMediumStyle ? '#f7fafc' : 'rgba(0, 0, 0, 0.9)',
+      border: isMediumStyle ? '1px solid #e2e8f0' : '2px solid #00ff00',
       borderRadius: '8px',
-      boxShadow: '0 0 10px rgba(0, 255, 0, 0.3)',
+      boxShadow: isMediumStyle ? '0 2px 4px rgba(0, 0, 0, 0.1)' : '0 0 10px rgba(0, 255, 0, 0.3)',
     },
     'code[class*="language-"]': {
       ...tomorrow['code[class*="language-"]'],
-      color: '#00ff00',
-      textShadow: '0 0 5px #00ff00',
+      color: isMediumStyle ? '#2d3748' : '#00ff00',
+      textShadow: isMediumStyle ? 'none' : '0 0 5px #00ff00',
     }
   };
 
@@ -48,13 +48,14 @@ const MarkdownRenderer = ({ content }) => {
     h1: ({ children }) => (
       <Heading
         as="h1"
-        size="xl"
-        color="#00ff00"
-        textShadow="0 0 10px #00ff00"
-        fontFamily={theme.fonts.heading}
+        size={isMediumStyle ? "2xl" : "xl"}
+        color={isMediumStyle ? "#292929" : "#00ff00"}
+        textShadow={isMediumStyle ? "none" : "0 0 10px #00ff00"}
+        fontFamily={isMediumStyle ? "Georgia, serif" : theme.fonts.heading}
+        fontWeight={isMediumStyle ? "600" : "normal"}
         mb={6}
         mt={8}
-        borderBottom="2px solid #00ff00"
+        borderBottom={isMediumStyle ? "2px solid #e2e8f0" : "2px solid #00ff00"}
         pb={2}
       >
         {children}
@@ -63,10 +64,11 @@ const MarkdownRenderer = ({ content }) => {
     h2: ({ children }) => (
       <Heading
         as="h2"
-        size="lg"
-        color="#00ff00"
-        textShadow="0 0 8px #00ff00"
-        fontFamily={theme.fonts.heading}
+        size={isMediumStyle ? "xl" : "lg"}
+        color={isMediumStyle ? "#292929" : "#00ff00"}
+        textShadow={isMediumStyle ? "none" : "0 0 8px #00ff00"}
+        fontFamily={isMediumStyle ? "Georgia, serif" : theme.fonts.heading}
+        fontWeight={isMediumStyle ? "600" : "normal"}
         mb={4}
         mt={6}
       >
@@ -76,10 +78,11 @@ const MarkdownRenderer = ({ content }) => {
     h3: ({ children }) => (
       <Heading
         as="h3"
-        size="md"
-        color="#00ff00"
-        textShadow="0 0 6px #00ff00"
-        fontFamily={theme.fonts.heading}
+        size={isMediumStyle ? "lg" : "md"}
+        color={isMediumStyle ? "#292929" : "#00ff00"}
+        textShadow={isMediumStyle ? "none" : "0 0 6px #00ff00"}
+        fontFamily={isMediumStyle ? "Georgia, serif" : theme.fonts.heading}
+        fontWeight={isMediumStyle ? "600" : "normal"}
         mb={3}
         mt={5}
       >
@@ -89,10 +92,11 @@ const MarkdownRenderer = ({ content }) => {
     h4: ({ children }) => (
       <Heading
         as="h4"
-        size="sm"
-        color="#00ff00"
-        textShadow="0 0 4px #00ff00"
-        fontFamily={theme.fonts.heading}
+        size={isMediumStyle ? "md" : "sm"}
+        color={isMediumStyle ? "#292929" : "#00ff00"}
+        textShadow={isMediumStyle ? "none" : "0 0 4px #00ff00"}
+        fontFamily={isMediumStyle ? "Georgia, serif" : theme.fonts.heading}
+        fontWeight={isMediumStyle ? "600" : "normal"}
         mb={2}
         mt={4}
       >
@@ -105,9 +109,10 @@ const MarkdownRenderer = ({ content }) => {
       <Text
         mb={4}
         lineHeight="1.8"
-        color="#00ff00"
-        textShadow="0 0 3px #00ff00"
-        fontSize="md"
+        color={isMediumStyle ? "#4a5568" : "#00ff00"}
+        textShadow={isMediumStyle ? "none" : "0 0 3px #00ff00"}
+        fontSize={isMediumStyle ? "lg" : "md"}
+        fontFamily={isMediumStyle ? "Georgia, serif" : "inherit"}
       >
         {children}
       </Text>
@@ -117,10 +122,13 @@ const MarkdownRenderer = ({ content }) => {
     a: ({ href, children }) => (
       <Link
         href={href}
-        color="#00ff00"
+        color={isMediumStyle ? "#007acc" : "#00ff00"}
         textDecoration="underline"
-        textShadow="0 0 5px #00ff00"
-        _hover={{
+        textShadow={isMediumStyle ? "none" : "0 0 5px #00ff00"}
+        _hover={isMediumStyle ? {
+          color: "#005a99",
+          textDecoration: "underline"
+        } : {
           color: "#ffffff",
           textShadow: "0 0 8px #00ff00",
           textDecoration: "none"
@@ -136,8 +144,9 @@ const MarkdownRenderer = ({ content }) => {
       <UnorderedList
         mb={4}
         ml={6}
-        color="#00ff00"
-        textShadow="0 0 3px #00ff00"
+        color={isMediumStyle ? "#4a5568" : "#00ff00"}
+        textShadow={isMediumStyle ? "none" : "0 0 3px #00ff00"}
+        fontSize={isMediumStyle ? "lg" : "md"}
       >
         {children}
       </UnorderedList>
@@ -146,8 +155,9 @@ const MarkdownRenderer = ({ content }) => {
       <OrderedList
         mb={4}
         ml={6}
-        color="#00ff00"
-        textShadow="0 0 3px #00ff00"
+        color={isMediumStyle ? "#4a5568" : "#00ff00"}
+        textShadow={isMediumStyle ? "none" : "0 0 3px #00ff00"}
+        fontSize={isMediumStyle ? "lg" : "md"}
       >
         {children}
       </OrderedList>
@@ -163,14 +173,14 @@ const MarkdownRenderer = ({ content }) => {
       if (inline) {
         return (
           <Code
-            bg="rgba(0, 255, 0, 0.1)"
-            color="#00ff00"
-            border="1px solid #00ff00"
+            bg={isMediumStyle ? "#f7fafc" : "rgba(0, 255, 0, 0.1)"}
+            color={isMediumStyle ? "#2d3748" : "#00ff00"}
+            border={isMediumStyle ? "1px solid #e2e8f0" : "1px solid #00ff00"}
             borderRadius="4px"
             px={2}
             py={1}
             fontSize="sm"
-            textShadow="0 0 3px #00ff00"
+            textShadow={isMediumStyle ? "none" : "0 0 3px #00ff00"}
           >
             {children}
           </Code>
@@ -194,14 +204,14 @@ const MarkdownRenderer = ({ content }) => {
             customStyle={{
               margin: 0,
               borderRadius: '8px',
-              border: '2px solid #00ff00',
-              boxShadow: '0 0 15px rgba(0, 255, 0, 0.3)',
-              background: 'rgba(0, 0, 0, 0.9)',
+              border: isMediumStyle ? '1px solid #e2e8f0' : '2px solid #00ff00',
+              boxShadow: isMediumStyle ? '0 2px 4px rgba(0, 0, 0, 0.1)' : '0 0 15px rgba(0, 255, 0, 0.3)',
+              background: isMediumStyle ? '#f7fafc' : 'rgba(0, 0, 0, 0.9)',
             }}
             codeTagProps={{
               style: {
-                color: '#00ff00',
-                textShadow: '0 0 5px #00ff00',
+                color: isMediumStyle ? '#2d3748' : '#00ff00',
+                textShadow: isMediumStyle ? 'none' : '0 0 5px #00ff00',
                 fontFamily: 'monospace',
               }
             }}
@@ -215,9 +225,9 @@ const MarkdownRenderer = ({ content }) => {
     // Horizontal rule
     hr: () => (
       <Divider
-        borderColor="#00ff00"
+        borderColor={isMediumStyle ? "#e2e8f0" : "#00ff00"}
         borderWidth="1px"
-        boxShadow="0 0 5px #00ff00"
+        boxShadow={isMediumStyle ? "none" : "0 0 5px #00ff00"}
         my={8}
       />
     ),
@@ -225,18 +235,19 @@ const MarkdownRenderer = ({ content }) => {
     // Blockquotes
     blockquote: ({ children }) => (
       <Box
-        borderLeft="4px solid #00ff00"
-        bg="rgba(0, 255, 0, 0.05)"
+        borderLeft={isMediumStyle ? "4px solid #007acc" : "4px solid #00ff00"}
+        bg={isMediumStyle ? "#f7fafc" : "rgba(0, 255, 0, 0.05)"}
         pl={4}
         py={2}
         my={4}
         borderRadius="0 8px 8px 0"
-        boxShadow="0 0 10px rgba(0, 255, 0, 0.2)"
+        boxShadow={isMediumStyle ? "0 2px 4px rgba(0, 0, 0, 0.1)" : "0 0 10px rgba(0, 255, 0, 0.2)"}
       >
         <Text
-          color="#00ff00"
-          textShadow="0 0 3px #00ff00"
+          color={isMediumStyle ? "#4a5568" : "#00ff00"}
+          textShadow={isMediumStyle ? "none" : "0 0 3px #00ff00"}
           fontStyle="italic"
+          fontSize={isMediumStyle ? "lg" : "md"}
         >
           {children}
         </Text>
@@ -248,17 +259,17 @@ const MarkdownRenderer = ({ content }) => {
       <TableContainer mb={6}>
         <Table
           variant="simple"
-          border="2px solid #00ff00"
+          border={isMediumStyle ? "1px solid #e2e8f0" : "2px solid #00ff00"}
           borderRadius="8px"
-          boxShadow="0 0 10px rgba(0, 255, 0, 0.3)"
-          bg="rgba(0, 0, 0, 0.8)"
+          boxShadow={isMediumStyle ? "0 2px 4px rgba(0, 0, 0, 0.1)" : "0 0 10px rgba(0, 255, 0, 0.3)"}
+          bg={isMediumStyle ? "white" : "rgba(0, 0, 0, 0.8)"}
         >
           {children}
         </Table>
       </TableContainer>
     ),
     thead: ({ children }) => (
-      <Thead bg="rgba(0, 255, 0, 0.1)">
+      <Thead bg={isMediumStyle ? "#f7fafc" : "rgba(0, 255, 0, 0.1)"}>
         {children}
       </Thead>
     ),
@@ -268,25 +279,27 @@ const MarkdownRenderer = ({ content }) => {
       </Tbody>
     ),
     tr: ({ children }) => (
-      <Tr borderColor="#00ff00">
+      <Tr borderColor={isMediumStyle ? "#e2e8f0" : "#00ff00"}>
         {children}
       </Tr>
     ),
     th: ({ children }) => (
       <Th
-        color="#00ff00"
-        textShadow="0 0 5px #00ff00"
-        borderColor="#00ff00"
-        fontFamily={theme.fonts.heading}
+        color={isMediumStyle ? "#2d3748" : "#00ff00"}
+        textShadow={isMediumStyle ? "none" : "0 0 5px #00ff00"}
+        borderColor={isMediumStyle ? "#e2e8f0" : "#00ff00"}
+        fontFamily={isMediumStyle ? "Georgia, serif" : theme.fonts.heading}
+        fontWeight={isMediumStyle ? "600" : "normal"}
       >
         {children}
       </Th>
     ),
     td: ({ children }) => (
       <Td
-        color="#00ff00"
-        textShadow="0 0 3px #00ff00"
-        borderColor="#00ff00"
+        color={isMediumStyle ? "#4a5568" : "#00ff00"}
+        textShadow={isMediumStyle ? "none" : "0 0 3px #00ff00"}
+        borderColor={isMediumStyle ? "#e2e8f0" : "#00ff00"}
+        fontSize={isMediumStyle ? "lg" : "md"}
       >
         {children}
       </Td>
