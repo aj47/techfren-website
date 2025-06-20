@@ -1,0 +1,30 @@
+User-agent: *
+Allow: /
+
+# Allow all crawlers to access the site
+Allow: /blog/
+Allow: /blog/*
+
+# Disallow crawling of loading pages and temporary files
+Disallow: /loading.html
+Disallow: /*.html$
+Disallow: /thankyou.html
+Disallow: /hackathon.html
+Disallow: /big-agi.html
+Disallow: /open-interpreter.html
+Disallow: /openhands.html
+Disallow: /animation.html
+
+# Allow crawling of important assets
+Allow: /hero.jpg
+Allow: /favicon.ico
+Allow: /*.png$
+Allow: /*.jpg$
+Allow: /*.jpeg$
+Allow: /*.gif$
+
+# Sitemap location
+Sitemap: https://www.techfren.net/sitemap.xml
+
+# Crawl delay (optional - be respectful to servers)
+Crawl-delay: 1

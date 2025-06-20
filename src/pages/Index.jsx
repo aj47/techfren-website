@@ -14,6 +14,7 @@ import Socials from "./Socials";
 import CollapsibleSection from "../components/CollapsibleSection";
 import DigitalRain from "../components/DigitalRain";
 import ProjectCard from "../components/ProjectCard";
+import SEO from "../components/SEO";
 import theme from "../theme";
 import "@fontsource/press-start-2p";
 import "@fontsource/roboto";
@@ -76,6 +77,12 @@ const AnimatedTitle = () => {
 const Index = () => {
   return (
     <ChakraProvider theme={theme}>
+      <SEO
+        title="techfren - Software Engineer and Content Creator"
+        description="Software engineer and content creator with a passion for Software Technology and AI Agents. Explore open source projects, blog posts, and tech insights."
+        url="/"
+        tags={['techfren', 'software engineer', 'content creator', 'AI', 'technology', 'programming', 'open source']}
+      />
       <DigitalRain />
       <Container maxW="container.xl" py={10}>
         <Box textAlign="center" p={6} borderRadius="lg">

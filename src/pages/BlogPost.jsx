@@ -23,6 +23,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import MarkdownRenderer from '../components/MarkdownRenderer';
 import BlogCard from '../components/BlogCard';
 import DigitalRain from '../components/DigitalRain';
+import SEO from '../components/SEO';
 import {
   loadBlogPost,
   loadBlogIndex,
@@ -146,6 +147,17 @@ const BlogPost = () => {
 
   return (
     <ChakraProvider theme={currentTheme}>
+      <SEO
+        title={`${post.title} | techfren`}
+        description={post.description}
+        url={`/blog/${post.slug}`}
+        type="article"
+        publishedTime={new Date(post.date).toISOString()}
+        author="techfren"
+        tags={post.tags || ['technology', 'software', 'AI']}
+        readingTime={readingTime}
+        isArticle={true}
+      />
       {!isMediumStyle && <DigitalRain />}
       <Container maxW="container.lg" py={10}>
         {/* Theme Toggle */}

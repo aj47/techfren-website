@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>techfren Blog</title>
+    <description>Insights on software engineering, AI technology, and the future of development from techfren.</description>
+    <link>https://www.techfren.net/blog</link>
+    <atom:link href="https://www.techfren.net/rss.xml" rel="self" type="application/rss+xml"/>
+    <language>en-US</language>
+    <managingEditor>hello@techfren.net (techfren)</managingEditor>
+    <webMaster>hello@techfren.net (techfren)</webMaster>
+    <lastBuildDate>Thu, 20 Jun 2025 00:00:00 GMT</lastBuildDate>
+    <generator>techfren Blog</generator>
+    <image>
+      <url>https://www.techfren.net/hero.jpg</url>
+      <title>techfren Blog</title>
+      <link>https://www.techfren.net/blog</link>
+      <width>200</width>
+      <height>200</height>
+    </image>
+    <item>
+      <title><![CDATA[The $10 Billion Question: Is the Entire Software Industry Headed for $0?]]></title>
+      <description><![CDATA[A viral tweet, a tech celebrity's stark warning, and a mountain of venture capital all point to the biggest debate in tech right now: Is software as we know it completely doomed?]]></description>
+      <link>https://www.techfren.net/blog/future-of-saas</link>
+      <guid isPermaLink="true">https://www.techfren.net/blog/future-of-saas</guid>
+      <pubDate>Thu, 20 Jun 2025 00:00:00 GMT</pubDate>
+      <author>hello@techfren.net (techfren)</author>
+      <category>Technology</category>
+      <category>Software Engineering</category>
+      <category>AI</category>
+      <category>SaaS</category>
+      <category>Future of Work</category>
+    </item>
+  </channel>
+</rss>

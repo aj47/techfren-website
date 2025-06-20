@@ -334,7 +334,8 @@ const MarkdownRenderer = ({ content, isMediumStyle = false }) => {
         boxShadow={isMediumStyle ? "0 4px 12px rgba(0, 0, 0, 0.15)" : "0 0 20px rgba(0, 255, 0, 0.3)"}
         mb={6}
         mt={4}
-        maxW="100%"
+        maxW="500px"
+        width="100%"
         height="auto"
         mx="auto"
         display="block"

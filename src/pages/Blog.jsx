@@ -19,6 +19,7 @@ import { FaSearch, FaSun, FaMoon } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import BlogCard from '../components/BlogCard';
 import DigitalRain from '../components/DigitalRain';
+import SEO from '../components/SEO';
 import {
   loadBlogIndex,
   searchPosts
@@ -113,6 +114,12 @@ const Blog = () => {
 
   return (
     <ChakraProvider theme={currentTheme}>
+      <SEO
+        title="Blog | techfren"
+        description="Insights on software engineering, AI technology, and the future of development. Read the latest thoughts from techfren on tech trends and innovations."
+        url="/blog"
+        tags={['blog', 'technology', 'software engineering', 'AI', 'programming']}
+      />
       {!isMediumStyle && <DigitalRain />}
       <Container maxW="container.xl" py={10}>
         {/* Theme Toggle */}
