@@ -1,6 +1,6 @@
 ---
 title: "The $9.9 Billion Question: Is the Entire Software Industry Headed for $0?"
-date: "2025-01-15"
+date: "2025-06-20"
 description: "A viral tweet, a tech celebrity's stark warning, and a mountain of venture capital all point to the biggest debate in tech right now: Is software as we know it completely doomed?"
 ---
 

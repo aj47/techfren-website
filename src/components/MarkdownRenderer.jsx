@@ -26,6 +26,25 @@ import {
 const MarkdownRenderer = ({ content, isMediumStyle = false }) => {
   const theme = useTheme();
 
+  // Remove the first h1 heading to avoid duplicate titles
+  const processedContent = React.useMemo(() => {
+    // Split content into lines
+    const lines = content.split('\n');
+    let firstH1Found = false;
+
+    // Filter out the first h1 heading
+    const filteredLines = lines.filter(line => {
+      // Check if this line is an h1 heading
+      if (line.trim().startsWith('# ') && !firstH1Found) {
+        firstH1Found = true;
+        return false; // Skip this line
+      }
+      return true; // Keep all other lines
+    });
+
+    return filteredLines.join('\n');
+  }, [content]);
+
   // Custom syntax highlighter theme with cyberpunk colors
   const customSyntaxTheme = {
     ...tomorrow,
@@ -321,7 +340,7 @@ const MarkdownRenderer = ({ content, isMediumStyle = false }) => {
         remarkPlugins={[remarkGfm]}
         components={components}
       >
-        {content}
+        {processedContent}
       </ReactMarkdown>
     </Box>
   );
