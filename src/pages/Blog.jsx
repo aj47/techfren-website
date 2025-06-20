@@ -31,7 +31,7 @@ const Blog = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [isMediumStyle, setIsMediumStyle] = useState(true);
+  const [isMediumStyle, setIsMediumStyle] = useState(false);
 
   useEffect(() => {
     const loadPosts = async () => {

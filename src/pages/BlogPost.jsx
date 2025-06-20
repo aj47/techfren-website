@@ -39,7 +39,7 @@ const BlogPost = () => {
   const [relatedPosts, setRelatedPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isMediumStyle, setIsMediumStyle] = useState(true);
+  const [isMediumStyle, setIsMediumStyle] = useState(false);
 
   useEffect(() => {
     const loadPost = async () => {
