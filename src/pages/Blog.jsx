@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -24,6 +24,7 @@ import {
   searchPosts
 } from '../utils/blogUtils';
 import { cyberpunkTheme, mediumTheme } from '../themes';
+import { loadBlogFonts } from '../utils/fontLoader';
 
 const Blog = () => {
   const [posts, setPosts] = useState([]);
@@ -71,7 +72,13 @@ const Blog = () => {
   };
 
   const toggleTheme = () => {
-    setIsMediumStyle(!isMediumStyle);
+    const newMediumStyle = !isMediumStyle;
+    setIsMediumStyle(newMediumStyle);
+
+    // Load fonts when switching to light mode
+    if (newMediumStyle) {
+      loadBlogFonts().catch(console.warn);
+    }
   };
 
   const currentTheme = isMediumStyle ? mediumTheme : cyberpunkTheme;
@@ -127,7 +134,7 @@ const Blog = () => {
             size={isMediumStyle ? "xl" : "lg"}
             color={isMediumStyle ? "#292929" : "#00ff00"}
             textShadow={isMediumStyle ? "none" : "0 0 15px #00ff00"}
-            fontFamily={isMediumStyle ? "Georgia, serif" : "'Press Start 2P', cursive"}
+            fontFamily={isMediumStyle ? "inherit" : "'Press Start 2P', cursive"}
             textAlign="center"
             fontWeight={isMediumStyle ? "400" : "normal"}
           >

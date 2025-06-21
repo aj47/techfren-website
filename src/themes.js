@@ -40,8 +40,8 @@ export const cyberpunkTheme = extendTheme({
 // Medium-style theme
 export const mediumTheme = extendTheme({
   fonts: {
-    heading: "Georgia, serif",
-    body: "Georgia, serif",
+    heading: "'Special Gothic Expanded One', 'Raleway', sans-serif",
+    body: "'Geist', 'Raleway', sans-serif",
   },
   styles: {
     global: {

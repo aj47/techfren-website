@@ -32,6 +32,7 @@ import {
   getRelatedPosts
 } from '../utils/blogUtils';
 import { cyberpunkTheme, mediumTheme } from '../themes';
+import { loadBlogFonts } from '../utils/fontLoader';
 
 const BlogPost = () => {
   const { slug } = useParams();
@@ -83,7 +84,13 @@ const BlogPost = () => {
   }, [slug]);
 
   const toggleTheme = () => {
-    setIsMediumStyle(!isMediumStyle);
+    const newMediumStyle = !isMediumStyle;
+    setIsMediumStyle(newMediumStyle);
+
+    // Load fonts when switching to light mode
+    if (newMediumStyle) {
+      loadBlogFonts().catch(console.warn);
+    }
   };
 
   const currentTheme = isMediumStyle ? mediumTheme : cyberpunkTheme;
@@ -204,7 +211,7 @@ const BlogPost = () => {
             size={isMediumStyle ? "2xl" : "lg"}
             color={isMediumStyle ? "#292929" : "#00ff00"}
             textShadow={isMediumStyle ? "none" : "0 0 15px #00ff00"}
-            fontFamily={isMediumStyle ? "Georgia, serif" : "'Press Start 2P', cursive"}
+            fontFamily={isMediumStyle ? "inherit" : "'Press Start 2P', cursive"}
             lineHeight={isMediumStyle ? "1.2" : "1.3"}
             textAlign="center"
             fontWeight={isMediumStyle ? "600" : "normal"}
@@ -260,7 +267,7 @@ const BlogPost = () => {
               size={isMediumStyle ? "xl" : "lg"}
               color={isMediumStyle ? "#292929" : "#00ff00"}
               textShadow={isMediumStyle ? "none" : "0 0 10px #00ff00"}
-              fontFamily={isMediumStyle ? "Georgia, serif" : "'Press Start 2P', cursive"}
+              fontFamily={isMediumStyle ? "inherit" : "'Press Start 2P', cursive"}
               textAlign="center"
               fontWeight={isMediumStyle ? "600" : "normal"}
             >

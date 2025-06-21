@@ -71,7 +71,7 @@ const MarkdownRenderer = ({ content, isMediumStyle = false }) => {
         size={isMediumStyle ? "2xl" : "xl"}
         color={isMediumStyle ? "#292929" : "#00ff00"}
         textShadow={isMediumStyle ? "none" : "0 0 10px #00ff00"}
-        fontFamily={isMediumStyle ? "Georgia, serif" : theme.fonts.heading}
+        fontFamily={isMediumStyle ? theme.fonts.heading : theme.fonts.heading}
         fontWeight={isMediumStyle ? "600" : "normal"}
         mb={6}
         mt={8}
@@ -87,7 +87,7 @@ const MarkdownRenderer = ({ content, isMediumStyle = false }) => {
         size={isMediumStyle ? "xl" : "lg"}
         color={isMediumStyle ? "#292929" : "#00ff00"}
         textShadow={isMediumStyle ? "none" : "0 0 8px #00ff00"}
-        fontFamily={isMediumStyle ? "Georgia, serif" : theme.fonts.heading}
+        fontFamily={theme.fonts.heading}
         fontWeight={isMediumStyle ? "600" : "normal"}
         mb={4}
         mt={6}
@@ -101,7 +101,7 @@ const MarkdownRenderer = ({ content, isMediumStyle = false }) => {
         size={isMediumStyle ? "lg" : "md"}
         color={isMediumStyle ? "#292929" : "#00ff00"}
         textShadow={isMediumStyle ? "none" : "0 0 6px #00ff00"}
-        fontFamily={isMediumStyle ? "Georgia, serif" : theme.fonts.heading}
+        fontFamily={theme.fonts.heading}
         fontWeight={isMediumStyle ? "600" : "normal"}
         mb={3}
         mt={5}
@@ -115,7 +115,7 @@ const MarkdownRenderer = ({ content, isMediumStyle = false }) => {
         size={isMediumStyle ? "md" : "sm"}
         color={isMediumStyle ? "#292929" : "#00ff00"}
         textShadow={isMediumStyle ? "none" : "0 0 4px #00ff00"}
-        fontFamily={isMediumStyle ? "Georgia, serif" : theme.fonts.heading}
+        fontFamily={theme.fonts.heading}
         fontWeight={isMediumStyle ? "600" : "normal"}
         mb={2}
         mt={4}
@@ -132,7 +132,7 @@ const MarkdownRenderer = ({ content, isMediumStyle = false }) => {
         color={isMediumStyle ? "#4a5568" : "#00ff00"}
         textShadow={isMediumStyle ? "none" : "0 0 3px #00ff00"}
         fontSize={isMediumStyle ? "lg" : "md"}
-        fontFamily={isMediumStyle ? "Georgia, serif" : "inherit"}
+        fontFamily={theme.fonts.body}
       >
         {children}
       </Text>
@@ -308,7 +308,7 @@ const MarkdownRenderer = ({ content, isMediumStyle = false }) => {
         color={isMediumStyle ? "#2d3748" : "#00ff00"}
         textShadow={isMediumStyle ? "none" : "0 0 5px #00ff00"}
         borderColor={isMediumStyle ? "#e2e8f0" : "#00ff00"}
-        fontFamily={isMediumStyle ? "Georgia, serif" : theme.fonts.heading}
+        fontFamily={theme.fonts.heading}
         fontWeight={isMediumStyle ? "600" : "normal"}
       >
         {children}

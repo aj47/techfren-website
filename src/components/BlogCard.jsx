@@ -62,7 +62,7 @@ const BlogCard = ({ post, showExcerpt = true, isCompact = false, isMediumStyle =
             size={isMediumStyle ? (isCompact ? "md" : "lg") : (isCompact ? "sm" : "md")}
             color={isMediumStyle ? "#292929" : "#00ff00"}
             textShadow={isMediumStyle ? "none" : "0 0 8px #00ff00"}
-            fontFamily={isMediumStyle ? "Georgia, serif" : "'Press Start 2P', cursive"}
+            fontFamily={isMediumStyle ? "inherit" : "'Press Start 2P', cursive"}
             lineHeight={isMediumStyle ? "1.3" : "1.4"}
             noOfLines={isCompact ? 2 : 3}
             fontWeight={isMediumStyle ? "600" : "normal"}
