@@ -30,7 +30,7 @@ He argues that:
 
 The core of his prediction is that AI won't just *assist* developers; it will *become* the developer. He envisions a future where AI can write entire, perfect, and complex codebases from a single, high-level prompt. In a world where the AI does all the coding, what is the point of a human-centred tool like an Integrated Development Environment (IDE)? He argues that humans won't need tools, they'll want experiences.
 
-It’s a compelling vision, and it's also worth noting that this serves as a setup for his own product, Spawn. While his critique is sharp, it overlooks the resilience of a market leader. A company like Cursor is smart enough to pivot as the landscape evolves. The concept of an "IDE" will of course change, as will everything. But Cursor isn't just building an IDE for today. With their vast user base and accumulated data, they have a unique insight into how developers and AI collaborate. This experience should give them the inside track on defining what comes next—be it a conversational orchestrator or something we can't yet imagine. They are ideally positioned to pioneer the future interface for software creation.
+It’s a compelling vision, and it's also worth noting that this serves as a setup for his own product, Spawn. While his critique is sharp, it overlooks the resilience of a market leader. A company like Cursor is smart enough to pivot as the landscape evolves. The concept of an "IDE" will of course change, as will everything. But Cursor isn't just building an IDE for today. With their vast user base and accumulated data, they have a unique insight into how developers and AI collaborate. This experience should give them the inside track on defining what comes next, be it a conversational orchestrator or something we can't yet imagine. They are ideally positioned to pioneer the future interface for software creation.
 ### The View from the Top: GeoHotz's "Worthless" Tier
 
 This sentiment isn't isolated. It's echoed by one of the most respected and iconoclastic minds in tech, George "GeoHotz" Hotz. In a [talk with TBPN](https://x.com/tbpn/status/1935072881425400016?s=46), he broke down the AI value stack into five tiers:
@@ -43,13 +43,13 @@ This sentiment isn't isolated. It's echoed by one of the most respected and icon
 4.  **Model Providers:** The creators of the foundational models (e.g., OpenAI, Anthropic).
 5.  **Consumer/Enterprise Software:** The application layer.
 
-His conclusion? Tier 5 is, in the grand scheme of things, **"worthless."** The real, defencible value lies deeper in the stack. Applications built on top are just thin wrappers, easily replaced and commoditised.
+His conclusion? Tier 5 is, in the grand scheme of things, **"worthless."** The real, defendable value lies deeper in the stack. Applications built on top are just thin wrappers, easily replaced and commoditised.
 
 ### The Rebuttal: The Last Mile Problem
 
 The argument that AI writing code makes SaaS worthless misunderstands where the value of software lies. It's not in the raw code, but in the **productisation**: the user experience, the integrations, the reliability, and the solution to a specific, messy business problem. This is the "last mile," and it's where companies are built.
 
-Innovators like Exo Labs, in combination with powerful open-source models from companies like DeepSeek, are democratizing access to high-performance AI. This trend is putting downward pressure on the entire value stack, threatening the margins of both Model Providers (Tier 4) and even the hardware ecosystem below them. As raw intelligence becomes a commodity, the defensible value shifts back to the application layer (Tier 5), where superior user experience and integration create the winning products.
+Innovators like Exo Labs, in combination with powerful open-source models from companies like DeepSeek, are democratising access to high-performance AI. This trend is putting the squeeze on the entire value stack, threatening the margins of both Model Providers (Tier 4) and even the hardware ecosystem below them. As raw intelligence becomes a commodity, the defendable value shifts back to the application layer (Tier 5), where a superior user experience and great integration create the winning products.
 
 ![Screenshot from Exo Labs showing their focus on user experience](/blog-content/future-of-software/exo.png)
 
@@ -61,9 +61,9 @@ This brings us to the future of the software engineer. Do I think the job is saf
 
 In the interim, we are entering a golden age for skilled developers. Right now, mid- to senior-level software engineers have an incredible, unfair advantage. They can combine their deep domain knowledge with powerful AI tools to become hyper-productive, reaping the benefits of this transitional era.
 
-But this golden age is a temporary bridge to a completely different world. The eventual automation of the developer role, and the millions of other jobs like it—from **customer service representatives** and **cashiers** to **writers** and **designers**—represents an economic earthquake impacting well over 15 million jobs in the U.S. alone.
+But this golden age is a temporary bridge to a completely different world. The eventual automation of the developer role, and the millions of other jobs like it: from **customer service representatives** and **cashiers** to **writers** and **designers**, represents an economic earthquake impacting well over 15 million jobs in the U.S. alone.
 
-An automation event of this magnitude wouldn't just be a technological milestone; it would be an economic one. It signals a shift in labor so profound that our collective efforts can finally be realigned. Instead of optimizing ad clicks, intelligence can be directed towards creating a world of abundance where the base needs of every person are met for free, removing the premise of a job as a necessity for survival.
+An automation event of this magnitude wouldn't just be a technological milestone; it would be an economic one. It signals a shift in labour so profound that our collective efforts can finally be realigned. Instead of optimising ad clicks, intelligence can be directed towards creating a world of abundance where the base needs of every person are met for free, removing the premise of a job as a necessity for survival.
 
 This abundance unlocks a new human purpose. If survival is no longer the central economic question, we can create new "jobs" or adventures born of pure curiosity and passion. We could see a renaissance of people exploring space, restoring ecosystems, pursuing art for its own sake, or building ambitious community projects that no one ever had the time or resources for before.
 
@@ -71,13 +71,13 @@ This is the ultimate point Jacob hints at in his essay. It reframes the entire d
 
 > **"The question isn't 'what will I do for work?' It's 'what will I do with freedom?'"**
 
-The software engineer isn't just another job at risk; their fate is the canary signaling a fundamental rewiring of our economy, pointing us toward a world where work is a choice, not a requirement.
+The software engineer isn't just another job at risk; their fate is the canary signalling a fundamental rewiring of our economy, pointing us toward a world where work is a choice, not a requirement.
 
 ## Conclusion
 
-The debate over the future of software isn't just academic—it's shaping the very fabric of our society. While the immediate focus is on which jobs will be disrupted, the real story is about the transformation that follows.
+The debate over the future of software isn't just academic; it's shaping the very fabric of our society. While the immediate focus is on which jobs will be disrupted, the real story is about the transformation that follows.
 
-The unique nature of software development—its digital purity and verifiable logic—makes it a likely beachhead for the complete automation of a high-skill profession. But this end-point isn't a destination of doom; it's a catalyst. The obsolescence of the human coder will be the clearest sign yet that we possess the tools to build a world of abundance.
+The unique nature of software development, its digital purity and verifiable logic, makes it a likely beachhead for the complete automation of a high-skill profession. But this end-point isn't a destination of doom; it's a catalyst. The obsolescence of the human coder will be the clearest sign yet that we possess the tools to build a world of abundance.
 
 The fate of the software engineer is a preview of a future where we are forced to answer a much more profound question: not how we will earn a living, but how we will choose to live.
 
