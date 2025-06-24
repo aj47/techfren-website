@@ -45,7 +45,7 @@ const parseFrontmatter = (content) => {
 
 // List of blog post slugs - add new blog post filenames here (without .md extension)
 const BLOG_POST_SLUGS = [
-  'future-of-saas'
+  'future-of-software'
 ];
 
 // Load blog posts index by fetching each markdown file

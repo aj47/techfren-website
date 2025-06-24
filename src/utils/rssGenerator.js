@@ -8,7 +8,7 @@ export const generateRSSFeed = async () => {
   const feedAuthor = 'techfren';
   const feedEmail = 'hello@techfren.net';
 
-  // Get blog posts (currently only future-of-saas)
+  // Get blog posts (currently only future-of-software)
   const blogPosts = await loadBlogIndex();
   
   // Generate RSS XML
@@ -56,7 +56,7 @@ export const generateAtomFeed = async () => {
   const feedAuthor = 'techfren';
   const feedEmail = 'hello@techfren.net';
   
-  // Get blog posts (currently only future-of-saas)
+  // Get blog posts (currently only future-of-software)
   const blogPosts = await loadBlogIndex();
   
   // Generate Atom XML
