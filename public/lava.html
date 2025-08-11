@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ASCII Lava Lamp</title>
+  <style>
+    :root {
+      color-scheme: dark light;
+    }
+    body {
+      margin: 0;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      background: #0b0b0b;
+      color: #e6e6e6;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      height: 100dvh;
+    }
+    header {
+      padding: 10px 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 16px;
+      align-items: center;
+      border-bottom: 1px solid #222;
+      background: #0f0f0f;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+    }
+    input[type="number"] {
+      width: 84px;
+      padding: 4px 6px;
+      background: #121212;
+      border: 1px solid #2a2a2a;
+      color: #e6e6e6;
+      border-radius: 6px;
+    }
+    button {
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid #2a2a2a;
+      background: #1a1a1a;
+      color: #e6e6e6;
+      cursor: pointer;
+    }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    pre#screen {
+      margin: 0;
+      padding: 0;
+      white-space: pre;
+      line-height: 1em;
+      tab-size: 2;
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+    }
+    .hint {
+      font-size: 12px;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body>
+  <pre id="screen"></pre>
+
+  <script>
+    (function () {
+      'use strict';
+
+      const GRADIENT = " .'`^\",:;Il!i~+-?][}{1)(|\\/_tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$";
+      const DEFAULT_FPS = 20;
+      const DEFAULT_BLOBS = 7;
+
+      class Blob {
+        constructor(x, y, vx, vy, r) {
+          this.x = x; this.y = y; this.vx = vx; this.vy = vy; this.r = r;
+        }
+        step(dt, w, h) {
+          this.x += this.vx * dt;
+          this.y += this.vy * dt;
+          let bounced = false;
+          if (this.x < 0) { this.x = -this.x; this.vx = -this.vx; bounced = true; }
+          else if (this.x > w - 1) { this.x = 2*(w-1) - this.x; this.vx = -this.vx; bounced = true; }
+          if (this.y < 0) { this.y = -this.y; this.vy = -this.vy; bounced = true; }
+          else if (this.y > h - 1) { this.y = 2*(h-1) - this.y; this.vy = -this.vy; bounced = true; }
+          if (bounced) { this.vx += (Math.random() - 0.5) * 0.2; this.vy += (Math.random() - 0.5) * 0.2; }
+        }
+      }
+
+      function mapValueToChar(v, vScale) {
+        let t = v * vScale;
+        if (t < 0) t = 0;
+        t = 1 - Math.exp(-t);
+        let idx = Math.floor(t * (GRADIENT.length - 1));
+        if (idx < 0) idx = 0; if (idx >= GRADIENT.length) idx = GRADIENT.length - 1;
+        return GRADIENT[idx];
+      }
+
+      function renderFrame(blobs, w, h, vScale) {
+        const soft = 1.5;
+        const lines = new Array(h);
+        for (let y = 0; y < h; y++) {
+          const row = new Array(w);
+          for (let x = 0; x < w; x++) {
+            let val = 0.0;
+            for (let i = 0; i < blobs.length; i++) {
+              const b = blobs[i];
+              const dx = x - b.x;
+              const dy = y - b.y;
+              const d2 = dx*dx + dy*dy;
+              val += (b.r * b.r) / (d2 + soft);
+            }
+            row[x] = mapValueToChar(val, vScale);
+          }
+          lines[y] = row.join('');
+        }
+        return lines.join('\n');
+      }
+
+      function randUniform(a, b) { return a + Math.random() * (b - a); }
+
+      function measureCell() {
+        const meas = document.createElement('pre');
+        meas.style.position = 'absolute';
+        meas.style.visibility = 'hidden';
+        meas.style.whiteSpace = 'pre';
+        meas.style.lineHeight = '1em';
+        meas.textContent = 'M'.repeat(100);
+        document.body.appendChild(meas);
+        const cw = meas.getBoundingClientRect().width / 100 || 8;
+        meas.textContent = 'M\nM';
+        const ch = (meas.getBoundingClientRect().height / 2) || 16;
+        meas.remove();
+        return { cw, ch };
+      }
+
+      const screen = document.getElementById('screen');
+      let state = { running: false, rafId: 0, fps: DEFAULT_FPS };
+
+      function initBlobs(count, w, h) {
+        const blobs = [];
+        const speedBase = 6.0;
+        const rMin = Math.max(4.0, Math.min(w, h) * 0.08);
+        const rMax = Math.max(rMin + 1.0, Math.min(w, h) * 0.16);
+        for (let i = 0; i < count; i++) {
+          const r = randUniform(rMin, rMax);
+          const x = randUniform(0, w - 1);
+          const y = randUniform(0, h - 1);
+          const angle = randUniform(0, Math.PI * 2);
+          const speed = randUniform(0.6, 1.4) * speedBase;
+          const vx = Math.cos(angle) * speed;
+          const vy = Math.sin(angle) * speed * 0.6;
+          blobs.push(new Blob(x, y, vx, vy, r));
+        }
+        const avgR = 0.5 * (rMin + rMax);
+        const vScale = 0.12 / (count * ((avgR * avgR) / 100.0) + 1e-6);
+        return { blobs, vScale };
+      }
+
+      function start() {
+        if (state.running) return;
+        const { cw, ch } = measureCell();
+        const w = Math.max(20, Math.floor(window.innerWidth / cw));
+        const h = Math.max(10, Math.floor(window.innerHeight / ch));
+        const { blobs, vScale } = initBlobs(DEFAULT_BLOBS, w, h);
+
+        state.running = true;
+        const frameTime = 1.0 / Math.max(1, state.fps);
+        let last = performance.now() / 1000.0;
+
+        function tick() {
+          if (!state.running) return;
+          const now = performance.now() / 1000.0;
+          const dt = now - last;
+          if (dt < frameTime) { state.rafId = requestAnimationFrame(tick); return; }
+          last = now;
+
+          for (let i = 0; i < blobs.length; i++) blobs[i].step(dt, w, h);
+          const frame = renderFrame(blobs, w, h, vScale);
+          screen.textContent = frame;
+
+          state.rafId = requestAnimationFrame(tick);
+        }
+        state.rafId = requestAnimationFrame(tick);
+      }
+
+      function stop() {
+        if (!state.running) return;
+        state.running = false;
+        if (state.rafId) cancelAnimationFrame(state.rafId);
+      }
+
+      let resizeTimer = 0;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => { stop(); start(); }, 100);
+      });
+
+      window.addEventListener('load', start);
+    })();
+  </script>
+</body>
+</html>
+
