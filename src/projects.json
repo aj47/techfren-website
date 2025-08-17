@@ -1,5 +1,12 @@
 [
   {
+    "name": "SpeakMCP",
+    "description": "AI-powered voice assistant with MCP integration. A fork of Whispo that transforms your voice into intelligent actions with advanced speech recognition, LLM processing, and Model Context Protocol (MCP) tool execution.",
+    "image": "https://opengraph.githubassets.com/1/aj47/SpeakMCP",
+    "github": "https://github.com/aj47/SpeakMCP",
+    "live": "https://github.com/aj47/SpeakMCP"
+  },
+  {
     "name": "techfren-leaderboard",
     "description": "An interactive leaderboard showcasing unofficial Aider polyglot benchmarks for various LLM models, including smaller and lesser-known models that don't appear on the official leaderboard.",
     "image": "/leaderboard.png",
