@@ -1,5 +1,12 @@
 [
   {
+    "name": "CreatorToolHub",
+    "description": "A Next.js application that hosts multiple creator tools in one place. Features a Thumbnail Creator powered by Google Gemini AI, with NextAuth authentication and modern React 19 architecture.",
+    "image": "/creatorToolHub.png",
+    "github": "https://github.com/aj47/CreatorToolHub",
+    "live": "https://github.com/aj47/CreatorToolHub"
+  },
+  {
     "name": "SpeakMCP",
     "description": "AI-powered voice assistant with MCP integration. A fork of Whispo that transforms your voice into intelligent actions with advanced speech recognition, LLM processing, and Model Context Protocol (MCP) tool execution.",
     "image": "https://opengraph.githubassets.com/1/aj47/SpeakMCP",
