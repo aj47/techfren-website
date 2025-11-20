@@ -1,5 +1,12 @@
 [
   {
+    "name": "TechFren Discord Bot",
+    "description": "A community bot for the TechFren Discord server built with discord.py. Features AI-powered query responses via Perplexity API, channel summarization commands, automated daily digests, and URL content extraction with threaded replies to keep channels organized.",
+    "image": "https://opengraph.githubassets.com/1/aj47/techfren-discord-bot",
+    "github": "https://github.com/aj47/techfren-discord-bot",
+    "live": "https://github.com/aj47/techfren-discord-bot"
+  },
+  {
     "name": "CreatorToolHub",
     "description": "A Next.js application that hosts multiple creator tools in one place. Features a Thumbnail Creator powered by Google Gemini AI, with NextAuth authentication and modern React 19 architecture.",
     "image": "/creatorToolHub.png",
