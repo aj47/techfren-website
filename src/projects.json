@@ -77,6 +77,13 @@
     "live": "https://alpha.berigame.com"
   },
   {
+    "name": "Playwright MCP (Contributor)",
+    "description": "Model Context Protocol (MCP) server for browser automation using Playwright. Enables AI models to interact with web browsers through a standardized interface, supporting navigation, screenshots, form interactions, and element manipulation.",
+    "image": "https://opengraph.githubassets.com/1/microsoft/playwright-mcp",
+    "github": "https://github.com/microsoft/playwright-mcp",
+    "live": "https://github.com/microsoft/playwright-mcp"
+  },
+  {
     "name": "big-AGI (Contributor)",
     "description": "An AI suite for professionals powered by state-of-the-art models. Features AI personas, multi-model chats, text-to-image, voice, code highlighting and execution, PDF import, and more with a polished UX.",
     "image": "https://opengraph.githubassets.com/1/enricoros/big-AGI",
