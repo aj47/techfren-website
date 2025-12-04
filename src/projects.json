@@ -21,6 +21,20 @@
     "live": "https://github.com/aj47/SpeakMCP"
   },
   {
+    "name": "iterm-mcp",
+    "description": "A Model Context Protocol server that provides access to your iTerm session. Features efficient token use, natural terminal integration, full terminal control with REPL support, and minimal dependencies - runnable via npx.",
+    "image": "https://opengraph.githubassets.com/1/aj47/iterm-mcp",
+    "github": "https://github.com/aj47/iterm-mcp",
+    "live": "https://www.npmjs.com/package/iterm-mcp"
+  },
+  {
+    "name": "Electron Native MCP",
+    "description": "A powerful MCP server for debugging and automating native Electron applications on macOS. Features DOM inspection via Chrome DevTools Protocol, UI automation with mouse/keyboard control, global hotkey triggering, and comprehensive permission management.",
+    "image": "https://opengraph.githubassets.com/1/aj47/electron-native-mcp",
+    "github": "https://github.com/aj47/electron-native-mcp",
+    "live": "https://github.com/aj47/electron-native-mcp"
+  },
+  {
     "name": "techfren-leaderboard",
     "description": "An interactive leaderboard showcasing unofficial Aider polyglot benchmarks for various LLM models, including smaller and lesser-known models that don't appear on the official leaderboard.",
     "image": "/leaderboard.png",
@@ -75,6 +89,13 @@
     "image": "/berigame.png",
     "github": "https://github.com/aj47/berigame",
     "live": "https://alpha.berigame.com"
+  },
+  {
+    "name": "Agent Battler",
+    "description": "A platform where developers can post GitHub issues with bounties and contributors can submit pull requests using their favorite AI coding agents. Track which AI agents win the most bounties with real-time leaderboards and terminal session recordings.",
+    "image": "https://opengraph.githubassets.com/1/aj47/agent-battler",
+    "github": "https://github.com/aj47/agent-battler",
+    "live": "https://agent-battler.vercel.app"
   },
   {
     "name": "Playwright MCP (Contributor)",
