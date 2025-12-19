@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>techfren Stream Countdown Terminal</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-black: #000000;
+            --neon-green: #00FF41;
+            --terminal-green: #33FF33;
+            --dim-gray: #666666;
+            --accent-green: #39FF14;
+            --matrix-glow: #00FF00;
+            --error-red: #FF4444;
+            --warning-yellow: #FFFF00;
+            --info-cyan: #00FFFF;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            background-color: var(--bg-black);
+            color: var(--neon-green);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Configuration Screen */
+        #config-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .config-title {
+            font-size: 28px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px var(--matrix-glow);
+        }
+
+        .config-subtitle {
+            color: var(--dim-gray);
+            margin-bottom: 40px;
+            letter-spacing: 4px;
+        }
+
+        .config-section {
+            background: rgba(0, 255, 65, 0.05);
+            border: 1px solid var(--neon-green);
+            padding: 30px;
+            margin: 15px 0;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .config-section h2 {
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: var(--terminal-green);
+        }
+
+        .quick-start-btn, .custom-start-btn {
+            background: transparent;
+            border: 2px solid var(--neon-green);
+            color: var(--neon-green);
+            padding: 15px 30px;
+            font-family: inherit;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .quick-start-btn:hover, .custom-start-btn:hover {
+            background: var(--neon-green);
+            color: var(--bg-black);
+            box-shadow: 0 0 20px var(--matrix-glow);
+        }
+
+        .or-divider {
+            color: var(--dim-gray);
+            text-align: center;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--terminal-green);
+            font-size: 14px;
+        }
+
+        .input-group input[type="number"] {
+            background: transparent;
+            border: 1px solid var(--dim-gray);
+            color: var(--neon-green);
+            padding: 10px 15px;
+            font-family: inherit;
+            font-size: 16px;
+            width: 150px;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--neon-green);
+            box-shadow: 0 0 5px var(--matrix-glow);
+        }
+
+        .json-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .json-btn {
+            background: transparent;
+            border: 1px solid var(--dim-gray);
+            color: var(--dim-gray);
+            padding: 8px 15px;
+            font-family: inherit;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .json-btn:hover {
+            border-color: var(--neon-green);
+            color: var(--neon-green);
+        }
+
+        .json-textarea {
+            width: 100%;
+            height: 150px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--dim-gray);
+            color: var(--neon-green);
+            padding: 15px;
+            font-family: inherit;
+            font-size: 12px;
+            resize: vertical;
+        }
+
+        .json-textarea:focus {
+            outline: none;
+            border-color: var(--neon-green);
+        }
+
+        .error-message {
+            color: var(--error-red);
+            font-size: 12px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        /* Terminal Screen */
+        #terminal-screen {
+            display: none;
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Matrix Rain Canvas */
+        #matrix-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.3;
+            z-index: 0;
+        }
+
+        /* Main Terminal Container */
+        .terminal-container {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            padding: 40px;
+        }
+
+        /* Content Area */
+        .content-area {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .content-block {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(0, 255, 65, 0.3);
+            padding: 30px 40px;
+            max-width: 800px;
+            width: 100%;
+            min-height: 300px;
+            font-size: 16px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            overflow: hidden;
+        }
+
+        .content-block .line {
+            opacity: 0;
+            transform: translateX(-10px);
+            animation: lineAppear 0.1s ease forwards;
+        }
+
+        @keyframes lineAppear {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .status-ok { color: var(--neon-green); }
+        .status-warn { color: var(--warning-yellow); }
+        .status-error { color: var(--error-red); }
+        .status-info { color: var(--info-cyan); }
+        .status-dim { color: var(--dim-gray); }
+
+        /* Countdown Area */
+        .countdown-area {
+            text-align: center;
+            padding: 30px 0;
+        }
+
+        .countdown-timer {
+            font-size: 72px;
+            font-weight: 700;
+            text-shadow: 0 0 30px var(--matrix-glow);
+            animation: pulse 1s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .progress-bar-container {
+            width: 60%;
+            max-width: 500px;
+            margin: 20px auto;
+            height: 4px;
+            background: var(--dim-gray);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--neon-green);
+            box-shadow: 0 0 10px var(--matrix-glow);
+            transition: width 0.1s linear;
+        }
+
+        .stream-status {
+            font-size: 14px;
+            letter-spacing: 4px;
+            color: var(--terminal-green);
+            margin-top: 10px;
+        }
+
+        /* Footer */
+        .terminal-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-top: 1px solid rgba(0, 255, 65, 0.2);
+        }
+
+        .footer-brand {
+            font-size: 14px;
+            color: var(--dim-gray);
+        }
+
+        .fullscreen-btn {
+            background: transparent;
+            border: 1px solid var(--dim-gray);
+            color: var(--dim-gray);
+            padding: 5px 10px;
+            font-family: inherit;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .fullscreen-btn:hover {
+            border-color: var(--neon-green);
+            color: var(--neon-green);
+        }
+
+        /* Typing cursor */
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 18px;
+            background: var(--neon-green);
+            animation: blink 0.7s step-end infinite;
+            vertical-align: middle;
+            margin-left: 2px;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* Spinner */
+        .spinner {
+            display: inline-block;
+            animation: spin 0.8s steps(8) infinite;
+        }
+
+        @keyframes spin {
+            0% { content: "⠋"; }
+            12.5% { content: "⠙"; }
+            25% { content: "⠹"; }
+            37.5% { content: "⠸"; }
+            50% { content: "⠼"; }
+            62.5% { content: "⠴"; }
+            75% { content: "⠦"; }
+            87.5% { content: "⠧"; }
+        }
+
+        /* Block header styling */
+        .block-header {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--terminal-green);
+        }
+
+        /* Box drawing characters */
+        .box-top { color: var(--neon-green); }
+        .box-content { padding-left: 20px; }
+
+        /* Final countdown special styling */
+        .final-countdown {
+            text-align: center;
+            font-size: 24px;
+        }
+
+        .final-countdown .countdown-timer {
+            font-size: 120px;
+        }
+
+        .live-text {
+            font-size: 48px;
+            color: var(--neon-green);
+            text-shadow: 0 0 50px var(--matrix-glow);
+            animation: glow 0.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 30px var(--matrix-glow); }
+            to { text-shadow: 0 0 60px var(--matrix-glow), 0 0 80px var(--neon-green); }
+        }
+
+        /* ASCII art styling */
+        .ascii-art {
+            font-size: 14px;
+            line-height: 1.2;
+            white-space: pre;
+        }
+    </style>
+</head>
+<body>
+    <!-- Configuration Screen -->
+    <div id="config-screen">
+        <h1 class="config-title">techfren STREAM TERMINAL</h1>
+        <div class="config-subtitle">─────────────</div>
+
+        <div class="config-section">
+            <h2>QUICK START</h2>
+            <button class="quick-start-btn" onclick="startQuickCountdown()">START 5 MIN COUNTDOWN</button>
+        </div>
+
+        <div class="or-divider">─ OR ─</div>
+
+        <div class="config-section">
+            <h2>CUSTOM CONFIGURATION</h2>
+
+            <div class="input-group">
+                <label>Countdown Duration (seconds):</label>
+                <input type="number" id="duration-input" value="300" min="30" max="3600">
+            </div>
+
+            <div class="input-group">
+                <label>Config JSON:</label>
+                <div class="json-buttons">
+                    <button class="json-btn" onclick="document.getElementById('file-input').click()">Upload File</button>
+                    <button class="json-btn" onclick="loadDefaultConfig()">Load Default</button>
+                </div>
+                <input type="file" id="file-input" accept=".json" onchange="handleFileUpload(event)">
+                <textarea class="json-textarea" id="json-input" placeholder='{
+  "topics": ["Topic 1", "Topic 2"],
+  "announcements": ["Announcement 1"]
+}'></textarea>
+                <div class="error-message" id="json-error"></div>
+            </div>
+
+            <button class="custom-start-btn" onclick="startCustomCountdown()">START CUSTOM COUNTDOWN</button>
+        </div>
+    </div>
+
+    <!-- Terminal Screen -->
+    <div id="terminal-screen">
+        <canvas id="matrix-canvas"></canvas>
+
+        <div class="terminal-container">
+            <div class="content-area">
+                <div class="content-block" id="content-block"></div>
+            </div>
+
+            <div class="countdown-area">
+                <div class="countdown-timer" id="countdown-timer">05:00</div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+                <div class="stream-status">STREAM STARTING SOON</div>
+            </div>
+
+            <div class="terminal-footer">
+                <span class="footer-brand">techfren ─────────────────────────────────────</span>
+                <button class="fullscreen-btn" onclick="toggleFullscreen()">F11 Fullscreen</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Default configuration
+        const defaultConfig = {
+            streamer: {
+                name: "techfren",
+                tagline: "Software Engineer / Content Creator"
+            },
+            topics: [
+                "Coding session",
+                "Building cool stuff",
+                "Q&A with chat",
+                "Exploring new tools"
+            ],
+            announcements: [
+                "Welcome to the stream!",
+                "Don't forget to follow for notifications",
+                "Join the Discord community!"
+            ],
+            toolOfTheDay: {
+                name: "Cursor",
+                description: "AI-powered code editor that feels like pair programming with a senior dev",
+                link: "cursor.com"
+            },
+            trivia: {
+                question: "What year was Python released?",
+                options: ["1989", "1991", "1995"],
+                answer: "B"
+            },
+            quotes: [
+                {
+                    text: "Look what we can build. Look what's possible. You can do this too.",
+                    author: "techfren"
+                },
+                {
+                    text: "The best part of AI coding tools isn't speed. It's that they make you braver.",
+                    author: "techfren"
+                }
+            ],
+            shoutouts: [
+                { name: "@levelsio", reason: "constant inspiration" },
+                { name: "Chat", reason: "being absolute legends" }
+            ],
+            customMessages: [
+                "Streaming from SF today",
+                "Working on something cool",
+                "Coffee status: OPTIMAL"
+            ],
+            socials: {
+                youtube: "youtube.com/@techfren",
+                tiktok: "tiktok.com/@techfren",
+                github: "github.com/aj47",
+                twitter: "x.com/techfrenAJ"
+            },
+            recentProjects: [
+                {
+                    name: "Clickolas Cage",
+                    description: "AI-powered browser automation agent",
+                    stat: "4.6 rating on Chrome Web Store"
+                },
+                {
+                    name: "Chaos Coder",
+                    description: "Create 9 websites in seconds",
+                    stat: "115K+ views on launch"
+                },
+                {
+                    name: "SpeakMCP",
+                    description: "Voice-powered AI agent delegation",
+                    stat: "Open source & free"
+                }
+            ]
+        };
+
+        let config = { ...defaultConfig };
+        let countdownInterval = null;
+        let contentInterval = null;
+        let totalDuration = 300;
+        let remainingTime = 300;
+        let currentBlockIndex = 0;
+        let isTyping = false;
+
+        // Content blocks sequence
+        const contentBlocks = [
+            { type: 'bios', duration: 5000 },
+            { type: 'hardware', duration: 5000 },
+            { type: 'ai_init', duration: 6000 },
+            { type: 'npm_install', duration: 5000 },
+            { type: 'viewer_detection', duration: 5000 },
+            { type: 'topics', duration: 8000 },
+            { type: 'tool_of_day', duration: 8000 },
+            { type: 'trivia', duration: 10000 },
+            { type: 'quote', duration: 6000 },
+            { type: 'socials', duration: 6000 },
+            { type: 'announcement', duration: 6000 },
+            { type: 'custom_message', duration: 5000 },
+            { type: 'recent_projects', duration: 8000 },
+            { type: 'fake_error', duration: 6000 }
+        ];
+
+        // Matrix rain setup
+        function initMatrixRain() {
+            const canvas = document.getElementById('matrix-canvas');
+            const ctx = canvas.getContext('2d');
+
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const chars = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const fontSize = 14;
+            const columns = canvas.width / fontSize;
+            const drops = [];
+
+            for (let i = 0; i < columns; i++) {
+                drops[i] = Math.random() * -100;
+            }
+
+            function draw() {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.fillStyle = '#00FF41';
+                ctx.font = fontSize + 'px monospace';
+
+                for (let i = 0; i < drops.length; i++) {
+                    const char = chars[Math.floor(Math.random() * chars.length)];
+                    ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                }
+            }
+
+            setInterval(draw, 50);
+
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        }
+
+        // Typing animation
+        async function typeText(element, text, speed = 30) {
+            isTyping = true;
+            element.innerHTML = '';
+
+            const lines = text.split('\n');
+
+            for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+                const line = lines[lineIndex];
+                const lineSpan = document.createElement('span');
+                lineSpan.className = 'line';
+                lineSpan.style.animationDelay = `${lineIndex * 50}ms`;
+                element.appendChild(lineSpan);
+
+                // Apply color classes based on content
+                let coloredLine = line
+                    .replace(/\[OK\]/g, '<span class="status-ok">[OK]</span>')
+                    .replace(/\[WARN\]/g, '<span class="status-warn">[WARN]</span>')
+                    .replace(/\[ERROR\]/g, '<span class="status-error">[ERROR]</span>')
+                    .replace(/\[INFO\]/g, '<span class="status-info">[INFO]</span>')
+                    .replace(/\[LOAD\]/g, '<span class="status-ok">[LOAD]</span>')
+                    .replace(/\[SCAN\]/g, '<span class="status-info">[SCAN]</span>')
+                    .replace(/\[████████████\]/g, '<span class="status-ok">[████████████]</span>')
+                    .replace(/\[████░░░░░░░░\]/g, '<span class="status-warn">[████░░░░░░░░]</span>');
+
+                lineSpan.innerHTML = coloredLine;
+
+                if (lineIndex < lines.length - 1) {
+                    element.appendChild(document.createTextNode('\n'));
+                }
+
+                await sleep(speed + Math.random() * 20);
+            }
+
+            isTyping = false;
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // Content generators
+        function getBiosContent() {
+            return `techfren BIOS v4.2.0
+Copyright (C) 2025 techfren Industries
+
+Initializing system...
+Checking memory... 64GB OK
+Detecting storage... 2TB NVMe OK
+Loading stream protocols...
+
+Press DEL to enter setup, or wait for boot...`;
+        }
+
+        function getHardwareContent() {
+            return `[SCAN] Detecting hardware configuration...
+
+[OK] GPU: NVIDIA RTX 4090 (24GB VRAM)
+[OK] CPU: AMD Ryzen 9 7950X (16 cores)
+[OK] RAM: 64GB DDR5-6000
+[OK] STORAGE: 2TB NVMe (1.8TB free)
+[OK] WEBCAM: Logitech StreamCam
+[OK] MICROPHONE: Shure SM7B
+[OK] VIBES: Immaculate
+[OK] COFFEE: Loaded
+
+Hardware check complete.`;
+        }
+
+        function getAiInitContent() {
+            return `Initializing AI subsystems...
+
+├── Claude 4.5 Opus........... [████████████] READY
+├── GPT-4o.................... [████████████] READY
+├── Local LLaMA 3.3........... [████████████] READY
+├── Cursor AI................. [████████████] READY
+├── GitHub Copilot............ [████████████] READY
+├── Brain Cells............... [████░░░░░░░░] PARTIAL
+└── Creativity Module......... [████████████] READY
+
+All AI systems operational.`;
+        }
+
+        function getNpmInstallContent() {
+            return `> npm install stream-dependencies
+
+Resolving packages...
+
+added 847 packages in 4.2s
+
++ hype@3.2.1
++ good-vibes@latest
++ caffeine@∞.0.0
++ open-source-love@1.0.0
++ chat-engagement@4.2.0
++ banger-content@69.0.0
++ sleep-deprivation@chronic
++ imposter-syndrome@0.0.1 (peer dependency)
+
+0 vulnerabilities (we don't talk about the tech debt)`;
+        }
+
+        function getViewerDetectionContent() {
+            return `[SCAN] Initializing viewer detection protocol...
+
+Scanning chat frequency... done
+Analyzing hype levels... done
+Detecting lurkers... (it's okay, we love you too)
+
+┌────────────────────────────────────┐
+│  VIEWERS DETECTED                  │
+│                                    │
+│  Humans........... calculating     │
+│  Bots............. 3 (banned)      │
+│  Legends.......... 1 (you)         │
+│  Hype Level....... RISING          │
+│                                    │
+└────────────────────────────────────┘`;
+        }
+
+        function getTopicsContent() {
+            const topics = config.topics || defaultConfig.topics;
+            let content = `═══════════════════════════════════════════════════
+   TODAY'S STREAM
+═══════════════════════════════════════════════════
+
+Loading agenda...
+
+`;
+            topics.forEach((topic, i) => {
+                content += `[${i + 1}] ${topic}\n`;
+            });
+            content += `
+Type !discord in chat to join our community
+More links at techfren.net
+
+═══════════════════════════════════════════════════`;
+            return content;
+        }
+
+        function getToolOfDayContent() {
+            const tool = config.toolOfTheDay || defaultConfig.toolOfTheDay;
+            return `╔═══════════════════════════════════════════════════════╗
+║                                                       ║
+║   TOOL OF THE DAY                                     ║
+║                                                       ║
+║   ${tool.name.padEnd(45)}║
+║   ${'─'.repeat(45)}║
+║                                                       ║
+║   ${tool.description.substring(0, 45).padEnd(45)}║
+║                                                       ║
+║   → ${tool.link.padEnd(43)}║
+║                                                       ║
+╚═══════════════════════════════════════════════════════╝`;
+        }
+
+        function getTriviaContent() {
+            const trivia = config.trivia || defaultConfig.trivia;
+            return `┌─ CHAT TRIVIA ─────────────────────────────────────────┐
+│                                                       │
+│   ${trivia.question.padEnd(45)}│
+│                                                       │
+│   A) ${trivia.options[0].padEnd(43)}│
+│   B) ${trivia.options[1].padEnd(43)}│
+│   C) ${trivia.options[2].padEnd(43)}│
+│                                                       │
+│   Type A, B, or C in chat!                            │
+│                                                       │
+│   Answer revealed when stream starts...               │
+│                                                       │
+└───────────────────────────────────────────────────────┘`;
+        }
+
+        function getQuoteContent() {
+            const quotes = config.quotes || defaultConfig.quotes;
+            const quote = quotes[Math.floor(Math.random() * quotes.length)];
+            return `
+
+   ┌────────────────────────────────────────────┐
+   │                                            │
+   │  "${quote.text}"
+   │                                            │
+   │                      — ${quote.author}
+   │                                            │
+   └────────────────────────────────────────────┘
+
+`;
+        }
+
+        function getSocialsContent() {
+            const socials = config.socials || defaultConfig.socials;
+            return `╔═══════════════════════════════════════════════════════╗
+║                                                       ║
+║   CONNECT WITH TECHFREN                               ║
+║                                                       ║
+╠═══════════════════════════════════════════════════════╣
+║                                                       ║
+║   YouTube    →  ${(socials.youtube || 'youtube.com/@techfren').padEnd(35)}║
+║   TikTok     →  ${(socials.tiktok || 'tiktok.com/@techfren').padEnd(35)}║
+║   GitHub     →  ${(socials.github || 'github.com/aj47').padEnd(35)}║
+║   Twitter/X  →  ${(socials.twitter || 'x.com/techfrenAJ').padEnd(35)}║
+║                                                       ║
+╚═══════════════════════════════════════════════════════╝`;
+        }
+
+        function getAnnouncementContent() {
+            const announcements = config.announcements || defaultConfig.announcements;
+            const announcement = announcements[Math.floor(Math.random() * announcements.length)];
+            return `┌─ ANNOUNCEMENT ────────────────────────────────────────┐
+│                                                       │
+│  ${announcement.padEnd(50)}│
+│                                                       │
+└───────────────────────────────────────────────────────┘`;
+        }
+
+        function getCustomMessageContent() {
+            const messages = config.customMessages || defaultConfig.customMessages;
+            const message = messages[Math.floor(Math.random() * messages.length)];
+            return `
+
+   > ${message}
+
+`;
+        }
+
+        function getRecentProjectsContent() {
+            const projects = config.recentProjects || defaultConfig.recentProjects;
+            let content = `[LOAD] Recent builds from github.com/aj47...
+
+┌─────────────────────────────────────────────────────┐
+│                                                     │
+`;
+            projects.forEach(project => {
+                content += `│  > ${project.name.padEnd(43)}│
+│    ${project.description.padEnd(43)}│
+│    ★ ${project.stat.padEnd(41)}│
+│                                                     │
+`;
+            });
+            content += `└─────────────────────────────────────────────────────┘
+
+All projects open source at github.com/aj47`;
+            return content;
+        }
+
+        function getFakeErrorContent() {
+            return `[ERROR] ════════════════════════════════════════════════
+
+   Stream.exe has encountered a problem
+
+   Error Code: 0xDEADBEEF
+   Reason: EXCESSIVE_HYPE_DETECTED
+
+   The system has detected dangerously high
+   levels of excitement. This may cause:
+   - Spontaneous keyboard smashing
+   - Involuntary "let's go" exclamations
+   - Uncontrollable urge to ship code
+
+[WARN] Attempting to contain hype levels...
+[OK] Hype redistributed across chat.
+[OK] Resuming boot sequence.
+
+════════════════════════════════════════════════════════`;
+        }
+
+        function getFinalCountdownContent(seconds) {
+            if (seconds <= 0) {
+                return `═══════════════════════════════════════════════════════════
+
+              ██╗     ██╗██╗   ██╗███████╗
+              ██║     ██║██║   ██║██╔════╝
+              ██║     ██║██║   ██║█████╗
+              ██║     ██║╚██╗ ██╔╝██╔══╝
+              ███████╗██║ ╚████╔╝ ███████╗
+              ╚══════╝╚═╝  ╚═══╝  ╚══════╝
+
+═══════════════════════════════════════════════════════════`;
+            }
+            return `═══════════════════════════════════════════════════════════
+
+              BOOT SEQUENCE COMPLETE
+
+              ALL SYSTEMS OPERATIONAL
+
+
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100%
+
+              STREAM INITIALIZING...
+
+═══════════════════════════════════════════════════════════`;
+        }
+
+        // Get content by block type
+        function getContentByType(type) {
+            switch (type) {
+                case 'bios': return getBiosContent();
+                case 'hardware': return getHardwareContent();
+                case 'ai_init': return getAiInitContent();
+                case 'npm_install': return getNpmInstallContent();
+                case 'viewer_detection': return getViewerDetectionContent();
+                case 'topics': return getTopicsContent();
+                case 'tool_of_day': return getToolOfDayContent();
+                case 'trivia': return getTriviaContent();
+                case 'quote': return getQuoteContent();
+                case 'socials': return getSocialsContent();
+                case 'announcement': return getAnnouncementContent();
+                case 'custom_message': return getCustomMessageContent();
+                case 'recent_projects': return getRecentProjectsContent();
+                case 'fake_error': return getFakeErrorContent();
+                case 'final': return getFinalCountdownContent(remainingTime);
+                default: return '';
+            }
+        }
+
+        // Display next content block
+        async function showNextBlock() {
+            if (remainingTime <= 15) {
+                const content = getContentByType('final');
+                const contentBlock = document.getElementById('content-block');
+                await typeText(contentBlock, content, 20);
+                return;
+            }
+
+            const block = contentBlocks[currentBlockIndex % contentBlocks.length];
+            const content = getContentByType(block.type);
+            const contentBlock = document.getElementById('content-block');
+
+            contentBlock.style.opacity = '0';
+            await sleep(200);
+
+            contentBlock.style.opacity = '1';
+            await typeText(contentBlock, content, 25);
+
+            currentBlockIndex++;
+
+            contentInterval = setTimeout(showNextBlock, block.duration);
+        }
+
+        // Update countdown timer
+        function updateCountdown() {
+            if (remainingTime <= 0) {
+                clearInterval(countdownInterval);
+                clearTimeout(contentInterval);
+
+                const contentBlock = document.getElementById('content-block');
+                typeText(contentBlock, getFinalCountdownContent(0), 10);
+
+                document.getElementById('countdown-timer').textContent = '00:00';
+                document.getElementById('progress-bar').style.width = '100%';
+                document.querySelector('.stream-status').textContent = 'STREAM IS LIVE';
+                return;
+            }
+
+            remainingTime--;
+
+            const minutes = Math.floor(remainingTime / 60);
+            const seconds = remainingTime % 60;
+            document.getElementById('countdown-timer').textContent =
+                `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+            const progress = ((totalDuration - remainingTime) / totalDuration) * 100;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+        }
+
+        // Start countdown
+        function startCountdown(duration, userConfig = null) {
+            if (userConfig) {
+                config = { ...defaultConfig, ...userConfig };
+            }
+
+            totalDuration = duration;
+            remainingTime = duration;
+            currentBlockIndex = 0;
+
+            document.getElementById('config-screen').style.display = 'none';
+            document.getElementById('terminal-screen').style.display = 'block';
+
+            initMatrixRain();
+            updateCountdown();
+            countdownInterval = setInterval(updateCountdown, 1000);
+            showNextBlock();
+        }
+
+        // Quick start
+        function startQuickCountdown() {
+            startCountdown(300, null);
+        }
+
+        // Custom start
+        function startCustomCountdown() {
+            const duration = parseInt(document.getElementById('duration-input').value) || 300;
+            const jsonText = document.getElementById('json-input').value.trim();
+            const errorEl = document.getElementById('json-error');
+
+            let userConfig = null;
+
+            if (jsonText) {
+                try {
+                    userConfig = JSON.parse(jsonText);
+                    errorEl.style.display = 'none';
+                } catch (e) {
+                    errorEl.textContent = `Invalid JSON: ${e.message}`;
+                    errorEl.style.display = 'block';
+                    return;
+                }
+            }
+
+            if (duration < 30) {
+                if (!confirm('Duration is less than 30 seconds. Continue anyway?')) {
+                    return;
+                }
+            }
+
+            if (duration > 3600) {
+                if (!confirm('Duration is more than 60 minutes. Continue anyway?')) {
+                    return;
+                }
+            }
+
+            startCountdown(duration, userConfig);
+        }
+
+        // File upload handler
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('json-input').value = e.target.result;
+            };
+            reader.readAsText(file);
+        }
+
+        // Load default config
+        function loadDefaultConfig() {
+            document.getElementById('json-input').value = JSON.stringify(defaultConfig, null, 2);
+        }
+
+        // Fullscreen toggle
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log('Fullscreen not supported');
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'F11') {
+                e.preventDefault();
+                toggleFullscreen();
+            }
+            if (e.key === 'Escape' && document.getElementById('terminal-screen').style.display === 'block') {
+                if (confirm('Exit countdown and return to config?')) {
+                    clearInterval(countdownInterval);
+                    clearTimeout(contentInterval);
+                    document.getElementById('terminal-screen').style.display = 'none';
+                    document.getElementById('config-screen').style.display = 'flex';
+                }
+            }
+        });
+
+        // Check for saved config
+        window.addEventListener('load', function() {
+            const savedConfig = localStorage.getItem('techfren-countdown-config');
+            if (savedConfig) {
+                try {
+                    document.getElementById('json-input').value = savedConfig;
+                } catch (e) {
+                    console.log('Could not load saved config');
+                }
+            }
+
+            const savedDuration = localStorage.getItem('techfren-countdown-duration');
+            if (savedDuration) {
+                document.getElementById('duration-input').value = savedDuration;
+            }
+        });
+
+        // Save config on change
+        document.getElementById('json-input').addEventListener('change', function() {
+            localStorage.setItem('techfren-countdown-config', this.value);
+        });
+
+        document.getElementById('duration-input').addEventListener('change', function() {
+            localStorage.setItem('techfren-countdown-duration', this.value);
+        });
+    </script>
+</body>
+</html>
