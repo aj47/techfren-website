@@ -412,9 +412,6 @@
             if (word.length !== WORD_LENGTH) return { success: false, error: 'Word must be 5 letters' };
             if (!/^[A-Z]+$/.test(word)) return { success: false, error: 'Word must contain only letters' };
 
-            // Start timer on first input
-            if (!timerStarted) startTimer();
-
             // Clear current row first
             for (let i = 0; i < WORD_LENGTH; i++) {
                 board[currentRow][i] = '';
@@ -442,9 +439,6 @@
 
             letter = letter.toUpperCase();
             if (!/^[A-Z]$/.test(letter)) return { success: false, error: 'Must be a single letter' };
-
-            // Start timer on first input
-            if (!timerStarted) startTimer();
 
             board[currentRow][position] = letter;
             const cell = document.getElementById(`cell-${currentRow}-${position}`);
@@ -622,9 +616,6 @@
         // Add letter
         function addLetter(letter) {
             if (currentCol < WORD_LENGTH) {
-                // Start timer on first letter input
-                if (!timerStarted) startTimer();
-
                 board[currentRow][currentCol] = letter;
                 const cell = document.getElementById(`cell-${currentRow}-${currentCol}`);
                 cell.textContent = letter;
@@ -808,6 +799,7 @@
         initMatrixRain();
         initBoard();
         initKeyboard();
+        startTimer();
 
         // Signal that the game is ready (for bots waiting for page load)
         window.wordleReady = true;
