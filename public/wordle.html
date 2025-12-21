@@ -266,6 +266,120 @@
                 min-width: 50px;
             }
         }
+
+        /* Leaderboard */
+        .leaderboard {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.95);
+            border-top: 1px solid var(--neon-green);
+            max-height: 300px;
+            transition: max-height 0.3s ease;
+        }
+
+        .leaderboard.collapsed {
+            max-height: 45px;
+        }
+
+        .leaderboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--dim-gray);
+        }
+
+        .leaderboard-header:hover {
+            background: rgba(0, 255, 65, 0.1);
+        }
+
+        .leaderboard-title {
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .leaderboard-toggle {
+            font-size: 12px;
+            color: var(--light-gray);
+            transition: transform 0.3s ease;
+        }
+
+        .leaderboard.collapsed .leaderboard-toggle {
+            transform: rotate(180deg);
+        }
+
+        .leaderboard-content {
+            max-height: 250px;
+            overflow-y: auto;
+            padding: 10px 0;
+        }
+
+        .leaderboard.collapsed .leaderboard-content {
+            display: none;
+        }
+
+        .leaderboard-entry {
+            display: grid;
+            grid-template-columns: 40px 1fr 100px;
+            gap: 15px;
+            padding: 10px 20px;
+            align-items: center;
+            border-bottom: 1px solid var(--dim-gray);
+        }
+
+        .leaderboard-entry:last-child {
+            border-bottom: none;
+        }
+
+        .leaderboard-rank {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--neon-green);
+            text-align: center;
+        }
+
+        .leaderboard-rank.gold {
+            color: #FFD700;
+            text-shadow: 0 0 10px #FFD700;
+        }
+
+        .leaderboard-rank.silver {
+            color: #C0C0C0;
+            text-shadow: 0 0 10px #C0C0C0;
+        }
+
+        .leaderboard-rank.bronze {
+            color: #CD7F32;
+            text-shadow: 0 0 10px #CD7F32;
+        }
+
+        .leaderboard-name {
+            font-size: 14px;
+        }
+
+        .leaderboard-name .model {
+            color: var(--neon-green);
+            font-weight: 700;
+        }
+
+        .leaderboard-name .provider {
+            color: var(--light-gray);
+            font-size: 12px;
+            margin-left: 8px;
+        }
+
+        .leaderboard-time {
+            font-size: 14px;
+            text-align: right;
+            color: var(--terminal-green);
+            font-weight: 700;
+        }
 </style>
 </head>
 <body>
@@ -279,6 +393,25 @@
         <div class="keyboard" id="keyboard"></div>
         <div class="message" id="message"></div>
     </div>
+
+    <!-- Leaderboard -->
+    <div class="leaderboard" id="leaderboard">
+        <div class="leaderboard-header" onclick="toggleLeaderboard()">
+            <span class="leaderboard-title">🏆 AI Leaderboard</span>
+            <span class="leaderboard-toggle">▼</span>
+        </div>
+        <div class="leaderboard-content">
+            <div class="leaderboard-entry">
+                <span class="leaderboard-rank gold">1</span>
+                <span class="leaderboard-name">
+                    <span class="model">Claude 4.5 Opus</span>
+                    <span class="provider">Anthropic</span>
+                </span>
+                <span class="leaderboard-time">5:00</span>
+            </div>
+        </div>
+    </div>
+
     <script>
         // The secret word
         const SECRET_WORD = 'GUILT';
@@ -703,6 +836,12 @@
             if (!typeResult.success) return typeResult;
             return await window.submitCurrentGuess();
         };
+
+        // Leaderboard toggle
+        function toggleLeaderboard() {
+            const leaderboard = document.getElementById('leaderboard');
+            leaderboard.classList.toggle('collapsed');
+        }
 
         // Initialize
         initMatrixRain();
