@@ -276,6 +276,25 @@
             text-decoration: underline;
             text-shadow: 0 0 10px var(--matrix-glow);
         }
+
+        .timer {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--terminal-green);
+            text-shadow: 0 0 10px var(--matrix-glow);
+            margin-top: 15px;
+            letter-spacing: 2px;
+        }
+
+        .timer.stopped {
+            color: var(--neon-green);
+            animation: pulse-glow 1s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { text-shadow: 0 0 10px var(--matrix-glow); }
+            50% { text-shadow: 0 0 25px var(--matrix-glow), 0 0 35px var(--matrix-glow); }
+        }
 </style>
 </head>
 <body>
@@ -285,6 +304,7 @@
             <h1>WORDLE</h1>
             <div class="subtitle">techfren edition · <a href="/wordlebench">leaderboard</a></div>
         </div>
+        <div class="timer" id="timer">0:00</div>
         <div class="board" id="board"></div>
         <div class="keyboard" id="keyboard"></div>
         <div class="message" id="message"></div>
@@ -302,6 +322,13 @@
         let board = [];
         let isRevealing = false;
 
+        // Timer state
+        let timerStarted = false;
+        let timerStopped = false;
+        let startTime = null;
+        let timerInterval = null;
+        let finalTime = null;
+
         const keyboardLayout = [
             ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
             ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
@@ -309,6 +336,52 @@
         ];
 
         const keyStatus = {};
+
+        // =============================================
+        // TIMER FUNCTIONS
+        // =============================================
+
+        function formatTime(ms) {
+            const totalSeconds = Math.floor(ms / 1000);
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function startTimer() {
+            if (timerStarted || timerStopped) return;
+            timerStarted = true;
+            startTime = Date.now();
+            timerInterval = setInterval(updateTimerDisplay, 100);
+        }
+
+        function stopTimer() {
+            if (!timerStarted || timerStopped) return;
+            timerStopped = true;
+            clearInterval(timerInterval);
+            finalTime = Date.now() - startTime;
+            const timerEl = document.getElementById('timer');
+            timerEl.textContent = formatTime(finalTime);
+            timerEl.classList.add('stopped');
+        }
+
+        function updateTimerDisplay() {
+            if (!timerStarted || timerStopped) return;
+            const elapsed = Date.now() - startTime;
+            document.getElementById('timer').textContent = formatTime(elapsed);
+        }
+
+        function resetTimer() {
+            timerStarted = false;
+            timerStopped = false;
+            startTime = null;
+            finalTime = null;
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = null;
+            const timerEl = document.getElementById('timer');
+            timerEl.textContent = '0:00';
+            timerEl.classList.remove('stopped');
+        }
 
         // =============================================
         // BOT-FRIENDLY API (exposed on window object)
@@ -324,7 +397,11 @@
                 board: board.map(row => [...row]),
                 currentGuess: board[currentRow] ? board[currentRow].join('') : '',
                 guessesRemaining: MAX_GUESSES - currentRow,
-                keyStatus: {...keyStatus}
+                keyStatus: {...keyStatus},
+                timerStarted,
+                timerStopped,
+                elapsedMs: timerStarted ? (timerStopped ? finalTime : Date.now() - startTime) : 0,
+                finalTime: finalTime
             };
         };
 
@@ -334,6 +411,9 @@
             word = word.toUpperCase();
             if (word.length !== WORD_LENGTH) return { success: false, error: 'Word must be 5 letters' };
             if (!/^[A-Z]+$/.test(word)) return { success: false, error: 'Word must contain only letters' };
+
+            // Start timer on first input
+            if (!timerStarted) startTimer();
 
             // Clear current row first
             for (let i = 0; i < WORD_LENGTH; i++) {
@@ -362,6 +442,9 @@
 
             letter = letter.toUpperCase();
             if (!/^[A-Z]$/.test(letter)) return { success: false, error: 'Must be a single letter' };
+
+            // Start timer on first input
+            if (!timerStarted) startTimer();
 
             board[currentRow][position] = letter;
             const cell = document.getElementById(`cell-${currentRow}-${position}`);
@@ -539,6 +622,9 @@
         // Add letter
         function addLetter(letter) {
             if (currentCol < WORD_LENGTH) {
+                // Start timer on first letter input
+                if (!timerStarted) startTimer();
+
                 board[currentRow][currentCol] = letter;
                 const cell = document.getElementById(`cell-${currentRow}-${currentCol}`);
                 cell.textContent = letter;
@@ -622,10 +708,12 @@
 
                 if (won) {
                     gameOver = true;
+                    stopTimer();
                     showMessage('You got it!', 'win');
                     showPlayAgain();
                 } else if (lost) {
                     gameOver = true;
+                    stopTimer();
                     showMessage(`The word was: ${SECRET_WORD}`, 'lose');
                     showPlayAgain();
                 } else {
@@ -702,6 +790,7 @@
             isRevealing = false;
             Object.keys(keyStatus).forEach(k => delete keyStatus[k]);
             document.getElementById('message').innerHTML = '';
+            resetTimer();
             initBoard();
             initKeyboard();
             return { success: true };
