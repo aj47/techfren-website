@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WordleBench - AI Leaderboard | techfren</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-black: #000000;
+            --neon-green: #00FF41;
+            --terminal-green: #33FF33;
+            --dim-gray: #666666;
+            --light-gray: #999999;
+            --matrix-glow: #00FF00;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            background-color: var(--bg-black);
+            color: var(--neon-green);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        #matrix-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.15;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 48px;
+            font-weight: 700;
+            letter-spacing: 8px;
+            text-shadow: 0 0 20px var(--matrix-glow);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: var(--dim-gray);
+            font-size: 14px;
+            letter-spacing: 4px;
+        }
+
+        .subtitle a {
+            color: var(--neon-green);
+            text-decoration: none;
+        }
+
+        .subtitle a:hover {
+            text-decoration: underline;
+        }
+
+        .leaderboard {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid var(--neon-green);
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
+        }
+
+        .leaderboard-header {
+            display: grid;
+            grid-template-columns: 60px 1fr 120px;
+            gap: 20px;
+            padding: 15px 25px;
+            border-bottom: 1px solid var(--neon-green);
+            font-size: 12px;
+            letter-spacing: 2px;
+            color: var(--dim-gray);
+            text-transform: uppercase;
+        }
+
+        .leaderboard-entry {
+            display: grid;
+            grid-template-columns: 60px 1fr 120px;
+            gap: 20px;
+            padding: 20px 25px;
+            align-items: center;
+            border-bottom: 1px solid var(--dim-gray);
+            transition: background 0.2s;
+        }
+
+        .leaderboard-entry:last-child {
+            border-bottom: none;
+        }
+
+        .leaderboard-entry:hover {
+            background: rgba(0, 255, 65, 0.05);
+        }
+
+        .rank {
+            font-size: 24px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .rank.gold { color: #FFD700; text-shadow: 0 0 15px #FFD700; }
+        .rank.silver { color: #C0C0C0; text-shadow: 0 0 15px #C0C0C0; }
+        .rank.bronze { color: #CD7F32; text-shadow: 0 0 15px #CD7F32; }
+
+        .model-info .model-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--neon-green);
+            margin-bottom: 4px;
+        }
+
+        .model-info .provider {
+            font-size: 12px;
+            color: var(--light-gray);
+        }
+
+        .time {
+            font-size: 20px;
+            font-weight: 700;
+            text-align: right;
+            color: var(--terminal-green);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            color: var(--dim-gray);
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back-link:hover {
+            color: var(--neon-green);
+        }
+    </style>
+</head>
+<body>
+    <canvas id="matrix-canvas"></canvas>
+    <div class="container">
+        <div class="header">
+            <h1>🏆 WORDLEBENCH</h1>
+            <div class="subtitle">AI Wordle Leaderboard · <a href="/wordle">play the game</a></div>
+        </div>
+
+        <div class="leaderboard">
+            <div class="leaderboard-header">
+                <span>Rank</span>
+                <span>Model</span>
+                <span style="text-align: right;">Time</span>
+            </div>
+            <div class="leaderboard-entry">
+                <span class="rank gold">1</span>
+                <div class="model-info">
+                    <div class="model-name">Claude 4.5 Opus</div>
+                    <div class="provider">Anthropic</div>
+                </div>
+                <span class="time">5:00</span>
+            </div>
+        </div>
+
+        <a href="/wordle" class="back-link">← Back to Wordle</a>
+    </div>
+
+    <script>
+        // Matrix rain effect
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const fontSize = 14;
+        let columns = Math.floor(canvas.width / fontSize);
+        let drops = Array(columns).fill(1);
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#00FF41';
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const char = chars[Math.floor(Math.random() * chars.length)];
+                ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        setInterval(drawMatrix, 50);
+
+        window.addEventListener('resize', () => {
+            columns = Math.floor(canvas.width / fontSize);
+            drops = Array(columns).fill(1);
+        });
+    </script>
+</body>
+</html>
+
