@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>techfren Wordle</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-black: #000000;
+            --neon-green: #00FF41;
+            --terminal-green: #33FF33;
+            --dim-gray: #333333;
+            --light-gray: #666666;
+            --matrix-glow: #00FF00;
+            --correct: #00FF41;
+            --present: #FFFF00;
+            --absent: #3a3a3c;
+            --border-color: #3a3a3c;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background-color: var(--bg-black);
+            color: var(--neon-green);
+            min-height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #matrix-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.15;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .game-container {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--dim-gray);
+            width: 100%;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            text-shadow: 0 0 10px var(--matrix-glow);
+            letter-spacing: 4px;
+        }
+
+        .header .subtitle {
+            color: var(--light-gray);
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .board {
+            display: grid;
+            grid-template-rows: repeat(6, 1fr);
+            gap: 5px;
+            margin-bottom: 25px;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 5px;
+        }
+
+        .cell {
+            width: 58px;
+            height: 58px;
+            border: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: transparent;
+            transition: all 0.1s ease;
+        }
+
+        .cell.filled {
+            border-color: var(--light-gray);
+            animation: pop 0.1s ease;
+        }
+
+        .cell.correct {
+            background-color: var(--correct);
+            border-color: var(--correct);
+            color: var(--bg-black);
+        }
+
+        .cell.present {
+            background-color: var(--present);
+            border-color: var(--present);
+            color: var(--bg-black);
+        }
+
+        .cell.absent {
+            background-color: var(--absent);
+            border-color: var(--absent);
+        }
+
+        .cell.reveal {
+            animation: flip 0.5s ease forwards;
+        }
+
+        @keyframes pop {
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes flip {
+            0% { transform: rotateX(0); }
+            50% { transform: rotateX(90deg); }
+            100% { transform: rotateX(0); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+
+        .shake {
+            animation: shake 0.3s ease;
+        }
+
+        .keyboard {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+            max-width: 484px;
+        }
+
+        .keyboard-row {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .key {
+            min-width: 40px;
+            height: 55px;
+            border: none;
+            border-radius: 4px;
+            background-color: var(--dim-gray);
+            color: var(--neon-green);
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            text-transform: uppercase;
+        }
+
+        .key:hover {
+            background-color: var(--light-gray);
+            box-shadow: 0 0 10px var(--matrix-glow);
+        }
+
+        .key:active {
+            transform: scale(0.95);
+        }
+
+        .key.wide {
+            min-width: 65px;
+            font-size: 12px;
+        }
+
+        .key.correct {
+            background-color: var(--correct);
+            color: var(--bg-black);
+        }
+
+        .key.present {
+            background-color: var(--present);
+            color: var(--bg-black);
+        }
+
+        .key.absent {
+            background-color: #1a1a1a;
+            color: var(--light-gray);
+        }
+
+        .message {
+            margin-top: 20px;
+            padding: 15px 25px;
+            font-size: 16px;
+            text-align: center;
+            min-height: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .message.win {
+            color: var(--correct);
+            text-shadow: 0 0 10px var(--matrix-glow);
+            font-size: 20px;
+        }
+
+        .message.lose {
+            color: #ff4444;
+        }
+
+        .play-again {
+            margin-top: 15px;
+            padding: 12px 30px;
+            background: transparent;
+            border: 2px solid var(--neon-green);
+            color: var(--neon-green);
+            font-family: inherit;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .play-again:hover {
+            background: var(--neon-green);
+            color: var(--bg-black);
+            box-shadow: 0 0 20px var(--matrix-glow);
+        }
+
+        @media (max-width: 500px) {
+            .cell {
+                width: 50px;
+                height: 50px;
+                font-size: 24px;
+            }
+            .key {
+                min-width: 30px;
+                height: 50px;
+                font-size: 12px;
+            }
+            .key.wide {
+                min-width: 50px;
+            }
+        }
+</style>
+</head>
+<body>
+    <canvas id="matrix-canvas"></canvas>
+    <div class="game-container">
+        <div class="header">
+            <h1>WORDLE</h1>
+            <div class="subtitle">techfren edition</div>
+        </div>
+        <div class="board" id="board"></div>
+        <div class="keyboard" id="keyboard"></div>
+        <div class="message" id="message"></div>
+    </div>
+    <script>
+        // The secret word
+        const SECRET_WORD = 'GUILT';
+        const WORD_LENGTH = 5;
+        const MAX_GUESSES = 6;
+
+        let currentRow = 0;
+        let currentCol = 0;
+        let gameOver = false;
+        let board = [];
+
+        const keyboardLayout = [
+            ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
+            ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
+            ['ENTER', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', '⌫']
+        ];
+
+        const keyStatus = {};
+
+        // Matrix rain
+        function initMatrixRain() {
+            const canvas = document.getElementById('matrix-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const chars = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const fontSize = 14;
+            const columns = canvas.width / fontSize;
+            const drops = [];
+
+            for (let i = 0; i < columns; i++) {
+                drops[i] = Math.random() * -100;
+            }
+
+            function draw() {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#00FF41';
+                ctx.font = fontSize + 'px monospace';
+
+                for (let i = 0; i < drops.length; i++) {
+                    const char = chars[Math.floor(Math.random() * chars.length)];
+                    ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                }
+            }
+
+            setInterval(draw, 50);
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        }
+
+        // Initialize board
+        function initBoard() {
+            const boardEl = document.getElementById('board');
+            boardEl.innerHTML = '';
+            board = [];
+
+            for (let i = 0; i < MAX_GUESSES; i++) {
+                const row = document.createElement('div');
+                row.className = 'row';
+                board[i] = [];
+
+                for (let j = 0; j < WORD_LENGTH; j++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.id = `cell-${i}-${j}`;
+                    row.appendChild(cell);
+                    board[i][j] = '';
+                }
+                boardEl.appendChild(row);
+            }
+        }
+
+        // Initialize keyboard
+        function initKeyboard() {
+            const keyboardEl = document.getElementById('keyboard');
+            keyboardEl.innerHTML = '';
+
+            keyboardLayout.forEach(row => {
+                const rowEl = document.createElement('div');
+                rowEl.className = 'keyboard-row';
+
+                row.forEach(key => {
+                    const keyEl = document.createElement('button');
+                    keyEl.className = 'key';
+                    keyEl.textContent = key;
+                    keyEl.id = `key-${key}`;
+
+                    if (key === 'ENTER' || key === '⌫') {
+                        keyEl.classList.add('wide');
+                    }
+
+                    keyEl.addEventListener('click', () => handleKeyPress(key));
+                    rowEl.appendChild(keyEl);
+                });
+
+                keyboardEl.appendChild(rowEl);
+            });
+        }
+
+        // Handle key press
+        function handleKeyPress(key) {
+            if (gameOver) return;
+
+            if (key === '⌫') {
+                deleteLetter();
+            } else if (key === 'ENTER') {
+                submitGuess();
+            } else if (currentCol < WORD_LENGTH) {
+                addLetter(key);
+            }
+        }
+
+        // Add letter
+        function addLetter(letter) {
+            if (currentCol < WORD_LENGTH) {
+                board[currentRow][currentCol] = letter;
+                const cell = document.getElementById(`cell-${currentRow}-${currentCol}`);
+                cell.textContent = letter;
+                cell.classList.add('filled');
+                currentCol++;
+            }
+        }
+
+        // Delete letter
+        function deleteLetter() {
+            if (currentCol > 0) {
+                currentCol--;
+                board[currentRow][currentCol] = '';
+                const cell = document.getElementById(`cell-${currentRow}-${currentCol}`);
+                cell.textContent = '';
+                cell.classList.remove('filled');
+            }
+        }
+
+        // Submit guess
+        function submitGuess() {
+            if (currentCol !== WORD_LENGTH) {
+                shakeRow();
+                showMessage('Not enough letters');
+                return;
+            }
+
+            const guess = board[currentRow].join('');
+            revealGuess(guess);
+        }
+
+        // Reveal guess with animation
+        function revealGuess(guess) {
+            const secretArr = SECRET_WORD.split('');
+            const guessArr = guess.split('');
+            const result = new Array(WORD_LENGTH).fill('absent');
+            const secretUsed = new Array(WORD_LENGTH).fill(false);
+
+            // First pass: find correct letters
+            for (let i = 0; i < WORD_LENGTH; i++) {
+                if (guessArr[i] === secretArr[i]) {
+                    result[i] = 'correct';
+                    secretUsed[i] = true;
+                }
+            }
+
+            // Second pass: find present letters
+            for (let i = 0; i < WORD_LENGTH; i++) {
+                if (result[i] !== 'correct') {
+                    for (let j = 0; j < WORD_LENGTH; j++) {
+                        if (!secretUsed[j] && guessArr[i] === secretArr[j]) {
+                            result[i] = 'present';
+                            secretUsed[j] = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // Animate cells
+            for (let i = 0; i < WORD_LENGTH; i++) {
+                setTimeout(() => {
+                    const cell = document.getElementById(`cell-${currentRow}-${i}`);
+                    cell.classList.add('reveal', result[i]);
+                    updateKeyboard(guessArr[i], result[i]);
+                }, i * 300);
+            }
+
+            // Check win/lose after animation
+            setTimeout(() => {
+                if (guess === SECRET_WORD) {
+                    gameOver = true;
+                    showMessage('You got it!', 'win');
+                    showPlayAgain();
+                } else if (currentRow === MAX_GUESSES - 1) {
+                    gameOver = true;
+                    showMessage(`The word was: ${SECRET_WORD}`, 'lose');
+                    showPlayAgain();
+                } else {
+                    currentRow++;
+                    currentCol = 0;
+                }
+            }, WORD_LENGTH * 300 + 200);
+        }
+
+        // Update keyboard colors
+        function updateKeyboard(letter, status) {
+            const priority = { 'correct': 3, 'present': 2, 'absent': 1 };
+            const current = keyStatus[letter] || 'unused';
+            const currentPriority = priority[current] || 0;
+
+            if (priority[status] > currentPriority) {
+                keyStatus[letter] = status;
+                const keyEl = document.getElementById(`key-${letter}`);
+                if (keyEl) {
+                    keyEl.classList.remove('correct', 'present', 'absent');
+                    keyEl.classList.add(status);
+                }
+            }
+        }
+
+        // Shake row animation
+        function shakeRow() {
+            const row = document.getElementById('board').children[currentRow];
+            row.classList.add('shake');
+            setTimeout(() => row.classList.remove('shake'), 300);
+        }
+
+        // Show message
+        function showMessage(text, type = '') {
+            const msgEl = document.getElementById('message');
+            msgEl.textContent = text;
+            msgEl.className = 'message';
+            if (type) msgEl.classList.add(type);
+            if (!type) {
+                setTimeout(() => { msgEl.textContent = ''; }, 2000);
+            }
+        }
+
+        // Show play again button
+        function showPlayAgain() {
+            const msgEl = document.getElementById('message');
+            const btn = document.createElement('button');
+            btn.className = 'play-again';
+            btn.textContent = 'Play Again';
+            btn.onclick = resetGame;
+            msgEl.appendChild(document.createElement('br'));
+            msgEl.appendChild(btn);
+        }
+
+        // Reset game
+        function resetGame() {
+            currentRow = 0;
+            currentCol = 0;
+            gameOver = false;
+            Object.keys(keyStatus).forEach(k => delete keyStatus[k]);
+            document.getElementById('message').innerHTML = '';
+            initBoard();
+            initKeyboard();
+        }
+
+        // Initialize
+        initMatrixRain();
+        initBoard();
+        initKeyboard();
+    </script>
+</body>
+</html>
+
