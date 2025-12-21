@@ -289,6 +289,7 @@
         let currentCol = 0;
         let gameOver = false;
         let board = [];
+        let isRevealing = false;
 
         const keyboardLayout = [
             ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
@@ -297,6 +298,117 @@
         ];
 
         const keyStatus = {};
+
+        // =============================================
+        // BOT-FRIENDLY API (exposed on window object)
+        // =============================================
+
+        // Get current game state - useful for bots to understand the board
+        window.getGameState = function() {
+            return {
+                currentRow,
+                currentCol,
+                gameOver,
+                isRevealing,
+                board: board.map(row => [...row]),
+                currentGuess: board[currentRow] ? board[currentRow].join('') : '',
+                guessesRemaining: MAX_GUESSES - currentRow,
+                keyStatus: {...keyStatus}
+            };
+        };
+
+        // Type a complete word (bot-friendly - handles the whole word at once)
+        window.typeWord = function(word) {
+            if (gameOver || isRevealing) return { success: false, error: 'Game is over or revealing' };
+            word = word.toUpperCase();
+            if (word.length !== WORD_LENGTH) return { success: false, error: 'Word must be 5 letters' };
+            if (!/^[A-Z]+$/.test(word)) return { success: false, error: 'Word must contain only letters' };
+
+            // Clear current row first
+            for (let i = 0; i < WORD_LENGTH; i++) {
+                board[currentRow][i] = '';
+                const cell = document.getElementById(`cell-${currentRow}-${i}`);
+                cell.textContent = '';
+                cell.classList.remove('filled');
+            }
+
+            // Set all letters at once
+            for (let i = 0; i < WORD_LENGTH; i++) {
+                board[currentRow][i] = word[i];
+                const cell = document.getElementById(`cell-${currentRow}-${i}`);
+                cell.textContent = word[i];
+                cell.classList.add('filled');
+            }
+            currentCol = WORD_LENGTH;
+
+            return { success: true, word: word };
+        };
+
+        // Type a single letter at a specific position (bot-friendly - no race conditions)
+        window.typeLetterAt = function(letter, position) {
+            if (gameOver || isRevealing) return { success: false, error: 'Game is over or revealing' };
+            if (position < 0 || position >= WORD_LENGTH) return { success: false, error: 'Invalid position' };
+
+            letter = letter.toUpperCase();
+            if (!/^[A-Z]$/.test(letter)) return { success: false, error: 'Must be a single letter' };
+
+            board[currentRow][position] = letter;
+            const cell = document.getElementById(`cell-${currentRow}-${position}`);
+            cell.textContent = letter;
+            cell.classList.add('filled');
+
+            // Update currentCol to be after the last filled position
+            currentCol = 0;
+            for (let i = WORD_LENGTH - 1; i >= 0; i--) {
+                if (board[currentRow][i]) {
+                    currentCol = i + 1;
+                    break;
+                }
+            }
+
+            return { success: true, letter, position };
+        };
+
+        // Submit the current guess (returns a promise that resolves after reveal animation)
+        window.submitCurrentGuess = function() {
+            return new Promise((resolve) => {
+                if (gameOver) {
+                    resolve({ success: false, error: 'Game is over' });
+                    return;
+                }
+                if (isRevealing) {
+                    resolve({ success: false, error: 'Currently revealing' });
+                    return;
+                }
+
+                const guess = board[currentRow].join('');
+                if (guess.length !== WORD_LENGTH) {
+                    shakeRow();
+                    resolve({ success: false, error: 'Not enough letters', currentGuess: guess });
+                    return;
+                }
+
+                // Do the reveal and resolve after it completes
+                revealGuessWithCallback(guess, (result) => {
+                    resolve(result);
+                });
+            });
+        };
+
+        // Clear current row
+        window.clearCurrentRow = function() {
+            if (gameOver || isRevealing) return { success: false, error: 'Game is over or revealing' };
+
+            for (let i = 0; i < WORD_LENGTH; i++) {
+                board[currentRow][i] = '';
+                const cell = document.getElementById(`cell-${currentRow}-${i}`);
+                cell.textContent = '';
+                cell.classList.remove('filled');
+            }
+            currentCol = 0;
+
+            return { success: true };
+        };
 
         // Matrix rain
         function initMatrixRain() {
@@ -346,12 +458,16 @@
             for (let i = 0; i < MAX_GUESSES; i++) {
                 const row = document.createElement('div');
                 row.className = 'row';
+                row.setAttribute('data-row', i);
                 board[i] = [];
 
                 for (let j = 0; j < WORD_LENGTH; j++) {
                     const cell = document.createElement('div');
                     cell.className = 'cell';
                     cell.id = `cell-${i}-${j}`;
+                    // Bot-friendly data attributes
+                    cell.setAttribute('data-row', i);
+                    cell.setAttribute('data-col', j);
                     row.appendChild(cell);
                     board[i][j] = '';
                 }
@@ -373,6 +489,16 @@
                     keyEl.className = 'key';
                     keyEl.textContent = key;
                     keyEl.id = `key-${key}`;
+
+                    // Bot-friendly data attributes
+                    keyEl.setAttribute('data-key', key);
+                    if (key === 'ENTER') {
+                        keyEl.setAttribute('data-action', 'submit');
+                    } else if (key === '⌫') {
+                        keyEl.setAttribute('data-action', 'delete');
+                    } else {
+                        keyEl.setAttribute('data-letter', key);
+                    }
 
                     if (key === 'ENTER' || key === '⌫') {
                         keyEl.classList.add('wide');
@@ -435,6 +561,13 @@
 
         // Reveal guess with animation
         function revealGuess(guess) {
+            revealGuessWithCallback(guess, null);
+        }
+
+        // Reveal guess with callback (for bot API)
+        function revealGuessWithCallback(guess, callback) {
+            isRevealing = true;
+            const revealRow = currentRow; // Capture current row
             const secretArr = SECRET_WORD.split('');
             const guessArr = guess.split('');
             const result = new Array(WORD_LENGTH).fill('absent');
@@ -464,7 +597,7 @@
             // Animate cells
             for (let i = 0; i < WORD_LENGTH; i++) {
                 setTimeout(() => {
-                    const cell = document.getElementById(`cell-${currentRow}-${i}`);
+                    const cell = document.getElementById(`cell-${revealRow}-${i}`);
                     cell.classList.add('reveal', result[i]);
                     updateKeyboard(guessArr[i], result[i]);
                 }, i * 300);
@@ -472,17 +605,35 @@
 
             // Check win/lose after animation
             setTimeout(() => {
-                if (guess === SECRET_WORD) {
+                isRevealing = false;
+                const won = guess === SECRET_WORD;
+                const lost = !won && currentRow === MAX_GUESSES - 1;
+
+                if (won) {
                     gameOver = true;
                     showMessage('You got it!', 'win');
                     showPlayAgain();
-                } else if (currentRow === MAX_GUESSES - 1) {
+                } else if (lost) {
                     gameOver = true;
                     showMessage(`The word was: ${SECRET_WORD}`, 'lose');
                     showPlayAgain();
                 } else {
                     currentRow++;
                     currentCol = 0;
+                }
+
+                // Call the callback with result info for bots
+                if (callback) {
+                    callback({
+                        success: true,
+                        guess: guess,
+                        result: result,
+                        won: won,
+                        lost: lost,
+                        gameOver: gameOver,
+                        row: revealRow,
+                        nextRow: currentRow
+                    });
                 }
             }, WORD_LENGTH * 300 + 200);
         }
@@ -532,21 +683,34 @@
             msgEl.appendChild(btn);
         }
 
-        // Reset game
+        // Reset game (also exposed on window for bots)
         function resetGame() {
             currentRow = 0;
             currentCol = 0;
             gameOver = false;
+            isRevealing = false;
             Object.keys(keyStatus).forEach(k => delete keyStatus[k]);
             document.getElementById('message').innerHTML = '';
             initBoard();
             initKeyboard();
+            return { success: true };
         }
+        window.resetGame = resetGame;
+
+        // Play a complete word and submit (convenience for bots)
+        window.playWord = async function(word) {
+            const typeResult = window.typeWord(word);
+            if (!typeResult.success) return typeResult;
+            return await window.submitCurrentGuess();
+        };
 
         // Initialize
         initMatrixRain();
         initBoard();
         initKeyboard();
+
+        // Signal that the game is ready (for bots waiting for page load)
+        window.wordleReady = true;
     </script>
 </body>
 </html>
