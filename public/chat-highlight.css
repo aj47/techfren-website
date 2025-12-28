@@ -1,0 +1,71 @@
+/* TechFren Chat Highlight - Cyberpunk Theme */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;500&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 16px;
+  background: transparent;
+  font-family: 'Roboto', sans-serif;
+}
+
+.highlight-chat {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background: rgba(0, 0, 0, 0.85);
+  border: 2px solid #00ff00;
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.4), inset 0 0 30px rgba(0, 255, 0, 0.05);
+  max-width: 600px;
+}
+
+/* Profile Image */
+.hl-img {
+  flex-shrink: 0;
+  order: -1;
+}
+
+.hl-profile-pic {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 2px solid #00ff00;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+}
+
+/* Content Container */
+.hl-c-cont {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Username */
+.hl-name {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 12px;
+  color: #00ff00;
+  text-shadow: 0 0 8px #00ff00;
+  margin-bottom: 8px;
+  letter-spacing: 1px;
+}
+
+/* Message */
+.hl-message {
+  font-family: 'Roboto', sans-serif;
+  font-size: 16px;
+  color: #00ff00;
+  text-shadow: 0 0 4px rgba(0, 255, 0, 0.6);
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+
+.hl-message i {
+  font-style: italic;
+  opacity: 0.9;
+}
+

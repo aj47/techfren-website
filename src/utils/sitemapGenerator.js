@@ -18,6 +18,18 @@ export const generateSitemap = async () => {
       lastmod: currentDate,
       changefreq: 'daily',
       priority: '0.9'
+    },
+    {
+      url: '/wordle',
+      lastmod: currentDate,
+      changefreq: 'weekly',
+      priority: '0.7'
+    },
+    {
+      url: '/wordlebench',
+      lastmod: currentDate,
+      changefreq: 'weekly',
+      priority: '0.7'
     }
   ];
   

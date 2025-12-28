@@ -7,7 +7,6 @@ Allow: /blog/*
 
 # Disallow crawling of loading pages and temporary files
 Disallow: /loading.html
-Disallow: /*.html$
 Disallow: /thankyou.html
 Disallow: /hackathon.html
 Disallow: /big-agi.html

@@ -175,6 +175,16 @@ const Index = () => {
             />
             <ProjectCard
               project={{
+                name: "WordleBench",
+                description: "AI Wordle Leaderboard - See how AI models compete",
+                live: "/wordlebench",
+                isInternal: true,
+                image: "/leaderboard.png",
+              }}
+              isQuickLink={true}
+            />
+            <ProjectCard
+              project={{
                 name: "Links from videos",
                 description: "List of links that I've referred to in videos",
                 live: "https://github.com/aj47/techfren-vids/blob/main/links.md",
