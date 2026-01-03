@@ -193,8 +193,11 @@
             <p>
                 The challenge: classify 30 witnesses as either <span class="knight">⚔️ Knights</span> (always tell truth)
                 or <span class="knave">🗡️ Knaves</span> (always lie) based on their statements about each other.
-                Each query generates ~2,000 tokens of verbose dossier text, quickly filling context windows
-                and testing whether agents can maintain coherent reasoning across 200K+ tokens.
+            </p>
+            <p>
+                <strong>Two difficulty levels:</strong><br>
+                • <span class="highlight">Normal:</span> 3 statements per witness, ~2,000 tokens/query → ~45K-60K total tokens<br>
+                • <span class="highlight">Hard:</span> 5 statements per witness, ~4,500 tokens/query → ~135K+ total tokens
             </p>
         </div>
 
@@ -277,7 +280,8 @@
 
         <!-- Footer -->
         <div class="footer-links">
-            <a href="/tribunal">▶ Play Tribunal (30)</a>
+            <a href="/tribunal">▶ Normal (30)</a>
+            <a href="/tribunal-hard">🔥 Hard (150 stmts)</a>
             <a href="/tribunal-mini">⚡ Mini (4)</a>
             <a href="/wordle">🎮 Wordle v1</a>
             <a href="/wordlebench">📊 WordleBench</a>

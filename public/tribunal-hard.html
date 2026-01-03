@@ -1,0 +1,1853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Testimony Tribunal (HARD) | techfren</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-black: #000000;
+            --neon-green: #00FF41;
+            --terminal-green: #33FF33;
+            --dim-gray: #333333;
+            --light-gray: #666666;
+            --matrix-glow: #00FF00;
+            --knight-gold: #FFD700;
+            --knave-red: #FF4444;
+            --border-color: #3a3a3c;
+            --panel-bg: rgba(0, 20, 0, 0.85);
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background-color: var(--bg-black);
+            color: var(--neon-green);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        #matrix-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .game-container {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: 280px 1fr 320px;
+            grid-template-rows: auto 1fr auto;
+            gap: 15px;
+            padding: 15px;
+            height: 100vh;
+            max-height: 100vh;
+        }
+
+        .header {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 10px;
+            border-bottom: 1px solid var(--dim-gray);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            text-shadow: 0 0 10px var(--matrix-glow);
+            letter-spacing: 3px;
+        }
+
+        .header .subtitle {
+            color: var(--light-gray);
+            font-size: 11px;
+            margin-top: 5px;
+        }
+
+        .header .subtitle a {
+            color: var(--neon-green);
+            text-decoration: none;
+        }
+
+        .timer {
+            font-size: 20px;
+            color: var(--terminal-green);
+            text-shadow: 0 0 10px var(--matrix-glow);
+            margin-top: 8px;
+        }
+
+        .panel {
+            background: var(--panel-bg);
+            border: 1px solid var(--dim-gray);
+            border-radius: 4px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-header {
+            background: var(--dim-gray);
+            padding: 8px 12px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .panel-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        /* Character List Panel */
+        .character-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .character-btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 10px;
+            background: transparent;
+            border: 1px solid var(--dim-gray);
+            color: var(--neon-green);
+            font-family: inherit;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+
+        .character-btn:hover {
+            border-color: var(--neon-green);
+            box-shadow: 0 0 8px var(--matrix-glow);
+        }
+
+        .character-btn.classified-knight {
+            border-color: var(--knight-gold);
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .character-btn.classified-knave {
+            border-color: var(--knave-red);
+            background: rgba(255, 68, 68, 0.1);
+        }
+
+        .character-btn .status {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+
+        .status.knight { background: var(--knight-gold); color: #000; }
+        .status.knave { background: var(--knave-red); color: #fff; }
+        .status.unknown { background: var(--dim-gray); color: var(--light-gray); }
+
+        /* Query Output Panel */
+        .query-output {
+            font-size: 12px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .query-entry {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed var(--dim-gray);
+        }
+
+        .query-entry:last-child {
+            border-bottom: none;
+        }
+
+        .query-timestamp {
+            color: var(--light-gray);
+            font-size: 10px;
+            margin-bottom: 5px;
+        }
+
+        .highlight-knight { color: var(--knight-gold); }
+        .highlight-knave { color: var(--knave-red); }
+        .highlight-name { color: #00BFFF; font-weight: 700; }
+
+        /* Control Panel */
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .control-section {
+            padding: 10px;
+            border: 1px solid var(--dim-gray);
+            border-radius: 4px;
+        }
+
+        .control-section h3 {
+            font-size: 11px;
+            margin-bottom: 8px;
+            color: var(--light-gray);
+            letter-spacing: 1px;
+        }
+
+        .classify-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid var(--dim-gray);
+            background: transparent;
+            color: var(--neon-green);
+            font-family: inherit;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover:not(:disabled) {
+            box-shadow: 0 0 10px var(--matrix-glow);
+        }
+
+        .btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .btn-knight {
+            border-color: var(--knight-gold);
+            color: var(--knight-gold);
+        }
+
+        .btn-knight:hover:not(:disabled) {
+            background: var(--knight-gold);
+            color: #000;
+        }
+
+        .btn-knave {
+            border-color: var(--knave-red);
+            color: var(--knave-red);
+        }
+
+        .btn-knave:hover:not(:disabled) {
+            background: var(--knave-red);
+            color: #fff;
+        }
+
+        .btn-action {
+            border-color: var(--neon-green);
+        }
+
+        .btn-action:hover:not(:disabled) {
+            background: var(--neon-green);
+            color: #000;
+        }
+
+        .btn-submit {
+            border-color: #00BFFF;
+            color: #00BFFF;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            background: #00BFFF;
+            color: #000;
+            box-shadow: 0 0 15px #00BFFF;
+        }
+
+        /* Stats Panel */
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            font-size: 11px;
+        }
+
+        .stat {
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 3px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 3px;
+        }
+
+        .stat-label {
+            color: var(--light-gray);
+            font-size: 9px;
+            letter-spacing: 1px;
+        }
+
+        /* Footer */
+        .footer {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            border-top: 1px solid var(--dim-gray);
+            font-size: 11px;
+        }
+
+        .progress-bar {
+            flex: 1;
+            max-width: 400px;
+            height: 8px;
+            background: var(--dim-gray);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0 20px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--neon-green);
+            transition: width 0.3s;
+        }
+
+        /* Message overlay */
+        .message-overlay {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--panel-bg);
+            border: 2px solid var(--neon-green);
+            padding: 30px 50px;
+            border-radius: 8px;
+            text-align: center;
+            z-index: 100;
+            display: none;
+        }
+
+        .message-overlay.show { display: block; }
+        .message-overlay.win { border-color: var(--knight-gold); }
+        .message-overlay.lose { border-color: var(--knave-red); }
+
+        .message-title {
+            font-size: 24px;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px currentColor;
+        }
+
+        .message-text {
+            font-size: 14px;
+            color: var(--light-gray);
+            margin-bottom: 20px;
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-black);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--dim-gray);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--light-gray);
+        }
+
+        /* Selected character highlight */
+        .character-btn.selected {
+            border-color: var(--neon-green);
+            background: rgba(0, 255, 65, 0.15);
+        }
+
+        .token-counter {
+            font-size: 10px;
+            color: var(--light-gray);
+        }
+
+        .token-counter span {
+            color: var(--terminal-green);
+        }
+</style>
+</head>
+<body>
+    <canvas id="matrix-canvas"></canvas>
+
+    <div class="game-container" id="game-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>THE TESTIMONY TRIBUNAL <span style="color: #FF6600;">(HARD)</span></h1>
+            <div class="subtitle">techfren AI benchmark v2 · 150 statements · <a href="/tribunalbench">leaderboard</a> · <a href="/tribunal">normal</a></div>
+            <div class="timer" id="timer">0:00</div>
+        </div>
+
+        <!-- Left Panel: Character List -->
+        <div class="panel" id="character-panel">
+            <div class="panel-header">⚖️ WITNESSES (0/30 CLASSIFIED)</div>
+            <div class="panel-content">
+                <div class="character-list" id="character-list">
+                    <!-- Characters populated by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Center Panel: Query Output -->
+        <div class="panel" id="output-panel">
+            <div class="panel-header">📜 TESTIMONY LOG</div>
+            <div class="panel-content">
+                <div class="query-output" id="query-output">
+<span style="color: var(--light-gray)">═══════════════════════════════════════════════════════════════════════════════
+     THE TESTIMONY TRIBUNAL - KNIGHT & KNAVE LOGIC CHALLENGE [HARD MODE]
+═══════════════════════════════════════════════════════════════════════════════
+                    ⚠️  EXTENDED DOSSIERS · 150 STATEMENTS · 5 PER WITNESS
+
+BRIEFING:
+You are the Grand Arbiter of the Tribunal. Before you stand 30 witnesses, each
+belonging to one of two ancient orders:
+
+  ⚔️  KNIGHTS - Bound by sacred oath to ALWAYS speak the TRUTH
+  🗡️  KNAVES  - Cursed to ALWAYS speak LIES
+
+HARD MODE DIFFERENCES:
+• Each witness makes 5 statements (vs 3 in normal mode) = 150 total statements
+• Dossiers are 3x more verbose with extended analysis sections
+• Target context consumption: ~135,000 tokens (vs ~45,000 in normal)
+• More complex logical chains to follow
+
+RULES:
+• Knights ALWAYS tell the truth - every statement they make is TRUE
+• Knaves ALWAYS lie - every statement they make is FALSE
+• There is exactly ONE valid classification that satisfies all statements
+
+INSTRUCTIONS:
+1. Click a witness name to query their comprehensive dossier
+2. Study the 5 statements each witness makes
+3. Cross-reference with the extended logical analysis sections
+4. Use the classify buttons to mark each witness as Knight or Knave
+5. Click "Check Consistency" to verify your current classifications
+6. When all 30 are classified, click "Submit Final Verdict"
+
+Good luck, Grand Arbiter. The HARD path demands diligent analysis.
+═══════════════════════════════════════════════════════════════════════════════
+</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel: Controls -->
+        <div class="panel" id="control-panel">
+            <div class="panel-header">🎮 CONTROLS</div>
+            <div class="panel-content">
+                <div class="controls">
+                    <!-- Stats -->
+                    <div class="control-section">
+                        <h3>CLASSIFICATION STATUS</h3>
+                        <div class="stats">
+                            <div class="stat">
+                                <div class="stat-value highlight-knight" id="knight-count">0</div>
+                                <div class="stat-label">KNIGHTS</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value highlight-knave" id="knave-count">0</div>
+                                <div class="stat-label">KNAVES</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value" id="unknown-count">30</div>
+                                <div class="stat-label">UNKNOWN</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value" id="query-count">0</div>
+                                <div class="stat-label">QUERIES</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Selected Character -->
+                    <div class="control-section">
+                        <h3>SELECTED WITNESS</h3>
+                        <div id="selected-name" style="font-size: 14px; margin-bottom: 10px; color: var(--light-gray);">
+                            None selected
+                        </div>
+                        <div class="classify-btns">
+                            <button class="btn btn-knight" id="btn-knight" disabled>⚔️ KNIGHT</button>
+                            <button class="btn btn-knave" id="btn-knave" disabled>🗡️ KNAVE</button>
+                        </div>
+                        <button class="btn btn-action" id="btn-clear" disabled style="margin-top: 8px; width: 100%;">
+                            CLEAR CLASSIFICATION
+                        </button>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="control-section">
+                        <h3>ACTIONS</h3>
+                        <button class="btn btn-action" id="btn-consistency" style="width: 100%;">
+                            🔍 CHECK CONSISTENCY
+                        </button>
+                        <button class="btn btn-submit" id="btn-submit" style="width: 100%;" disabled>
+                            ⚖️ SUBMIT FINAL VERDICT
+                        </button>
+                    </div>
+
+                    <!-- Token Counter -->
+                    <div class="control-section">
+                        <h3>CONTEXT USAGE</h3>
+                        <div class="token-counter">
+                            Approximate tokens: <span id="token-count">0</span>
+                        </div>
+                        <div class="progress-bar" style="margin-top: 8px;">
+                            <div class="progress-fill" id="token-progress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div>Witnesses: <span id="footer-classified">0</span>/30 classified</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+            </div>
+            <div class="token-counter">~<span id="footer-tokens">0</span> tokens in context</div>
+        </div>
+    </div>
+
+    <!-- Message Overlay -->
+    <div class="message-overlay" id="message-overlay">
+        <div class="message-title" id="message-title">VERDICT</div>
+        <div class="message-text" id="message-text"></div>
+        <button class="btn btn-action" id="btn-play-again">RETRY TRIBUNAL</button>
+    </div>
+
+    <script>
+        // =============================================
+        // THE TESTIMONY TRIBUNAL - GAME LOGIC
+        // =============================================
+
+        const NUM_CHARACTERS = 30;
+        const TARGET_TOKENS = 200000;
+
+        // Character names - memorable and distinct
+        const CHARACTER_NAMES = [
+            "Lord Aldric", "Dame Beatrix", "Count Casimir", "Duchess Delia",
+            "Earl Edmund", "Lady Fiona", "Baron Godfrey", "Countess Helena",
+            "Sir Ignatius", "Baroness Juliet", "Duke Kendrick", "Lady Lysandra",
+            "Marquis Magnus", "Viscountess Nadia", "Lord Octavian", "Dame Penelope",
+            "Count Quentin", "Duchess Rosalind", "Earl Sebastian", "Lady Theodora",
+            "Baron Ulric", "Countess Vivienne", "Sir Winston", "Baroness Xenia",
+            "Duke Yorick", "Lady Zelda", "Marquis Alaric", "Viscountess Bianca",
+            "Lord Cedric", "Dame Dahlia"
+        ];
+
+        // Character backgrounds for verbose dossiers
+        const BACKGROUNDS = [
+            "A distinguished member of the Northern Estates, known for their extensive library and scholarly pursuits. They have served on the Council of Arbiters for over two decades.",
+            "Heir to the coastal trading empire, they command respect in both merchant and noble circles. Their testimony has been sought in seventeen prior tribunals.",
+            "A veteran of the Eastern Campaigns, decorated for valor and strategic brilliance. They now serve as an advisor to the Crown on matters of security.",
+            "The youngest to ever hold their title, granted after exceptional service during the Great Plague. They established three hospitals in the outer provinces.",
+            "A renowned patron of the arts whose gallery houses works from across the known world. They have sponsored over forty artists and architects.",
+            "Former ambassador to the Southern Kingdoms, fluent in seven languages. Their diplomatic skills resolved the Border Conflict of the last decade.",
+            "Master of the Royal Treasury for fifteen years, known for impeccable record-keeping. They uncovered the embezzlement scandal that shook the court.",
+            "A philosopher and theologian whose writings on ethics are studied in academies everywhere. They founded the Institute of Moral Sciences.",
+            "Champion of three consecutive tournaments, undefeated in single combat. They now train the elite guard of the capital.",
+            "A healer of legendary skill, said to have cured the King's malady when all others failed. They run the largest infirmary in the realm.",
+            "The architect of the Grand Cathedral, whose spires are visible from twenty leagues away. They redesigned the entire capital district.",
+            "A judge of the High Court for twelve years, known for fairness and wisdom. Their rulings have set precedents still followed today.",
+            "Commander of the Western Fleet, victor of the Battle of Coral Bay. They secured the trade routes that enriched the kingdom.",
+            "A naturalist who catalogued over three thousand species in the Royal Bestiary. Their expeditions mapped the uncharted northern territories.",
+            "The realm's foremost historian, keeper of the Archives. They have documented every significant event of the past century.",
+            "A musician whose compositions are performed at every royal occasion. They invented two new instruments now used across the continent.",
+            "Master of the Alchemists' Guild, discoverer of the process for refining starlight ore. Their innovations revolutionized metallurgy.",
+            "A benefactor whose charitable works feed thousands. They built orphanages, schools, and shelters throughout the poor districts.",
+            "The spymaster's right hand, though officially just a minor functionary. Their network of informants spans every province.",
+            "A mystic and seer consulted by nobles and commoners alike. Their prophecies, cryptic as they are, have proven uncannily accurate.",
+            "Warden of the Northern Marches, defending against incursions for thirty years. The border has not been breached under their watch.",
+            "A vintner whose estates produce the finest wines in the realm. Their cellars are legendary among connoisseurs.",
+            "The King's personal physician, trusted with the health of the royal family. They have delivered three heirs to the throne.",
+            "A cartographer whose maps are used by every navigator in the kingdom. They charted the treacherous Serpent's Passage.",
+            "Master of Ceremonies at the Royal Court, orchestrating every feast and festival. They have served under three monarchs.",
+            "A mathematician whose theorems solved the problem of the celestial calendar. The new system they devised gains only one day every millennium.",
+            "Commander of the Citadel Guard, responsible for the security of the capital. Not a single breach has occurred in their tenure.",
+            "A poet laureate whose verses are memorized by schoolchildren. Their epic of the Founding is considered the definitive account.",
+            "Keeper of the Royal Menagerie, curator of exotic creatures from distant lands. They have bred species thought to be extinct.",
+            "A textile merchant who revolutionized the silk trade. Their innovations made fine cloth accessible to the middle classes."
+        ];
+
+        // HARD MODE: 5 statements per witness (150 total) + verbose dossiers
+        // Puzzle data - encoded to prevent source code inspection
+        const _pd = 'W1swLFtbMSx0cnVlXSxbNSxmYWxzZV0sWzExLHRydWVdLFsxNyx0cnVlXSxbMjMsdHJ1ZV1dXSxbMSxbWzIsdHJ1ZV0sWzYsdHJ1ZV0sWzEyLHRydWVdLFsxOCxmYWxzZV0sWzI0LGZhbHNlXV1dLFsyLFtbMyx0cnVlXSxbNyx0cnVlXSxbMTMsdHJ1ZV0sWzE5LHRydWVdLFsyNSx0cnVlXV1dLFszLFtbNCx0cnVlXSxbOCx0cnVlXSxbMTQsZmFsc2VdLFsyMCx0cnVlXSxbMjYsdHJ1ZV1dXSxbNCxbWzUsZmFsc2VdLFs5LGZhbHNlXSxbMTUsZmFsc2VdLFsyMSx0cnVlXSxbMjcsZmFsc2VdXV0sWzUsW1s2LGZhbHNlXSxbMTAsZmFsc2VdLFsxNixmYWxzZV0sWzIyLGZhbHNlXSxbMjgsZmFsc2VdXV0sWzYsW1s3LHRydWVdLFsxMSx0cnVlXSxbMTcsdHJ1ZV0sWzIzLHRydWVdLFsyOSx0cnVlXV1dLFs3LFtbOCx0cnVlXSxbMTIsdHJ1ZV0sWzE4LGZhbHNlXSxbMjQsZmFsc2VdLFswLHRydWVdXV0sWzgsW1s5LGZhbHNlXSxbMTMsdHJ1ZV0sWzE5LHRydWVdLFsyNSx0cnVlXSxbMSx0cnVlXV1dLFs5LFtbMTAsZmFsc2VdLFsxNCx0cnVlXSxbMjAsZmFsc2VdLFsyNixmYWxzZV0sWzIsZmFsc2VdXV0sWzEwLFtbMTEsdHJ1ZV0sWzE1LGZhbHNlXSxbMjEsdHJ1ZV0sWzI3LGZhbHNlXSxbMyx0cnVlXV1dLFsxMSxbWzEyLHRydWVdLFsxNix0cnVlXSxbMjIsdHJ1ZV0sWzI4LHRydWVdLFs0LHRydWVdXV0sWzEyLFtbMTMsdHJ1ZV0sWzE3LHRydWVdLFsyMyx0cnVlXSxbMjksdHJ1ZV0sWzUsZmFsc2VdXV0sWzEzLFtbMTQsZmFsc2VdLFsxOCxmYWxzZV0sWzI0LGZhbHNlXSxbMCx0cnVlXSxbNix0cnVlXV1dLFsxNCxbWzE1LHRydWVdLFsxOSxmYWxzZV0sWzI1LGZhbHNlXSxbMSxmYWxzZV0sWzcsZmFsc2VdXV0sWzE1LFtbMTYsZmFsc2VdLFsyMCxmYWxzZV0sWzI2LGZhbHNlXSxbMixmYWxzZV0sWzgsZmFsc2VdXV0sWzE2LFtbMTcsdHJ1ZV0sWzIxLHRydWVdLFsyNyxmYWxzZV0sWzMsdHJ1ZV0sWzksZmFsc2VdXV0sWzE3LFtbMTgsZmFsc2VdLFsyMix0cnVlXSxbMjgsdHJ1ZV0sWzQsdHJ1ZV0sWzEwLHRydWVdXV0sWzE4LFtbMTksZmFsc2VdLFsyMyxmYWxzZV0sWzI5LGZhbHNlXSxbNSx0cnVlXSxbMTEsZmFsc2VdXV0sWzE5LFtbMjAsdHJ1ZV0sWzI0LGZhbHNlXSxbMCx0cnVlXSxbNix0cnVlXSxbMTIsdHJ1ZV1dXSxbMjAsW1syMSx0cnVlXSxbMjUsdHJ1ZV0sWzEsdHJ1ZV0sWzcsdHJ1ZV0sWzEzLHRydWVdXV0sWzIxLFtbMjIsdHJ1ZV0sWzI2LHRydWVdLFsyLHRydWVdLFs4LHRydWVdLFsxNCxmYWxzZV1dXSxbMjIsW1syMyx0cnVlXSxbMjcsZmFsc2VdLFszLHRydWVdLFs5LGZhbHNlXSxbMTUsZmFsc2VdXV0sWzIzLFtbMjQsZmFsc2VdLFsyOCx0cnVlXSxbNCx0cnVlXSxbMTAsdHJ1ZV0sWzE2LHRydWVdXV0sWzI0LFtbMjUsZmFsc2VdLFsyOSxmYWxzZV0sWzUsdHJ1ZV0sWzExLGZhbHNlXSxbMTcsZmFsc2VdXV0sWzI1LFtbMjYsdHJ1ZV0sWzAsdHJ1ZV0sWzYsdHJ1ZV0sWzEyLHRydWVdLFsxOCxmYWxzZV1dXSxbMjYsW1syNyxmYWxzZV0sWzEsdHJ1ZV0sWzcsdHJ1ZV0sWzEzLHRydWVdLFsxOSx0cnVlXV1dLFsyNyxbWzI4LGZhbHNlXSxbMixmYWxzZV0sWzgsZmFsc2VdLFsxNCx0cnVlXSxbMjAsZmFsc2VdXV0sWzI4LFtbMjksdHJ1ZV0sWzMsdHJ1ZV0sWzksZmFsc2VdLFsxNSxmYWxzZV0sWzIxLHRydWVdXV0sWzI5LFtbMCx0cnVlXSxbNCx0cnVlXSxbMTAsdHJ1ZV0sWzE2LHRydWVdLFsyMix0cnVlXV1dXQ==';
+        const STATEMENT_GRAPH = JSON.parse(atob(_pd));
+
+        // Game state
+        let classifications = {}; // { name: 'knight' | 'knave' | null }
+        let selectedCharacter = null;
+        let queryHistory = [];
+        let queryCount = 0;
+        let tokenCount = 0;
+        let gameOver = false;
+        let timerStarted = false;
+        let timerStopped = false;
+        let startTime = null;
+        let timerInterval = null;
+        let finalTime = null;
+
+        // Build character objects with statements
+        let characters = [];
+
+        function initCharacters() {
+            characters = CHARACTER_NAMES.map((name, idx) => ({
+                id: idx,
+                name: name,
+                background: BACKGROUNDS[idx],
+                statements: STATEMENT_GRAPH[idx][1].map(([targetIdx, claimKnight]) => ({
+                    targetId: targetIdx,
+                    targetName: CHARACTER_NAMES[targetIdx],
+                    claimsKnight: claimKnight // true = "X is a Knight", false = "X is a Knave"
+                }))
+            }));
+
+            // Initialize classifications
+            characters.forEach(c => {
+                classifications[c.name] = null;
+            });
+        }
+
+        // HARD MODE: Generate extremely verbose dossier (~4500 tokens per query)
+        function generateDossier(character) {
+            const timestamp = new Date().toISOString();
+            const charClass = classifications[character.name];
+            const queryNum = queryCount + 1;
+
+            let dossier = `
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║                    ROYAL TRIBUNAL OF TRUTH AND DECEPTION                     ║
+║                         OFFICIAL WITNESS DOSSIER                             ║
+║                                                                              ║
+║                    ═══════════════════════════════════════                   ║
+║                    SUBJECT: ${character.name.toUpperCase().padEnd(40)}║
+║                    ═══════════════════════════════════════                   ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ ADMINISTRATIVE METADATA                                                      │
+├──────────────────────────────────────────────────────────────────────────────┤
+│ Document Type:        WITNESS DOSSIER - COMPREHENSIVE ANALYSIS               │
+│ Query Timestamp:      ${timestamp.padEnd(50)}│
+│ Query Sequence:       #${String(queryNum).padEnd(51)}│
+│ Classification:       ${(charClass ? charClass.toUpperCase() : 'PENDING DETERMINATION').padEnd(50)}│
+│ Security Level:       TRIBUNAL EYES ONLY                                     │
+│ Prepared By:          Office of the Grand Arbiter                            │
+│ Document Version:     3.7.2 (HARD MODE - EXTENDED ANALYSIS)                  │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+════════════════════════════════════════════════════════════════════════════════
+                        SECTION I: BIOGRAPHICAL PROFILE
+════════════════════════════════════════════════════════════════════════════════
+
+PERSONAL HISTORY AND BACKGROUND:
+
+${character.background}
+
+EXTENDED BIOGRAPHICAL NOTES:
+
+${character.name} first came to the attention of the Royal Tribunal during the
+preliminary hearings conducted in the Hall of Judgment, where their composed
+demeanor and carefully measured speech patterns were meticulously documented by
+the attending scribes. The Chief Recorder noted that the witness demonstrated
+"an unusual degree of self-possession, neither overly confident nor unduly
+nervous, suggesting either genuine transparency or well-practiced deception."
+
+The ancestral lineage of ${character.name} has been traced back through seven
+generations of noble standing, though historical records from the Archive of
+Lineages indicate that the family's origins can be found among the mercantile
+classes of the Old Republic. This mixed heritage—combining the traditions of
+commercial pragmatism with aristocratic refinement—is said to grant them a
+unique perspective on matters of both commerce and governance.
+
+According to the Registry of Noble Properties, ${character.name} maintains
+official residences in three distinct provinces:
+
+  1. THE ANCESTRAL ESTATE (Northern Reaches)
+     A fortified manor house dating to the Third Dynasty, comprising
+     forty-seven rooms, extensive gardens, and a private library containing
+     over twelve thousand volumes on subjects ranging from natural philosophy
+     to ancient jurisprudence.
+
+  2. THE CAPITAL TOWNHOUSE (Central District)
+     An elegant four-story residence in the fashionable quarter, frequently
+     used for hosting diplomatic gatherings and maintaining connections with
+     other members of the nobility and the merchant guilds.
+
+  3. THE COUNTRY RETREAT (Western Valleys)
+     A modest but well-appointed estate used primarily during the summer
+     months, featuring extensive grounds suitable for hunting and other
+     aristocratic pursuits.
+
+Household staff across all three properties have been interviewed by Tribunal
+investigators. Their collective testimony paints a picture of ${character.name}
+as a master of routine and precision, maintaining detailed records of all
+transactions, correspondence, and daily activities. The head steward of the
+ancestral estate noted: "Not a single coin changes hands without proper
+documentation. Whether this speaks to honesty or careful concealment of
+dishonesty, I cannot say."
+
+PSYCHOLOGICAL ASSESSMENT:
+
+The Tribunal's consulting alienists have conducted a preliminary evaluation
+of ${character.name} based on observed behaviors and testimony from associates.
+Their assessment indicates: ${charClass === 'knight' ? 'a personality profile consistent with individuals who place extraordinary value on personal integrity, sometimes to the point of social discomfort; such individuals often struggle with diplomatic ambiguity and may alienate those who prefer more flexible standards of truth' : charClass === 'knave' ? 'behavioral patterns associated with individuals possessing exceptional social intelligence and persuasive capabilities; such persons often display remarkable skill in making falsehoods sound plausible and may pursue truth-telling only when it serves strategic advantage' : 'insufficient data for definitive classification; the subject displays a carefully neutral presentation that could indicate either genuine transparency or sophisticated deception; further investigation and logical analysis of statements is required'}.
+
+CHARACTER WITNESSES:
+
+The Tribunal has gathered testimony from seventeen individuals who claim
+personal acquaintance with ${character.name}. Their assessments range from
+"utterly trustworthy, incapable of falsehood" to "a silver-tongued master of
+misdirection." This divergence of opinion underscores the difficulty in
+determining the witness's true nature through reputation alone.
+
+════════════════════════════════════════════════════════════════════════════════
+                     SECTION II: FORMAL TESTIMONY RECORD
+════════════════════════════════════════════════════════════════════════════════
+
+PREAMBLE TO STATEMENTS:
+
+The following statements were recorded during ${character.name}'s formal
+testimony before the Royal Tribunal, conducted in the Chamber of Truth under
+the traditional protocols established by the Founding Arbiters. Each statement
+has been independently verified for transcription accuracy by the Chief Scribe
+and two sworn witnesses, as required by Tribunal procedures.
+
+The witness was administered the Standard Oath prior to testimony, though it
+should be noted that this oath carries no supernatural binding—Knights honor
+it absolutely, while Knaves disregard it entirely. The statements must
+therefore be evaluated through logical analysis rather than assumed truthful.
+
+RECORDED STATEMENTS BY ${character.name.toUpperCase()}:
+───────────────────────────────────────────────────────────────────────────────
+`;
+
+            character.statements.forEach((stmt, idx) => {
+                const targetClass = classifications[stmt.targetName];
+                const claimText = stmt.claimsKnight ? "is a KNIGHT (truth-teller)" : "is a KNAVE (liar)";
+                const targetChar = characters.find(c => c.id === stmt.targetId);
+                const hour = (idx + 2) + (character.id % 3);
+                const minute = (17 + idx * 23 + character.id * 7) % 60;
+
+                dossier += `
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ STATEMENT ${idx + 1} OF 5 - RECORDED TESTIMONY                                        ┃
+┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫
+┃                                                                              ┃
+┃  VERBATIM DECLARATION:                                                       ┃
+┃  ═══════════════════                                                         ┃
+┃                                                                              ┃
+┃      "${stmt.targetName} ${claimText}."
+┃                                                                              ┃
+┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫
+┃  STATEMENT METADATA:                                                         ┃
+┃  ──────────────────                                                          ┃
+┃  Time of Statement:     Hour ${hour} of formal testimony, minute ${String(minute).padStart(2, '0')}           ┃
+┃  Recording Scribe:      Archivist ${['Quintus', 'Septimus', 'Octavia', 'Decimus', 'Primus'][idx]}                                        ┃
+┃  Witness Demeanor:      ${stmt.claimsKnight ? 'Confident, measured, emphatic  ' : 'Accusatory, deliberate, firm   '}                          ┃
+┃  Interruptions:         None recorded                                        ┃
+┃  Clarifications Sought: None required                                        ┃
+┃                                                                              ┃
+┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫
+┃  SUBJECT OF STATEMENT: ${stmt.targetName.padEnd(48)}┃
+┃  ──────────────────────                                                      ┃
+┃  Current Classification: ${(targetClass ? targetClass.toUpperCase() : 'UNCLASSIFIED - PENDING').padEnd(45)}┃
+┃                                                                              ┃
+┃  Brief on ${stmt.targetName}:
+┃  ${targetChar ? targetChar.background.substring(0, 70) : 'Background data unavailable'}...
+┃                                                                              ┃
+┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫
+┃  CONTEXTUAL OBSERVATIONS BY TRIBUNAL SCRIBES:                                ┃
+┃  ────────────────────────────────────────────                                ┃
+┃                                                                              ┃
+┃  The statement was delivered during the ${['second', 'third', 'fourth', 'fifth', 'sixth'][idx]} phase of testimony,
+┃  following intensive questioning regarding ${character.name}'s knowledge of
+┃  the complete witness roster and any prior relationships therein.            ┃
+┃                                                                              ┃
+┃  ${character.name} ${stmt.claimsKnight ? 'spoke in supportive terms regarding' : 'leveled accusations against'}
+┃  ${stmt.targetName}, with ${stmt.claimsKnight ? 'apparent warmth and conviction. The phrasing' : 'notable intensity. The accusatory nature of the claim'}
+┃  suggested direct personal knowledge rather than reliance upon hearsay       ┃
+┃  or third-party accounts.                                                    ┃
+┃                                                                              ┃
+┃  Body language analysis by the Tribunal's behavioral observer noted that     ┃
+┃  ${character.name} maintained steady eye contact with the arbiter panel
+┃  throughout the delivery of this statement, ${stmt.claimsKnight ? 'displaying no signs of' : 'though whether this indicates'}
+┃  ${stmt.claimsKnight ? 'deception or hesitation according to standard indicators.' : 'truthfulness or practiced deception cannot be determined solely'}
+┃  ${stmt.claimsKnight ? '' : 'from physical observation.'}
+┃                                                                              ┃
+┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫
+┃  LOGICAL IMPLICATIONS (SCENARIO ANALYSIS):                                   ┃
+┃  ─────────────────────────────────────────                                   ┃
+┃                                                                              ┃
+┃  IF ${character.name.padEnd(25)} IS A KNIGHT (truth-teller):
+┃  ▸ This statement is TRUE                                                    ┃
+┃  ▸ Therefore: ${stmt.targetName.padEnd(20)} must be a ${stmt.claimsKnight ? 'KNIGHT' : 'KNAVE '}
+┃                                                                              ┃
+┃  IF ${character.name.padEnd(25)} IS A KNAVE (liar):
+┃  ▸ This statement is FALSE                                                   ┃
+┃  ▸ Therefore: ${stmt.targetName.padEnd(20)} must be a ${stmt.claimsKnight ? 'KNAVE ' : 'KNIGHT'}
+┃                                                                              ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+`;
+            });
+
+            dossier += `
+════════════════════════════════════════════════════════════════════════════════
+                 SECTION III: TESTIMONY RECEIVED ABOUT SUBJECT
+════════════════════════════════════════════════════════════════════════════════
+
+CROSS-EXAMINATION RECORDS: STATEMENTS MADE ABOUT ${character.name.toUpperCase()}
+
+The Royal Tribunal has compiled all recorded statements made by other witnesses
+regarding ${character.name}. Each entry below represents sworn testimony that
+directly references this witness. Understanding these external claims is
+essential for establishing logical constraints and determining the subject's
+true classification.
+
+STATEMENTS CATALOGUED:
+───────────────────────────────────────────────────────────────────────────────
+`;
+            // Find all statements about this character
+            let aboutCounter = 0;
+            characters.forEach(other => {
+                if (other.id === character.id) return;
+                other.statements.forEach(stmt => {
+                    if (stmt.targetId === character.id) {
+                        aboutCounter++;
+                        const otherClass = classifications[other.name];
+                        const claimText = stmt.claimsKnight ? "is a KNIGHT (truth-teller)" : "is a KNAVE (liar)";
+                        dossier += `
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ EXTERNAL STATEMENT #${aboutCounter}                                                        │
+├──────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│ DECLARANT:        ${other.name.padEnd(52)}│
+│ STATUS:           ${(otherClass ? otherClass.toUpperCase() : 'UNCLASSIFIED - PENDING DETERMINATION').padEnd(52)}│
+│                                                                              │
+│ VERBATIM CLAIM:   "${character.name} ${claimText}."
+│                                                                              │
+├──────────────────────────────────────────────────────────────────────────────┤
+│ LOGICAL ANALYSIS OF THIS EXTERNAL STATEMENT:                                 │
+│                                                                              │
+│ SCENARIO X: If ${other.name.padEnd(20)} is a KNIGHT (truth-teller):
+│   ▸ The statement would be TRUE                                              │
+│   ▸ Implication: ${character.name.padEnd(20)} is genuinely a ${stmt.claimsKnight ? 'KNIGHT' : 'KNAVE '}
+│                                                                              │
+│ SCENARIO Y: If ${other.name.padEnd(20)} is a KNAVE (liar):
+│   ▸ The statement would be FALSE                                             │
+│   ▸ Implication: ${character.name.padEnd(20)} is actually a ${stmt.claimsKnight ? 'KNAVE ' : 'KNIGHT'}
+│                                                                              │
+│ CONSTRAINT NOTE: The classification of ${other.name.padEnd(15)} directly
+│ determines what this statement implies about ${character.name.padEnd(17)}
+│ through logical necessity. Both cannot be determined independently.          │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+`;
+                    }
+                });
+            });
+
+            if (aboutCounter === 0) {
+                dossier += `
+No other witnesses have made statements directly referencing ${character.name}.
+This means the subject's classification must be inferred entirely from:
+  1. Their own statements about other witnesses
+  2. Logical chains connecting to classified witnesses
+
+This lack of external reference makes ${character.name} somewhat isolated in
+the witness network, requiring more careful logical deduction.
+
+`;
+            }
+
+            dossier += `
+════════════════════════════════════════════════════════════════════════════════
+                SECTION IV: NETWORK ANALYSIS & CROSS-REFERENCES
+════════════════════════════════════════════════════════════════════════════════
+
+WITNESS RELATIONSHIP TOPOLOGY FOR ${character.name.toUpperCase()}
+
+The following analysis maps the connections between ${character.name} and other
+witnesses in the testimony network. Understanding these relationships is crucial
+for logical deduction, as the classification of connected witnesses directly
+constrains what ${character.name}'s classification can be.
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ PRIMARY CONNECTIONS (TIER 1)                                                 │
+│ Witnesses directly connected to ${character.name.padEnd(42)}│
+├──────────────────────────────────────────────────────────────────────────────┤
+`;
+            // Direct connections
+            const directConnections = new Set();
+            character.statements.forEach(s => directConnections.add(s.targetName));
+            characters.forEach(other => {
+                other.statements.forEach(s => {
+                    if (s.targetId === character.id) directConnections.add(other.name);
+                });
+            });
+
+            directConnections.forEach(name => {
+                const c = classifications[name];
+                const dirChar = characters.find(ch => ch.name === name);
+                const relation = character.statements.some(s => s.targetName === name) ? 'SPOKE ABOUT' : 'SPOKE ABOUT US';
+                dossier += `│  → ${name.padEnd(25)} │ ${(c ? c.toUpperCase() : 'UNCLASSIFIED').padEnd(14)} │ ${relation.padEnd(15)}│\n`;
+            });
+
+            dossier += `├──────────────────────────────────────────────────────────────────────────────┤
+│ SECONDARY CONNECTIONS (TIER 2)                                               │
+│ Witnesses connected through primary connections                              │
+├──────────────────────────────────────────────────────────────────────────────┤
+`;
+            // Secondary connections
+            const secondaryConnections = new Set();
+            directConnections.forEach(connName => {
+                const conn = characters.find(c => c.name === connName);
+                if (conn) {
+                    conn.statements.forEach(s => {
+                        if (s.targetName !== character.name && !directConnections.has(s.targetName)) {
+                            secondaryConnections.add(s.targetName);
+                        }
+                    });
+                }
+            });
+
+            secondaryConnections.forEach(name => {
+                const c = classifications[name];
+                dossier += `│  ⤳ ${name.padEnd(25)} │ ${(c ? c.toUpperCase() : 'UNCLASSIFIED').padEnd(14)} │ INDIRECT        │\n`;
+            });
+
+            dossier += `└──────────────────────────────────────────────────────────────────────────────┘
+
+TERTIARY CONNECTIONS (TIER 3):
+Witnesses not directly connected but within the extended logical network:
+`;
+            const tertiaryConnections = new Set();
+            secondaryConnections.forEach(secName => {
+                const sec = characters.find(c => c.name === secName);
+                if (sec) {
+                    sec.statements.forEach(s => {
+                        if (s.targetName !== character.name &&
+                            !directConnections.has(s.targetName) &&
+                            !secondaryConnections.has(s.targetName)) {
+                            tertiaryConnections.add(s.targetName);
+                        }
+                    });
+                }
+            });
+
+            if (tertiaryConnections.size > 0) {
+                tertiaryConnections.forEach(name => {
+                    const c = classifications[name];
+                    dossier += `    ⇢ ${name}: ${c ? c.toUpperCase() : 'UNCLASSIFIED'}\n`;
+                });
+            } else {
+                dossier += `    (All witnesses accounted for in primary/secondary tiers)\n`;
+            }
+
+            dossier += `
+
+════════════════════════════════════════════════════════════════════════════════
+              SECTION V: COMPREHENSIVE LOGICAL SCENARIO ANALYSIS
+════════════════════════════════════════════════════════════════════════════════
+
+The following analysis explores the logical implications of each possible
+classification for ${character.name}. This section is crucial for understanding
+how classifying this witness would cascade through the network of statements.
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ HYPOTHESIS A: ${character.name.toUpperCase()} IS A KNIGHT (TRUTH-TELLER)
+┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫
+┃                                                                              ┃
+┃ Under this hypothesis, ALL statements made by ${character.name.padEnd(26)}
+┃ would be TRUE. This yields the following logical constraints:                ┃
+┃                                                                              ┃
+`;
+            character.statements.forEach((stmt, idx) => {
+                const implication = stmt.claimsKnight ? 'KNIGHT (truth-teller)' : 'KNAVE (liar)';
+                const curClass = classifications[stmt.targetName];
+                const conflict = curClass && ((curClass === 'knight') !== stmt.claimsKnight);
+                dossier += `┃  ${idx+1}. Statement "${stmt.targetName} is a ${stmt.claimsKnight ? 'Knight' : 'Knave'}"
+┃     → Would be TRUE → ${stmt.targetName.padEnd(20)} must be a ${implication}
+┃     Current Status: ${(curClass ? curClass.toUpperCase() : 'UNCLASSIFIED').padEnd(15)} ${conflict ? '⚠️ CONFLICT!' : '            '}
+┃                                                                              ┃
+`;
+            });
+
+            dossier += `┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ HYPOTHESIS B: ${character.name.toUpperCase()} IS A KNAVE (LIAR)
+┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫
+┃                                                                              ┃
+┃ Under this hypothesis, ALL statements made by ${character.name.padEnd(26)}
+┃ would be FALSE. This yields the following logical constraints:               ┃
+┃                                                                              ┃
+`;
+            character.statements.forEach((stmt, idx) => {
+                const implication = stmt.claimsKnight ? 'KNAVE (liar)' : 'KNIGHT (truth-teller)';
+                const curClass = classifications[stmt.targetName];
+                const conflict = curClass && ((curClass === 'knave') !== stmt.claimsKnight);
+                dossier += `┃  ${idx+1}. Statement "${stmt.targetName} is a ${stmt.claimsKnight ? 'Knight' : 'Knave'}"
+┃     → Would be FALSE → ${stmt.targetName.padEnd(20)} must be a ${implication}
+┃     Current Status: ${(curClass ? curClass.toUpperCase() : 'UNCLASSIFIED').padEnd(15)} ${conflict ? '⚠️ CONFLICT!' : '            '}
+┃                                                                              ┃
+`;
+            });
+
+            dossier += `┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+`;
+
+            dossier += `
+════════════════════════════════════════════════════════════════════════════════
+           SECTION VI: DERIVED CONSTRAINTS & ARBITER RECOMMENDATIONS
+════════════════════════════════════════════════════════════════════════════════
+
+AUTOMATED CONSTRAINT ANALYSIS
+
+Based on the current state of classifications and the complete testimony record,
+the Royal Tribunal's analytical engine has identified the following logical
+constraints that apply specifically to ${character.name}:
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ DERIVED LOGICAL CONSTRAINTS                                                  │
+├──────────────────────────────────────────────────────────────────────────────┤
+`;
+            // Check for forced classifications based on current state
+            let constraintNotes = [];
+            characters.forEach(other => {
+                if (classifications[other.name]) {
+                    other.statements.forEach(stmt => {
+                        if (stmt.targetId === character.id) {
+                            const isKnight = classifications[other.name] === 'knight';
+                            const impliedType = isKnight
+                                ? (stmt.claimsKnight ? 'Knight' : 'Knave')
+                                : (stmt.claimsKnight ? 'Knave' : 'Knight');
+                            constraintNotes.push({
+                                other: other.name,
+                                otherClass: classifications[other.name],
+                                claim: stmt.claimsKnight ? 'Knight' : 'Knave',
+                                truthful: isKnight,
+                                implied: impliedType
+                            });
+                        }
+                    });
+                }
+            });
+
+            if (constraintNotes.length > 0) {
+                constraintNotes.forEach((note, idx) => {
+                    dossier += `│                                                                              │
+│ CONSTRAINT ${idx + 1}:                                                                │
+│ ────────────────────────────────────────────────────────────────────────     │
+│                                                                              │
+│ SOURCE:      ${note.other.padEnd(58)}│
+│ STATUS:      CLASSIFIED AS ${note.otherClass.toUpperCase().padEnd(44)}│
+│ CLAIM MADE:  "${character.name} is a ${note.claim}"
+│                                                                              │
+│ ANALYSIS:    Since ${note.other.padEnd(20)} is a ${note.otherClass.toUpperCase()},
+│              their statements are ${note.truthful ? 'TRUE ' : 'FALSE'}.
+│              This claim being ${note.truthful ? 'TRUE ' : 'FALSE'} means:
+│                                                                              │
+│ CONCLUSION:  ${character.name.padEnd(20)} ═══▶  MUST BE A ${note.implied.toUpperCase().padEnd(10)}
+│                                                                              │
+├──────────────────────────────────────────────────────────────────────────────┤
+`;
+                });
+            } else {
+                dossier += `│                                                                              │
+│ No witnesses who have been classified have made statements about             │
+│ ${character.name.padEnd(66)}│
+│                                                                              │
+│ This means ${character.name.padEnd(20)}'s classification cannot yet be
+│ determined through direct logical inference from existing classifications.   │
+│                                                                              │
+│ RECOMMENDATION: Classify other witnesses first, particularly those who       │
+│ have made statements about ${character.name.padEnd(40)}│
+│                                                                              │
+├──────────────────────────────────────────────────────────────────────────────┤
+`;
+            }
+
+            dossier += `└──────────────────────────────────────────────────────────────────────────────┘
+
+════════════════════════════════════════════════════════════════════════════════
+             SECTION VII: COMPLETE TRIBUNAL CLASSIFICATION LEDGER
+════════════════════════════════════════════════════════════════════════════════
+
+MASTER RECORD OF ALL WITNESS CLASSIFICATIONS
+
+The following comprehensive ledger shows the current classification status of
+all 30 witnesses before the Royal Tribunal. This record is updated in real-time
+as classifications are made and serves as the official record of proceedings.
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ WITNESS NAME              ┃ CLASSIFICATION  ┃ STATUS                         ┃
+┣━━━━━━━━━━━━━━━━━━━━━━━━━━━╋━━━━━━━━━━━━━━━━━╋━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫
+`;
+            let knightCount = 0, knaveCount = 0, unknownCount = 0;
+            characters.forEach(c => {
+                const cls = classifications[c.name];
+                let icon, status, statusText;
+                if (cls === 'knight') {
+                    icon = '⚔️ ';
+                    status = 'KNIGHT';
+                    statusText = 'VERIFIED TRUTH-TELLER';
+                    knightCount++;
+                } else if (cls === 'knave') {
+                    icon = '🗡️ ';
+                    status = 'KNAVE ';
+                    statusText = 'CONFIRMED DECEIVER   ';
+                    knaveCount++;
+                } else {
+                    icon = '❓ ';
+                    status = 'PENDING';
+                    statusText = 'AWAITING DETERMINATION';
+                    unknownCount++;
+                }
+                dossier += `┃ ${icon}${c.name.padEnd(23)} ┃ ${status.padEnd(15)} ┃ ${statusText.padEnd(30)} ┃\n`;
+            });
+
+            dossier += `┗━━━━━━━━━━━━━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ SESSION STATISTICS                                                           │
+├────────────────────────────┬─────────────────────────────────────────────────┤
+│ Witnesses Classified:      │ ${String(knightCount + knaveCount).padEnd(47)}│
+│ Witnesses Remaining:       │ ${String(unknownCount).padEnd(47)}│
+│ Knights Identified:        │ ${String(knightCount).padEnd(47)}│
+│ Knaves Identified:         │ ${String(knaveCount).padEnd(47)}│
+│ Progress:                  │ ${String(Math.round((knightCount + knaveCount) / 30 * 100) + '%').padEnd(47)}│
+└────────────────────────────┴─────────────────────────────────────────────────┘
+
+════════════════════════════════════════════════════════════════════════════════
+                            END OF DOSSIER DOCUMENT
+                 ROYAL TRIBUNAL OF TRUTH AND DECEPTION - HARD MODE
+                Document generated at: ${new Date().toISOString()}
+════════════════════════════════════════════════════════════════════════════════
+
+`;
+            return dossier;
+        }
+
+        // Placeholder for remaining functions - will be added next
+        function initGame() {
+            initCharacters();
+            initUI();
+            initMatrixRain();
+            console.log('Tribunal ready');
+            window.tribunalReady = true;
+        }
+
+        function initUI() {
+            // Build character list
+            const listEl = document.getElementById('character-list');
+            listEl.innerHTML = '';
+
+            characters.forEach(char => {
+                const btn = document.createElement('button');
+                btn.className = 'character-btn';
+                btn.id = `char-btn-${char.id}`;
+                btn.setAttribute('data-character-id', char.id);
+                btn.setAttribute('data-character-name', char.name);
+                btn.innerHTML = `
+                    <span>${char.name}</span>
+                    <span class="status unknown">?</span>
+                `;
+                btn.onclick = () => selectCharacter(char);
+                listEl.appendChild(btn);
+            });
+        }
+
+        // =============================================
+        // CHARACTER SELECTION AND CLASSIFICATION
+        // =============================================
+
+        function selectCharacter(character) {
+            selectedCharacter = character;
+
+            // Update UI selection
+            document.querySelectorAll('.character-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            document.getElementById(`char-btn-${character.id}`).classList.add('selected');
+
+            // Update selected name display
+            document.getElementById('selected-name').innerHTML = `
+                <span class="highlight-name">${character.name}</span>
+                <span style="font-size: 11px; display: block; margin-top: 4px; color: var(--light-gray);">
+                    ${classifications[character.name] ? 'Classified as ' + classifications[character.name].toUpperCase() : 'Not yet classified'}
+                </span>
+            `;
+
+            // Enable buttons
+            document.getElementById('btn-knight').disabled = false;
+            document.getElementById('btn-knave').disabled = false;
+            document.getElementById('btn-clear').disabled = !classifications[character.name];
+
+            // Generate and display dossier
+            queryCount++;
+            const dossier = generateDossier(character);
+            appendToOutput(dossier);
+
+            // Start timer on first query
+            if (!timerStarted) startTimer();
+
+            // Update stats
+            updateStats();
+        }
+
+        function classifyCharacter(type) {
+            if (!selectedCharacter || gameOver) return;
+
+            classifications[selectedCharacter.name] = type;
+
+            // Update button appearance
+            const btn = document.getElementById(`char-btn-${selectedCharacter.id}`);
+            btn.classList.remove('classified-knight', 'classified-knave');
+            btn.classList.add(`classified-${type}`);
+            btn.querySelector('.status').className = `status ${type}`;
+            btn.querySelector('.status').textContent = type === 'knight' ? '⚔️' : '🗡️';
+
+            // Update selected display
+            document.getElementById('selected-name').innerHTML = `
+                <span class="highlight-name">${selectedCharacter.name}</span>
+                <span style="font-size: 11px; display: block; margin-top: 4px; color: ${type === 'knight' ? 'var(--knight-gold)' : 'var(--knave-red)'};">
+                    Classified as ${type.toUpperCase()}
+                </span>
+            `;
+
+            document.getElementById('btn-clear').disabled = false;
+
+            // Log the classification
+            const logEntry = `
+────────────────────────────────────────
+CLASSIFICATION RECORDED
+${selectedCharacter.name} → ${type.toUpperCase()}
+Time: ${new Date().toISOString()}
+────────────────────────────────────────
+`;
+            appendToOutput(logEntry);
+
+            updateStats();
+        }
+
+        function clearClassification() {
+            if (!selectedCharacter || gameOver) return;
+
+            classifications[selectedCharacter.name] = null;
+
+            // Update button appearance
+            const btn = document.getElementById(`char-btn-${selectedCharacter.id}`);
+            btn.classList.remove('classified-knight', 'classified-knave');
+            btn.querySelector('.status').className = 'status unknown';
+            btn.querySelector('.status').textContent = '?';
+
+            document.getElementById('selected-name').innerHTML = `
+                <span class="highlight-name">${selectedCharacter.name}</span>
+                <span style="font-size: 11px; display: block; margin-top: 4px; color: var(--light-gray);">
+                    Not yet classified
+                </span>
+            `;
+
+            document.getElementById('btn-clear').disabled = true;
+
+            const logEntry = `
+────────────────────────────────────────
+CLASSIFICATION CLEARED
+${selectedCharacter.name} → UNCLASSIFIED
+────────────────────────────────────────
+`;
+            appendToOutput(logEntry);
+
+            updateStats();
+        }
+
+        // =============================================
+        // VALIDATION - THE CHEAT-PROOF CORE
+        // =============================================
+
+        // Check if current classifications are internally consistent
+        // This does NOT compare against a stored solution - it checks LOGICAL CONSISTENCY
+        function checkConsistency() {
+            const results = {
+                isConsistent: true,
+                contradictions: [],
+                analysis: ''
+            };
+
+            let analysisText = `
+════════════════════════════════════════════════════════════════════════════════
+                         CONSISTENCY ANALYSIS REPORT
+════════════════════════════════════════════════════════════════════════════════
+Time: ${new Date().toISOString()}
+Classified Witnesses: ${Object.values(classifications).filter(c => c !== null).length}/30
+
+Checking logical consistency of all statements against current classifications...
+
+`;
+
+            characters.forEach(speaker => {
+                const speakerClass = classifications[speaker.name];
+                if (!speakerClass) return; // Skip unclassified
+
+                const speakerIsKnight = speakerClass === 'knight';
+
+                speaker.statements.forEach(stmt => {
+                    const targetClass = classifications[stmt.targetName];
+                    if (!targetClass) return; // Skip if target unclassified
+
+                    const targetIsKnight = targetClass === 'knight';
+                    const claimIsTrue = stmt.claimsKnight === targetIsKnight;
+
+                    // If speaker is Knight, their claim must be true
+                    // If speaker is Knave, their claim must be false
+                    const statementValid = speakerIsKnight === claimIsTrue;
+
+                    if (!statementValid) {
+                        results.isConsistent = false;
+                        const contradiction = {
+                            speaker: speaker.name,
+                            speakerClass: speakerClass,
+                            target: stmt.targetName,
+                            targetClass: targetClass,
+                            claim: stmt.claimsKnight ? 'Knight' : 'Knave'
+                        };
+                        results.contradictions.push(contradiction);
+
+                        analysisText += `
+❌ CONTRADICTION FOUND:
+   ${speaker.name} (${speakerClass.toUpperCase()}) claims "${stmt.targetName} is a ${stmt.claimsKnight ? 'Knight' : 'Knave'}"
+   But ${stmt.targetName} is classified as ${targetClass.toUpperCase()}
+
+   If ${speaker.name} is a ${speakerClass}, their statement should be ${speakerIsKnight ? 'TRUE' : 'FALSE'}.
+   The claim "${stmt.targetName} is a ${stmt.claimsKnight ? 'Knight' : 'Knave'}" is ${claimIsTrue ? 'TRUE' : 'FALSE'}.
+   This is a logical impossibility!
+
+`;
+                    } else {
+                        analysisText += `✓ ${speaker.name} → ${stmt.targetName}: Consistent\n`;
+                    }
+                });
+            });
+
+            if (results.isConsistent) {
+                analysisText += `
+────────────────────────────────────────────────────────────────────────────────
+                              RESULT: CONSISTENT
+────────────────────────────────────────────────────────────────────────────────
+
+All classified witnesses and their statements are logically consistent with
+each other. No contradictions detected.
+
+`;
+            } else {
+                analysisText += `
+────────────────────────────────────────────────────────────────────────────────
+                          RESULT: CONTRADICTIONS FOUND
+────────────────────────────────────────────────────────────────────────────────
+
+${results.contradictions.length} contradiction(s) detected. Review the classifications
+of the witnesses involved and adjust accordingly.
+
+`;
+            }
+
+            analysisText += `════════════════════════════════════════════════════════════════════════════════\n\n`;
+
+            results.analysis = analysisText;
+            appendToOutput(analysisText);
+
+            return results;
+        }
+
+        // Validate final submission - checks complete solution
+        function validateSolution() {
+            // First check all are classified
+            const unclassified = characters.filter(c => classifications[c.name] === null);
+            if (unclassified.length > 0) {
+                return {
+                    valid: false,
+                    complete: false,
+                    error: `${unclassified.length} witnesses still unclassified`,
+                    unclassified: unclassified.map(c => c.name)
+                };
+            }
+
+            // Check consistency
+            const consistency = checkConsistency();
+            if (!consistency.isConsistent) {
+                return {
+                    valid: false,
+                    complete: true,
+                    error: `${consistency.contradictions.length} contradictions found`,
+                    contradictions: consistency.contradictions
+                };
+            }
+
+            // All classified and consistent - this IS the valid solution
+            return {
+                valid: true,
+                complete: true,
+                message: 'All classifications are logically consistent!'
+            };
+        }
+
+        function submitSolution() {
+            if (gameOver) return;
+
+            const result = validateSolution();
+
+            if (!result.complete) {
+                appendToOutput(`
+════════════════════════════════════════════════════════════════════════════════
+                           SUBMISSION REJECTED
+════════════════════════════════════════════════════════════════════════════════
+
+Cannot submit: ${result.error}
+
+Please classify all 30 witnesses before submitting.
+
+════════════════════════════════════════════════════════════════════════════════
+`);
+                return result;
+            }
+
+            if (!result.valid) {
+                appendToOutput(`
+════════════════════════════════════════════════════════════════════════════════
+                           VERDICT: INCORRECT
+════════════════════════════════════════════════════════════════════════════════
+
+Your classifications contain logical contradictions. The truth cannot contradict
+itself. Review your work and correct the errors.
+
+${result.error}
+
+════════════════════════════════════════════════════════════════════════════════
+`);
+                return result;
+            }
+
+            // SUCCESS!
+            gameOver = true;
+            stopTimer();
+
+            const successMsg = `
+════════════════════════════════════════════════════════════════════════════════
+                           VERDICT: CORRECT!
+════════════════════════════════════════════════════════════════════════════════
+
+Congratulations, Grand Arbiter! You have successfully classified all 30 witnesses.
+
+Your logical deductions have revealed the truth: every statement is now consistent
+with the nature of its speaker. Knights speak only truth, Knaves speak only lies,
+and your classifications satisfy all constraints.
+
+Final Statistics:
+• Time: ${formatTime(finalTime)}
+• Queries Made: ${queryCount}
+• Approximate Tokens: ${tokenCount}
+
+════════════════════════════════════════════════════════════════════════════════
+`;
+            appendToOutput(successMsg);
+            showMessage('CORRECT!', `Time: ${formatTime(finalTime)} | Queries: ${queryCount}`, 'win');
+
+            return result;
+        }
+
+        // =============================================
+        // UI HELPERS
+        // =============================================
+
+        function appendToOutput(text) {
+            const output = document.getElementById('query-output');
+            output.textContent += text;
+            output.scrollTop = output.scrollHeight;
+
+            // Estimate tokens (rough: ~4 chars per token)
+            tokenCount += Math.ceil(text.length / 4);
+            updateTokenDisplay();
+        }
+
+        function updateStats() {
+            let knights = 0, knaves = 0, unknown = 0;
+            Object.values(classifications).forEach(c => {
+                if (c === 'knight') knights++;
+                else if (c === 'knave') knaves++;
+                else unknown++;
+            });
+
+            document.getElementById('knight-count').textContent = knights;
+            document.getElementById('knave-count').textContent = knaves;
+            document.getElementById('unknown-count').textContent = unknown;
+            document.getElementById('query-count').textContent = queryCount;
+            document.getElementById('footer-classified').textContent = knights + knaves;
+
+            // Update progress
+            const progress = ((knights + knaves) / NUM_CHARACTERS) * 100;
+            document.getElementById('progress-fill').style.width = `${progress}%`;
+
+            // Update character panel header
+            document.querySelector('#character-panel .panel-header').textContent =
+                `⚖️ WITNESSES (${knights + knaves}/${NUM_CHARACTERS} CLASSIFIED)`;
+
+            // Enable submit button if all classified
+            document.getElementById('btn-submit').disabled = (unknown > 0);
+        }
+
+        function updateTokenDisplay() {
+            document.getElementById('token-count').textContent = tokenCount.toLocaleString();
+            document.getElementById('footer-tokens').textContent = tokenCount.toLocaleString();
+
+            const progress = Math.min((tokenCount / TARGET_TOKENS) * 100, 100);
+            document.getElementById('token-progress').style.width = `${progress}%`;
+        }
+
+        function showMessage(title, text, type) {
+            const overlay = document.getElementById('message-overlay');
+            overlay.className = `message-overlay show ${type}`;
+            document.getElementById('message-title').textContent = title;
+            document.getElementById('message-title').style.color = type === 'win' ? 'var(--knight-gold)' : 'var(--knave-red)';
+            document.getElementById('message-text').textContent = text;
+        }
+
+        // =============================================
+        // TIMER FUNCTIONS
+        // =============================================
+
+        function formatTime(ms) {
+            const totalSeconds = Math.floor(ms / 1000);
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function startTimer() {
+            if (timerStarted || timerStopped) return;
+            timerStarted = true;
+            startTime = Date.now();
+            timerInterval = setInterval(updateTimerDisplay, 100);
+        }
+
+        function stopTimer() {
+            if (!timerStarted || timerStopped) return;
+            timerStopped = true;
+            clearInterval(timerInterval);
+            finalTime = Date.now() - startTime;
+            document.getElementById('timer').textContent = formatTime(finalTime);
+        }
+
+        function updateTimerDisplay() {
+            if (!timerStarted || timerStopped) return;
+            document.getElementById('timer').textContent = formatTime(Date.now() - startTime);
+        }
+
+        // =============================================
+        // MATRIX RAIN (from v1)
+        // =============================================
+
+        function initMatrixRain() {
+            const canvas = document.getElementById('matrix-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const chars = "アイウエオカキクケコサシスセソタチツテトナニヌネノ0123456789KNIGHTKNAVE";
+            const fontSize = 14;
+            const columns = canvas.width / fontSize;
+            const drops = [];
+
+            for (let i = 0; i < columns; i++) {
+                drops[i] = Math.random() * -100;
+            }
+
+            function draw() {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#00FF41';
+                ctx.font = fontSize + 'px monospace';
+
+                for (let i = 0; i < drops.length; i++) {
+                    const char = chars[Math.floor(Math.random() * chars.length)];
+                    ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                }
+            }
+
+            setInterval(draw, 50);
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        }
+
+        // =============================================
+        // EVENT LISTENERS
+        // =============================================
+
+        function initEventListeners() {
+            document.getElementById('btn-knight').onclick = () => classifyCharacter('knight');
+            document.getElementById('btn-knave').onclick = () => classifyCharacter('knave');
+            document.getElementById('btn-clear').onclick = clearClassification;
+            document.getElementById('btn-consistency').onclick = checkConsistency;
+            document.getElementById('btn-submit').onclick = submitSolution;
+            document.getElementById('btn-play-again').onclick = resetGame;
+        }
+
+        function resetGame() {
+            // Reset all state
+            classifications = {};
+            selectedCharacter = null;
+            queryHistory = [];
+            queryCount = 0;
+            tokenCount = 0;
+            gameOver = false;
+            timerStarted = false;
+            timerStopped = false;
+            startTime = null;
+            finalTime = null;
+            if (timerInterval) clearInterval(timerInterval);
+
+            // Reset UI
+            document.getElementById('message-overlay').classList.remove('show');
+            document.getElementById('timer').textContent = '0:00';
+            document.getElementById('query-output').textContent = getInitialBriefing();
+            document.getElementById('selected-name').innerHTML = 'None selected';
+            document.getElementById('btn-knight').disabled = true;
+            document.getElementById('btn-knave').disabled = true;
+            document.getElementById('btn-clear').disabled = true;
+
+            initCharacters();
+            initUI();
+            updateStats();
+            updateTokenDisplay();
+        }
+
+        function getInitialBriefing() {
+            return `═══════════════════════════════════════════════════════════════════════════════
+                    THE TESTIMONY TRIBUNAL - KNIGHT & KNAVE LOGIC CHALLENGE
+═══════════════════════════════════════════════════════════════════════════════
+
+BRIEFING:
+You are the Grand Arbiter of the Tribunal. Before you stand 30 witnesses, each
+belonging to one of two ancient orders:
+
+  ⚔️  KNIGHTS - Bound by sacred oath to ALWAYS speak the TRUTH
+  🗡️  KNAVES  - Cursed to ALWAYS speak LIES
+
+Each witness has made statements about the nature of other witnesses. Your task
+is to classify ALL 30 witnesses correctly as either Knight or Knave.
+
+RULES:
+• Knights ALWAYS tell the truth - every statement they make is TRUE
+• Knaves ALWAYS lie - every statement they make is FALSE
+• There is exactly ONE valid classification that satisfies all statements
+
+INSTRUCTIONS:
+1. Click a witness name to query their full dossier
+2. Study their statements and cross-reference with other testimonies
+3. Use the classify buttons to mark each witness as Knight or Knave
+4. Click "Check Consistency" to verify your current classifications
+5. When all 30 are classified, click "Submit Final Verdict"
+
+Good luck, Grand Arbiter. The truth awaits those who seek it diligently.
+═══════════════════════════════════════════════════════════════════════════════
+`;
+        }
+
+        // =============================================
+        // BOT-FRIENDLY API (exposed on window object)
+        // =============================================
+
+        // Get current game state
+        window.getGameState = function() {
+            return {
+                gameOver,
+                timerStarted,
+                timerStopped,
+                elapsedMs: timerStarted ? (timerStopped ? finalTime : Date.now() - startTime) : 0,
+                queryCount,
+                tokenCount,
+                selectedCharacter: selectedCharacter ? selectedCharacter.name : null,
+                classifications: {...classifications},
+                stats: {
+                    knights: Object.values(classifications).filter(c => c === 'knight').length,
+                    knaves: Object.values(classifications).filter(c => c === 'knave').length,
+                    unclassified: Object.values(classifications).filter(c => c === null).length
+                },
+                characterNames: characters.map(c => c.name)
+            };
+        };
+
+        // Get list of all characters with their current status
+        window.getCharacters = function() {
+            return characters.map(c => ({
+                id: c.id,
+                name: c.name,
+                classification: classifications[c.name],
+                statementCount: c.statements.length
+            }));
+        };
+
+        // Query a character's dossier (returns the dossier text)
+        window.queryCharacter = function(nameOrId) {
+            const char = typeof nameOrId === 'number'
+                ? characters[nameOrId]
+                : characters.find(c => c.name.toLowerCase() === nameOrId.toLowerCase());
+
+            if (!char) {
+                return { success: false, error: `Character not found: ${nameOrId}` };
+            }
+
+            selectCharacter(char);
+
+            return {
+                success: true,
+                character: char.name,
+                classification: classifications[char.name],
+                statements: char.statements.map(s => ({
+                    target: s.targetName,
+                    claim: s.claimsKnight ? 'Knight' : 'Knave',
+                    targetClassification: classifications[s.targetName]
+                }))
+            };
+        };
+
+        // Classify a character
+        window.classify = function(nameOrId, type) {
+            const char = typeof nameOrId === 'number'
+                ? characters[nameOrId]
+                : characters.find(c => c.name.toLowerCase() === nameOrId.toLowerCase());
+
+            if (!char) {
+                return { success: false, error: `Character not found: ${nameOrId}` };
+            }
+
+            if (type !== 'knight' && type !== 'knave') {
+                return { success: false, error: `Invalid type: ${type}. Must be 'knight' or 'knave'` };
+            }
+
+            if (gameOver) {
+                return { success: false, error: 'Game is over' };
+            }
+
+            // Select and classify
+            selectCharacter(char);
+            classifyCharacter(type);
+
+            return {
+                success: true,
+                character: char.name,
+                classification: type,
+                stats: window.getGameState().stats
+            };
+        };
+
+        // Clear a character's classification
+        window.clearClassify = function(nameOrId) {
+            const char = typeof nameOrId === 'number'
+                ? characters[nameOrId]
+                : characters.find(c => c.name.toLowerCase() === nameOrId.toLowerCase());
+
+            if (!char) {
+                return { success: false, error: `Character not found: ${nameOrId}` };
+            }
+
+            selectCharacter(char);
+            clearClassification();
+
+            return { success: true, character: char.name };
+        };
+
+        // Check consistency of current classifications
+        window.checkConsistencyAPI = function() {
+            const result = checkConsistency();
+            return {
+                success: true,
+                isConsistent: result.isConsistent,
+                contradictionCount: result.contradictions.length,
+                contradictions: result.contradictions
+            };
+        };
+
+        // Submit final answer
+        window.submitAnswer = function() {
+            const result = submitSolution();
+            return {
+                success: result.valid || false,
+                complete: result.complete || false,
+                valid: result.valid || false,
+                error: result.error || null,
+                message: result.message || null,
+                finalTime: finalTime,
+                queryCount: queryCount,
+                tokenCount: tokenCount
+            };
+        };
+
+        // Get all statements (for bots to analyze without querying each character)
+        window.getAllStatements = function() {
+            const statements = [];
+            characters.forEach(speaker => {
+                speaker.statements.forEach(stmt => {
+                    statements.push({
+                        speaker: speaker.name,
+                        speakerClassification: classifications[speaker.name],
+                        target: stmt.targetName,
+                        targetClassification: classifications[stmt.targetName],
+                        claim: stmt.claimsKnight ? 'Knight' : 'Knave'
+                    });
+                });
+            });
+            return statements;
+        };
+
+        // Reset the game
+        window.resetGame = resetGame;
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            initGame();
+            initEventListeners();
+        });
+    </script>
+</body>
+</html>
+
