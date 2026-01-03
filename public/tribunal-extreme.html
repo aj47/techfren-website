@@ -827,6 +827,7 @@ be carefully parsed.
 
             if (aboutCount === 0) {
                 dossier += `No other witnesses have made statements about ${character.name}.\n`;
+            }
 
             dossier += `
 ────────────────────────────────────────────────────────────────────────────────
@@ -1459,18 +1460,28 @@ Final Statistics:
 
         function getInitialBriefing() {
             return `═══════════════════════════════════════════════════════════════════════════════
-                    THE TESTIMONY TRIBUNAL - KNIGHT & KNAVE LOGIC CHALLENGE
+           THE TESTIMONY TRIBUNAL - EXTREME MODE (60 WITNESSES, OBFUSCATED)
 ═══════════════════════════════════════════════════════════════════════════════
 
 BRIEFING:
-You are the Grand Arbiter of the Tribunal. Before you stand 30 witnesses, each
+You are the Grand Arbiter of the Tribunal. Before you stand 60 witnesses, each
 belonging to one of two ancient orders:
 
   ⚔️  KNIGHTS - Bound by sacred oath to ALWAYS speak the TRUTH
   🗡️  KNAVES  - Cursed to ALWAYS speak LIES
 
 Each witness has made statements about the nature of other witnesses. Your task
-is to classify ALL 30 witnesses correctly as either Knight or Knave.
+is to classify ALL 60 witnesses correctly as either Knight or Knave.
+
+⚠️  EXTREME MODE WARNING ⚠️
+In this mode, statements are OBFUSCATED. They are NOT presented as clean
+"X is a Knight" or "X is a Knave" claims. Instead, each statement is EMBEDDED
+in narrative prose that you must carefully parse to understand the actual claim.
+
+For example, instead of "Dame Beatrix is a Knight", you may see:
+"When I think of Dame Beatrix, I am reminded of those who walk the ancient path
+of truth. Dame Beatrix is one whose words ring with the clarity of mountain
+springs..." (This is claiming Dame Beatrix IS A KNIGHT.)
 
 RULES:
 • Knights ALWAYS tell the truth - every statement they make is TRUE
@@ -1479,12 +1490,12 @@ RULES:
 
 INSTRUCTIONS:
 1. Click a witness name to query their full dossier
-2. Study their statements and cross-reference with other testimonies
+2. CAREFULLY READ the prose to extract actual claims about other witnesses
 3. Use the classify buttons to mark each witness as Knight or Knave
 4. Click "Check Consistency" to verify your current classifications
-5. When all 30 are classified, click "Submit Final Verdict"
+5. When all 60 are classified, click "Submit Final Verdict"
 
-Good luck, Grand Arbiter. The truth awaits those who seek it diligently.
+Parsing the obfuscated statements is YOUR challenge. Good luck, Grand Arbiter.
 ═══════════════════════════════════════════════════════════════════════════════
 `;
         }
