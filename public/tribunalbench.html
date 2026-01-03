@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TribunalBench - AI Logic Benchmark | techfren</title>
+    <meta name="description" content="TribunalBench: A deterministic Knights & Knaves logic puzzle designed to test AI agents' reasoning and context retention as context fills up.">
+    <meta name="keywords" content="TribunalBench, AI benchmark, Knights and Knaves, logic puzzle, AI agents, context window, Claude, GPT">
+    <meta name="author" content="techfren">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="TribunalBench - AI Logic Benchmark | techfren">
+    <meta property="og:description" content="A deterministic logic puzzle testing AI agents' reasoning as context fills up.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.techfren.net/tribunalbench">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="TribunalBench - AI Logic Benchmark | techfren">
+    <meta name="twitter:description" content="A deterministic logic puzzle testing AI agents' reasoning as context fills up.">
+    <link rel="canonical" href="https://www.techfren.net/tribunalbench">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-black: #000000;
+            --neon-green: #00FF41;
+            --terminal-green: #33FF33;
+            --dim-gray: #666666;
+            --light-gray: #999999;
+            --matrix-glow: #00FF00;
+            --knight-gold: #FFD700;
+            --knave-red: #FF4444;
+            --panel-bg: rgba(0, 20, 0, 0.9);
+        }
+        body {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            background-color: var(--bg-black);
+            color: var(--neon-green);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        #matrix-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            opacity: 0.12;
+        }
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h1 {
+            font-size: 42px;
+            font-weight: 700;
+            letter-spacing: 6px;
+            text-shadow: 0 0 20px var(--matrix-glow);
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: var(--dim-gray);
+            font-size: 14px;
+            letter-spacing: 3px;
+        }
+        .subtitle a {
+            color: var(--neon-green);
+            text-decoration: none;
+        }
+        .subtitle a:hover { text-decoration: underline; }
+        .play-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 15px 40px;
+            background: transparent;
+            border: 2px solid var(--neon-green);
+            color: var(--neon-green);
+            font-family: inherit;
+            font-size: 16px;
+            letter-spacing: 3px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .play-btn:hover {
+            background: var(--neon-green);
+            color: var(--bg-black);
+            box-shadow: 0 0 30px var(--matrix-glow);
+        }
+        .section {
+            background: var(--panel-bg);
+            border: 1px solid var(--neon-green);
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.15);
+            margin-bottom: 30px;
+            padding: 25px;
+        }
+        .section h2 {
+            font-size: 18px;
+            letter-spacing: 3px;
+            margin-bottom: 15px;
+            color: var(--knight-gold);
+            border-bottom: 1px solid var(--dim-gray);
+            padding-bottom: 10px;
+        }
+        .section p, .section li {
+            color: var(--light-gray);
+            font-size: 13px;
+            line-height: 1.8;
+            margin-bottom: 12px;
+        }
+        .section ul { margin-left: 20px; }
+        .section li { margin-bottom: 8px; }
+        .highlight { color: var(--neon-green); }
+        .knight { color: var(--knight-gold); }
+        .knave { color: var(--knave-red); }
+        .leaderboard {
+            background: var(--panel-bg);
+            border: 1px solid var(--neon-green);
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.15);
+        }
+        .leaderboard-header {
+            display: grid;
+            grid-template-columns: 50px 1fr 100px 100px 100px;
+            gap: 15px;
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--neon-green);
+            font-size: 11px;
+            letter-spacing: 2px;
+            color: var(--dim-gray);
+            text-transform: uppercase;
+        }
+        .leaderboard-entry {
+            display: grid;
+            grid-template-columns: 50px 1fr 100px 100px 100px;
+            gap: 15px;
+            padding: 15px 20px;
+            align-items: center;
+            border-bottom: 1px solid rgba(102, 102, 102, 0.3);
+            transition: background 0.2s;
+        }
+        .leaderboard-entry:last-child { border-bottom: none; }
+        .leaderboard-entry:hover { background: rgba(0, 255, 65, 0.05); }
+        .rank { font-size: 20px; font-weight: 700; text-align: center; }
+        .rank.gold { color: #FFD700; text-shadow: 0 0 15px #FFD700; }
+        .rank.silver { color: #C0C0C0; text-shadow: 0 0 15px #C0C0C0; }
+        .rank.bronze { color: #CD7F32; text-shadow: 0 0 15px #CD7F32; }
+        .model-info .model-name { font-size: 15px; font-weight: 700; color: var(--neon-green); margin-bottom: 3px; }
+        .model-info .provider { font-size: 11px; color: var(--light-gray); }
+        .stat { font-size: 14px; font-weight: 700; text-align: right; color: var(--terminal-green); }
+        .stat.fail { color: var(--knave-red); }
+        .stat-label { font-size: 10px; color: var(--dim-gray); display: block; }
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--dim-gray);
+            font-size: 14px;
+        }
+        .footer-links {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .footer-links a {
+            color: var(--dim-gray);
+            text-decoration: none;
+            font-size: 13px;
+            margin: 0 15px;
+        }
+        .footer-links a:hover { color: var(--neon-green); }
+    </style>
+</head>
+<body>
+    <canvas id="matrix-canvas"></canvas>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>⚖️ TRIBUNALBENCH</h1>
+            <div class="subtitle">AI Logic Reasoning Benchmark v2</div>
+            <a href="/tribunal" class="play-btn">▶ PLAY THE GAME</a>
+        </div>
+
+        <!-- About Section -->
+        <div class="section">
+            <h2>📋 THE EXPERIMENT</h2>
+            <p>
+                <strong class="highlight">TribunalBench</strong> tests AI agents' ability to maintain logical reasoning
+                as their context window fills up. Unlike traditional benchmarks, this is a
+                <span class="highlight">fully deterministic</span> logic puzzle with exactly one valid solution.
+            </p>
+            <p>
+                The challenge: classify 30 witnesses as either <span class="knight">⚔️ Knights</span> (always tell truth)
+                or <span class="knave">🗡️ Knaves</span> (always lie) based on their statements about each other.
+                Each query generates ~2,000 tokens of verbose dossier text, quickly filling context windows
+                and testing whether agents can maintain coherent reasoning across 200K+ tokens.
+            </p>
+        </div>
+
+        <!-- Design Section -->
+        <div class="section">
+            <h2>🔧 DESIGN PRINCIPLES</h2>
+            <ul>
+                <li><strong class="highlight">Deterministic:</strong> No luck or randomness. The puzzle has exactly one logically valid solution derived through pure deduction.</li>
+                <li><strong class="highlight">Cheat-Proof:</strong> The solution is never stored. Validation checks logical consistency only — if a Knight's statements are all true and a Knave's are all false, you win.</li>
+                <li><strong class="highlight">Context-Heavy:</strong> Each character query returns 2,000+ tokens of verbose text (backgrounds, statements, cross-references, scenario analysis). Solving requires tracking information across a massive context.</li>
+                <li><strong class="highlight">Bot-Friendly:</strong> Exposes a clean API: <code class="highlight">queryCharacter()</code>, <code class="highlight">classify()</code>, <code class="highlight">checkConsistency()</code>, <code class="highlight">submitAnswer()</code></li>
+            </ul>
+        </div>
+
+        <!-- Why This Matters -->
+        <div class="section">
+            <h2>🎯 WHY IT MATTERS</h2>
+            <p>
+                Current AI benchmarks often test knowledge recall or single-turn reasoning. But real-world agent tasks
+                require <span class="highlight">sustained logical coherence</span> across many interactions while context accumulates.
+            </p>
+            <p>
+                This benchmark reveals: Do agents "forget" earlier deductions as context grows? Can they maintain a
+                mental model of 30 interconnected entities? Do they fall into circular reasoning or contradictions?
+            </p>
+            <p>
+                <strong>The hypothesis:</strong> Performance will degrade as context fills — and different models
+                will degrade at different rates. This benchmark makes that visible.
+            </p>
+        </div>
+
+        <!-- Leaderboard -->
+        <div class="section" style="padding: 0;">
+            <h2 style="padding: 25px 25px 15px 25px; margin-bottom: 0;">🏆 LEADERBOARD</h2>
+            <div class="leaderboard">
+                <div class="leaderboard-header">
+                    <span>Rank</span>
+                    <span>Model</span>
+                    <span style="text-align: right;">Time</span>
+                    <span style="text-align: right;">Queries</span>
+                    <span style="text-align: right;">Tokens</span>
+                </div>
+
+                <div class="empty-state">
+                    <p>🔮 No entries yet</p>
+                    <p style="margin-top: 10px; font-size: 12px;">Be the first to benchmark an AI agent!</p>
+                </div>
+
+                <!-- Example entries (uncomment when you have results)
+                <div class="leaderboard-entry">
+                    <span class="rank gold">1</span>
+                    <div class="model-info">
+                        <div class="model-name">Claude Sonnet 4</div>
+                        <div class="provider">Anthropic · claude-code · playwright MCP</div>
+                    </div>
+                    <span class="stat">4:32</span>
+                    <span class="stat">45</span>
+                    <span class="stat">89K</span>
+                </div>
+                -->
+            </div>
+        </div>
+
+        <!-- How to Submit -->
+        <div class="section">
+            <h2>📤 SUBMIT A RUN</h2>
+            <p>
+                To submit your AI agent's results to the leaderboard:
+            </p>
+            <ul>
+                <li>Record a screen capture of the full run (required for verification)</li>
+                <li>Include: Model name, agent framework, MCP tools used</li>
+                <li>Submit via <a href="https://twitter.com/techloafcapital" class="highlight" target="_blank">Twitter/X @techloafcapital</a> or GitHub PR</li>
+            </ul>
+            <p style="color: var(--dim-gray); font-size: 11px; margin-top: 15px;">
+                Note: Runs must complete successfully (all 30 classifications correct) to appear on the leaderboard.
+                Failed attempts can be submitted as data points for analysis.
+            </p>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer-links">
+            <a href="/tribunal">▶ Play Tribunal (30)</a>
+            <a href="/tribunal-mini">⚡ Mini (4)</a>
+            <a href="/wordle">🎮 Wordle v1</a>
+            <a href="/wordlebench">📊 WordleBench</a>
+            <a href="/">🏠 techfren.net</a>
+        </div>
+    </div>
+
+    <script>
+        // Matrix rain effect
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        const chars = 'アイウエオカキクケコ01KNIGHT騎士KNAVE悪党TRUTH真実LIE嘘⚔🗡⚖';
+        const fontSize = 14;
+        let columns = Math.floor(canvas.width / fontSize);
+        let drops = Array(columns).fill(1);
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#00FF41';
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const char = chars[Math.floor(Math.random() * chars.length)];
+                ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        setInterval(drawMatrix, 50);
+        window.addEventListener('resize', () => {
+            columns = Math.floor(canvas.width / fontSize);
+            drops = Array(columns).fill(1);
+        });
+    </script>
+</body>
+</html>
+
