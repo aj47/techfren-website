@@ -311,8 +311,24 @@
     </div>
 
     <script>
-        // The secret word
-        const SECRET_WORD = 'GUILT';
+        // =============================================
+        // ENCODED SECRET WORD (anti-cheat protection)
+        // The word is XOR-encoded to prevent agents from
+        // reading it directly from the source code.
+        // To change the word, use: encodeWord('NEWWORD', 42)
+        // =============================================
+        const _e = [109, 127, 99, 102, 126]; // encoded chars
+        const _k = 42; // XOR key
+        const SECRET_WORD = _e.map(c => String.fromCharCode(c ^ _k)).join('');
+
+        // Helper function to encode new words (run in console)
+        // Usage: encodeWord('YOURWORD', 42) -> copy the array
+        window.encodeWord = (word, key = 42) => {
+            const encoded = word.toUpperCase().split('').map(c => c.charCodeAt(0) ^ key);
+            console.log(`Encoded "${word}": [${encoded.join(', ')}]`);
+            return encoded;
+        };
+
         const WORD_LENGTH = 5;
         const MAX_GUESSES = 6;
 
