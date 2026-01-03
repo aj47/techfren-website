@@ -1,0 +1,1650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Testimony Tribunal (EXTREME) | techfren</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-black: #000000;
+            --neon-green: #00FF41;
+            --terminal-green: #33FF33;
+            --dim-gray: #333333;
+            --light-gray: #666666;
+            --matrix-glow: #00FF00;
+            --knight-gold: #FFD700;
+            --knave-red: #FF4444;
+            --border-color: #3a3a3c;
+            --panel-bg: rgba(0, 20, 0, 0.85);
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background-color: var(--bg-black);
+            color: var(--neon-green);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        #matrix-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .game-container {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: 280px 1fr 320px;
+            grid-template-rows: auto 1fr auto;
+            gap: 15px;
+            padding: 15px;
+            height: 100vh;
+            max-height: 100vh;
+        }
+
+        .header {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 10px;
+            border-bottom: 1px solid var(--dim-gray);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            text-shadow: 0 0 10px var(--matrix-glow);
+            letter-spacing: 3px;
+        }
+
+        .header .subtitle {
+            color: var(--light-gray);
+            font-size: 11px;
+            margin-top: 5px;
+        }
+
+        .header .subtitle a {
+            color: var(--neon-green);
+            text-decoration: none;
+        }
+
+        .timer {
+            font-size: 20px;
+            color: var(--terminal-green);
+            text-shadow: 0 0 10px var(--matrix-glow);
+            margin-top: 8px;
+        }
+
+        .panel {
+            background: var(--panel-bg);
+            border: 1px solid var(--dim-gray);
+            border-radius: 4px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-header {
+            background: var(--dim-gray);
+            padding: 8px 12px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .panel-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        /* Character List Panel */
+        .character-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .character-btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 10px;
+            background: transparent;
+            border: 1px solid var(--dim-gray);
+            color: var(--neon-green);
+            font-family: inherit;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+
+        .character-btn:hover {
+            border-color: var(--neon-green);
+            box-shadow: 0 0 8px var(--matrix-glow);
+        }
+
+        .character-btn.classified-knight {
+            border-color: var(--knight-gold);
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .character-btn.classified-knave {
+            border-color: var(--knave-red);
+            background: rgba(255, 68, 68, 0.1);
+        }
+
+        .character-btn .status {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+
+        .status.knight { background: var(--knight-gold); color: #000; }
+        .status.knave { background: var(--knave-red); color: #fff; }
+        .status.unknown { background: var(--dim-gray); color: var(--light-gray); }
+
+        /* Query Output Panel */
+        .query-output {
+            font-size: 12px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .query-entry {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed var(--dim-gray);
+        }
+
+        .query-entry:last-child {
+            border-bottom: none;
+        }
+
+        .query-timestamp {
+            color: var(--light-gray);
+            font-size: 10px;
+            margin-bottom: 5px;
+        }
+
+        .highlight-knight { color: var(--knight-gold); }
+        .highlight-knave { color: var(--knave-red); }
+        .highlight-name { color: #00BFFF; font-weight: 700; }
+
+        /* Control Panel */
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .control-section {
+            padding: 10px;
+            border: 1px solid var(--dim-gray);
+            border-radius: 4px;
+        }
+
+        .control-section h3 {
+            font-size: 11px;
+            margin-bottom: 8px;
+            color: var(--light-gray);
+            letter-spacing: 1px;
+        }
+
+        .classify-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid var(--dim-gray);
+            background: transparent;
+            color: var(--neon-green);
+            font-family: inherit;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover:not(:disabled) {
+            box-shadow: 0 0 10px var(--matrix-glow);
+        }
+
+        .btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .btn-knight {
+            border-color: var(--knight-gold);
+            color: var(--knight-gold);
+        }
+
+        .btn-knight:hover:not(:disabled) {
+            background: var(--knight-gold);
+            color: #000;
+        }
+
+        .btn-knave {
+            border-color: var(--knave-red);
+            color: var(--knave-red);
+        }
+
+        .btn-knave:hover:not(:disabled) {
+            background: var(--knave-red);
+            color: #fff;
+        }
+
+        .btn-action {
+            border-color: var(--neon-green);
+        }
+
+        .btn-action:hover:not(:disabled) {
+            background: var(--neon-green);
+            color: #000;
+        }
+
+        .btn-submit {
+            border-color: #00BFFF;
+            color: #00BFFF;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            background: #00BFFF;
+            color: #000;
+            box-shadow: 0 0 15px #00BFFF;
+        }
+
+        /* Stats Panel */
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            font-size: 11px;
+        }
+
+        .stat {
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 3px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 3px;
+        }
+
+        .stat-label {
+            color: var(--light-gray);
+            font-size: 9px;
+            letter-spacing: 1px;
+        }
+
+        /* Footer */
+        .footer {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            border-top: 1px solid var(--dim-gray);
+            font-size: 11px;
+        }
+
+        .progress-bar {
+            flex: 1;
+            max-width: 400px;
+            height: 8px;
+            background: var(--dim-gray);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0 20px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--neon-green);
+            transition: width 0.3s;
+        }
+
+        /* Message overlay */
+        .message-overlay {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--panel-bg);
+            border: 2px solid var(--neon-green);
+            padding: 30px 50px;
+            border-radius: 8px;
+            text-align: center;
+            z-index: 100;
+            display: none;
+        }
+
+        .message-overlay.show { display: block; }
+        .message-overlay.win { border-color: var(--knight-gold); }
+        .message-overlay.lose { border-color: var(--knave-red); }
+
+        .message-title {
+            font-size: 24px;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px currentColor;
+        }
+
+        .message-text {
+            font-size: 14px;
+            color: var(--light-gray);
+            margin-bottom: 20px;
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-black);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--dim-gray);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--light-gray);
+        }
+
+        /* Selected character highlight */
+        .character-btn.selected {
+            border-color: var(--neon-green);
+            background: rgba(0, 255, 65, 0.15);
+        }
+
+        .token-counter {
+            font-size: 10px;
+            color: var(--light-gray);
+        }
+
+        .token-counter span {
+            color: var(--terminal-green);
+        }
+</style>
+</head>
+<body>
+    <canvas id="matrix-canvas"></canvas>
+
+    <div class="game-container" id="game-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>THE TESTIMONY TRIBUNAL <span style="color: #FF4444;">[EXTREME]</span></h1>
+            <div class="subtitle">60 witnesses · 240 obfuscated statements · <a href="/tribunal">normal mode</a> · <a href="/tribunalbench">leaderboard</a></div>
+            <div class="timer" id="timer">0:00</div>
+        </div>
+
+        <!-- Left Panel: Character List -->
+        <div class="panel" id="character-panel">
+            <div class="panel-header">⚖️ WITNESSES (0/60 CLASSIFIED)</div>
+            <div class="panel-content">
+                <div class="character-list" id="character-list">
+                    <!-- Characters populated by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Center Panel: Query Output -->
+        <div class="panel" id="output-panel">
+            <div class="panel-header">📜 TESTIMONY LOG</div>
+            <div class="panel-content">
+                <div class="query-output" id="query-output">
+<span style="color: var(--light-gray)">═══════════════════════════════════════════════════════════════════════════════
+          THE TESTIMONY TRIBUNAL - EXTREME MODE [60 WITNESSES · OBFUSCATED]
+═══════════════════════════════════════════════════════════════════════════════
+                        ⚠️ WARNING: STATEMENTS ARE EMBEDDED IN PROSE ⚠️
+
+BRIEFING:
+You are the Grand Arbiter of the Tribunal. Before you stand 60 witnesses, each
+belonging to one of two ancient orders:
+
+  ⚔️  KNIGHTS - Bound by sacred oath to ALWAYS speak the TRUTH
+  🗡️  KNAVES  - Cursed to ALWAYS speak LIES
+
+EXTREME MODE DIFFERENCES:
+• 60 witnesses instead of 30 (double the logical complexity)
+• 240 statements total (4 per witness, embedded in prose)
+• Statements are OBFUSCATED - not in clean "X is a Knight" format
+• You must carefully parse narrative text to extract claims
+• Red herrings and commentary mixed with actual testimony
+• Target context: 200K+ tokens
+
+STATEMENT FORMATS (examples of how claims are hidden):
+• "...one who walks the path of truth..."
+• "...their words carry the weight of deception..."
+• "...speaks as the honorable knights do..."
+• "...cannot be counted among the truthful..."
+
+RULES:
+• Knights ALWAYS tell truth - every statement they make is TRUE
+• Knaves ALWAYS lie - every statement they make is FALSE
+• There is exactly ONE valid classification that satisfies all statements
+• YOU MUST CAREFULLY READ THE PROSE - statements are not cleanly formatted
+
+INSTRUCTIONS:
+1. Click a witness name to query their comprehensive dossier
+2. CAREFULLY READ the narrative to extract the 4 embedded statements
+3. Cross-reference with other testimonies
+4. Use the classify buttons to mark each witness as Knight or Knave
+5. Click "Check Consistency" to verify your current classifications
+6. When all 60 are classified, click "Submit Final Verdict"
+
+May your parsing be thorough, Grand Arbiter. The truth hides in plain sight.
+═══════════════════════════════════════════════════════════════════════════════
+</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel: Controls -->
+        <div class="panel" id="control-panel">
+            <div class="panel-header">🎮 CONTROLS</div>
+            <div class="panel-content">
+                <div class="controls">
+                    <!-- Stats -->
+                    <div class="control-section">
+                        <h3>CLASSIFICATION STATUS</h3>
+                        <div class="stats">
+                            <div class="stat">
+                                <div class="stat-value highlight-knight" id="knight-count">0</div>
+                                <div class="stat-label">KNIGHTS</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value highlight-knave" id="knave-count">0</div>
+                                <div class="stat-label">KNAVES</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value" id="unknown-count">30</div>
+                                <div class="stat-label">UNKNOWN</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value" id="query-count">0</div>
+                                <div class="stat-label">QUERIES</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Selected Character -->
+                    <div class="control-section">
+                        <h3>SELECTED WITNESS</h3>
+                        <div id="selected-name" style="font-size: 14px; margin-bottom: 10px; color: var(--light-gray);">
+                            None selected
+                        </div>
+                        <div class="classify-btns">
+                            <button class="btn btn-knight" id="btn-knight" disabled>⚔️ KNIGHT</button>
+                            <button class="btn btn-knave" id="btn-knave" disabled>🗡️ KNAVE</button>
+                        </div>
+                        <button class="btn btn-action" id="btn-clear" disabled style="margin-top: 8px; width: 100%;">
+                            CLEAR CLASSIFICATION
+                        </button>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="control-section">
+                        <h3>ACTIONS</h3>
+                        <button class="btn btn-action" id="btn-consistency" style="width: 100%;">
+                            🔍 CHECK CONSISTENCY
+                        </button>
+                        <button class="btn btn-submit" id="btn-submit" style="width: 100%;" disabled>
+                            ⚖️ SUBMIT FINAL VERDICT
+                        </button>
+                    </div>
+
+                    <!-- Token Counter -->
+                    <div class="control-section">
+                        <h3>CONTEXT USAGE</h3>
+                        <div class="token-counter">
+                            Approximate tokens: <span id="token-count">0</span>
+                        </div>
+                        <div class="progress-bar" style="margin-top: 8px;">
+                            <div class="progress-fill" id="token-progress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div>Witnesses: <span id="footer-classified">0</span>/60 classified</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+            </div>
+            <div class="token-counter">~<span id="footer-tokens">0</span> tokens in context</div>
+        </div>
+    </div>
+
+    <!-- Message Overlay -->
+    <div class="message-overlay" id="message-overlay">
+        <div class="message-title" id="message-title">VERDICT</div>
+        <div class="message-text" id="message-text"></div>
+        <button class="btn btn-action" id="btn-play-again">RETRY TRIBUNAL</button>
+    </div>
+
+    <script>
+        // =============================================
+        // THE TESTIMONY TRIBUNAL - GAME LOGIC
+        // =============================================
+
+        const NUM_CHARACTERS = 60;
+        const TARGET_TOKENS = 250000;
+
+        // Character names - 60 memorable and distinct names
+        const CHARACTER_NAMES = [
+            "Lord Aldric", "Dame Beatrix", "Count Casimir", "Duchess Delia",
+            "Earl Edmund", "Lady Fiona", "Baron Godfrey", "Countess Helena",
+            "Sir Ignatius", "Baroness Juliet", "Duke Kendrick", "Lady Lysandra",
+            "Marquis Magnus", "Viscountess Nadia", "Lord Octavian", "Dame Penelope",
+            "Count Quentin", "Duchess Rosalind", "Earl Sebastian", "Lady Theodora",
+            "Baron Ulric", "Countess Vivienne", "Sir Winston", "Baroness Xenia",
+            "Duke Yorick", "Lady Zelda", "Marquis Alaric", "Viscountess Bianca",
+            "Lord Cedric", "Dame Dahlia", "Count Emeric", "Duchess Evangeline",
+            "Earl Florian", "Lady Gwendolyn", "Baron Hadrian", "Countess Isadora",
+            "Sir Jasper", "Baroness Katerina", "Duke Leopold", "Lady Marguerite",
+            "Marquis Nathaniel", "Viscountess Ophelia", "Lord Percival", "Dame Quintessa",
+            "Count Reginald", "Duchess Seraphina", "Earl Thaddeus", "Lady Ursula",
+            "Baron Valerian", "Countess Winifred", "Sir Xavier", "Baroness Yolanda",
+            "Duke Zacharias", "Lady Anastasia", "Marquis Benedict", "Viscountess Cordelia",
+            "Lord Dominic", "Dame Eleanora", "Count Ferdinand", "Duchess Genevieve"
+        ];
+
+        // Character backgrounds for verbose dossiers - 60 unique backgrounds
+        const BACKGROUNDS = [
+            "A distinguished member of the Northern Estates, known for their extensive library and scholarly pursuits. They have served on the Council of Arbiters for over two decades.",
+            "Heir to the coastal trading empire, they command respect in both merchant and noble circles. Their testimony has been sought in seventeen prior tribunals.",
+            "A veteran of the Eastern Campaigns, decorated for valor and strategic brilliance. They now serve as an advisor to the Crown on matters of security.",
+            "The youngest to ever hold their title, granted after exceptional service during the Great Plague. They established three hospitals in the outer provinces.",
+            "A renowned patron of the arts whose gallery houses works from across the known world. They have sponsored over forty artists and architects.",
+            "Former ambassador to the Southern Kingdoms, fluent in seven languages. Their diplomatic skills resolved the Border Conflict of the last decade.",
+            "Master of the Royal Treasury for fifteen years, known for impeccable record-keeping. They uncovered the embezzlement scandal that shook the court.",
+            "A philosopher and theologian whose writings on ethics are studied in academies everywhere. They founded the Institute of Moral Sciences.",
+            "Champion of three consecutive tournaments, undefeated in single combat. They now train the elite guard of the capital.",
+            "A healer of legendary skill, said to have cured the King's malady when all others failed. They run the largest infirmary in the realm.",
+            "The architect of the Grand Cathedral, whose spires are visible from twenty leagues away. They redesigned the entire capital district.",
+            "A judge of the High Court for twelve years, known for fairness and wisdom. Their rulings have set precedents still followed today.",
+            "Commander of the Western Fleet, victor of the Battle of Coral Bay. They secured the trade routes that enriched the kingdom.",
+            "A naturalist who catalogued over three thousand species in the Royal Bestiary. Their expeditions mapped the uncharted northern territories.",
+            "The realm's foremost historian, keeper of the Archives. They have documented every significant event of the past century.",
+            "A musician whose compositions are performed at every royal occasion. They invented two new instruments now used across the continent.",
+            "Master of the Alchemists' Guild, discoverer of the process for refining starlight ore. Their innovations revolutionized metallurgy.",
+            "A benefactor whose charitable works feed thousands. They built orphanages, schools, and shelters throughout the poor districts.",
+            "The spymaster's right hand, though officially just a minor functionary. Their network of informants spans every province.",
+            "A mystic and seer consulted by nobles and commoners alike. Their prophecies, cryptic as they are, have proven uncannily accurate.",
+            "Warden of the Northern Marches, defending against incursions for thirty years. The border has not been breached under their watch.",
+            "A vintner whose estates produce the finest wines in the realm. Their cellars are legendary among connoisseurs.",
+            "The King's personal physician, trusted with the health of the royal family. They have delivered three heirs to the throne.",
+            "A cartographer whose maps are used by every navigator in the kingdom. They charted the treacherous Serpent's Passage.",
+            "Master of Ceremonies at the Royal Court, orchestrating every feast and festival. They have served under three monarchs.",
+            "A mathematician whose theorems solved the problem of the celestial calendar. The new system they devised gains only one day every millennium.",
+            "Commander of the Citadel Guard, responsible for the security of the capital. Not a single breach has occurred in their tenure.",
+            "A poet laureate whose verses are memorized by schoolchildren. Their epic of the Founding is considered the definitive account.",
+            "Keeper of the Royal Menagerie, curator of exotic creatures from distant lands. They have bred species thought to be extinct.",
+            "A textile merchant who revolutionized the silk trade. Their innovations made fine cloth accessible to the middle classes.",
+            "The Grand Archivist of the Eastern Library, custodian of scrolls dating back millennia. Their cataloguing system is used across continents.",
+            "A master shipwright whose designs have won every regatta. Their vessels are prized by merchants and admirals alike.",
+            "The head of the Perfumers' Guild, creator of scents worn by royalty. Their latest fragrance caused a diplomatic incident when two queens demanded exclusivity.",
+            "A retired general who wrote the definitive treatise on siege warfare. Every military academy studies their campaigns.",
+            "The kingdom's chief astronomer, discoverer of three new celestial bodies. They predicted the Great Eclipse to the minute.",
+            "A legendary chef whose banquets have sealed treaties. Ambassadors have been known to concede points just to taste their desserts.",
+            "Master of the Glassblowers' Guild, creator of the Crown Jewels' settings. Their stained glass adorns every major cathedral.",
+            "A survivor of the Plague Ships, the only noble to work in the quarantine wards. Their immunity saved hundreds of lives.",
+            "The inventor of the mechanical clock, whose timepieces grace every palace. They solved the longitude problem for maritime navigation.",
+            "A philosopher whose debates have shaped the kingdom's laws. Three consecutive monarchs have sought their counsel.",
+            "Warden of the Royal Forests, protector of ancient groves. They single-handedly stopped the Great Timber Rush.",
+            "The realm's premier falconer, trainer of the King's hunting birds. Their techniques have been exported to distant empires.",
+            "A sculptor whose works stand in every major square. They carved the memorial to the fallen that moves visitors to tears.",
+            "Master of the Miners' Guild, discoverer of the great silver vein. Their safety innovations saved thousands of lives underground.",
+            "The kingdom's foremost linguist, decoder of the Ancient Tablets. They speak fluently with envoys from every known land.",
+            "A bridge engineer whose spans connect the realm. Their suspension design crosses the Great Chasm, thought impossible by all.",
+            "The royal beekeeper, supplier of honey to the palace. Their mead recipe is a closely guarded state secret.",
+            "A master of ceremonies whose protocols govern all state functions. Foreign courts have adopted their etiquette standards.",
+            "The head of the Weavers' Guild, creator of the Great Tapestry. It tells the kingdom's entire history in thread.",
+            "A renowned botanist whose gardens supply the royal apothecary. They discovered the cure for the Wasting Sickness.",
+            "Master of the Royal Mint, designer of the kingdom's coinage. Their anti-counterfeiting measures are studied worldwide.",
+            "A legendary tracker who found the Lost Prince. Their skills are whispered about in both admiration and fear.",
+            "The keeper of the Royal Lighthouse, guardian of the treacherous straits. Not a ship has foundered under their watch.",
+            "A master calligrapher whose penmanship graces every royal decree. Their illuminated manuscripts are national treasures.",
+            "The head of the Saddlers' Guild, outfitter of the Royal Cavalry. Their designs improved mount endurance by half.",
+            "A cheese maker whose aged varieties are traded like jewels. Nobles have wagered fortunes on wheels of their vintage.",
+            "Master of the Bell Foundry, caster of the Great Carillon. The bells can be heard twenty leagues away on clear nights.",
+            "The kingdom's expert on poisons and their antidotes. They have saved the royal family from assassination thrice.",
+            "A legendary dancer whose performances have stopped wars. Rival kings declared truce just to attend their farewell tour.",
+            "Master of the Papermakers' Guild, inventor of watermarked parchment. Their process made forgery nearly impossible."
+        ];
+
+        // Puzzle data - encoded to prevent source code inspection
+        // 60 characters, 4 statements each, 240 total statements
+        // Validation checks logical consistency only - no solution stored
+        const _pd = 'W1swLFtbMSx0cnVlXSxbNyxmYWxzZV0sWzE3LHRydWVdLFsyOSx0cnVlXV1dLFsxLFtbMixmYWxzZV0sWzgsdHJ1ZV0sWzE4LHRydWVdLFszMCx0cnVlXV1dLFsyLFtbMyx0cnVlXSxbOSxmYWxzZV0sWzE5LHRydWVdLFszMSx0cnVlXV1dLFszLFtbNCxmYWxzZV0sWzEwLGZhbHNlXSxbMjAsZmFsc2VdLFszMixmYWxzZV1dXSxbNCxbWzUsdHJ1ZV0sWzExLGZhbHNlXSxbMjEsdHJ1ZV0sWzMzLHRydWVdXV0sWzUsW1s2LHRydWVdLFsxMix0cnVlXSxbMjIsdHJ1ZV0sWzM0LHRydWVdXV0sWzYsW1s3LGZhbHNlXSxbMTMsdHJ1ZV0sWzIzLGZhbHNlXSxbMzUsZmFsc2VdXV0sWzcsW1s4LGZhbHNlXSxbMTQsdHJ1ZV0sWzI0LGZhbHNlXSxbMzYsZmFsc2VdXV0sWzgsW1s5LHRydWVdLFsxNSxmYWxzZV0sWzI1LHRydWVdLFszNyx0cnVlXV1dLFs5LFtbMTAsdHJ1ZV0sWzE2LHRydWVdLFsyNix0cnVlXSxbMzgsdHJ1ZV1dXSxbMTAsW1sxMSxmYWxzZV0sWzE3LHRydWVdLFsyNyxmYWxzZV0sWzM5LGZhbHNlXV1dLFsxMSxbWzEyLGZhbHNlXSxbMTgsZmFsc2VdLFsyOCxmYWxzZV0sWzQwLGZhbHNlXV1dLFsxMixbWzEzLHRydWVdLFsxOSxmYWxzZV0sWzI5LHRydWVdLFs0MSx0cnVlXV1dLFsxMyxbWzE0LGZhbHNlXSxbMjAsdHJ1ZV0sWzMwLHRydWVdLFs0Mix0cnVlXV1dLFsxNCxbWzE1LHRydWVdLFsyMSxmYWxzZV0sWzMxLHRydWVdLFs0Myx0cnVlXV1dLFsxNSxbWzE2LGZhbHNlXSxbMjIsZmFsc2VdLFszMixmYWxzZV0sWzQ0LGZhbHNlXV1dLFsxNixbWzE3LHRydWVdLFsyMyxmYWxzZV0sWzMzLHRydWVdLFs0NSx0cnVlXV1dLFsxNyxbWzE4LHRydWVdLFsyNCx0cnVlXSxbMzQsdHJ1ZV0sWzQ2LHRydWVdXV0sWzE4LFtbMTksZmFsc2VdLFsyNSx0cnVlXSxbMzUsZmFsc2VdLFs0NyxmYWxzZV1dXSxbMTksW1syMCxmYWxzZV0sWzI2LGZhbHNlXSxbMzYsZmFsc2VdLFs0OCxmYWxzZV1dXSxbMjAsW1syMSx0cnVlXSxbMjcsZmFsc2VdLFszNyx0cnVlXSxbNDksdHJ1ZV1dXSxbMjEsW1syMix0cnVlXSxbMjgsdHJ1ZV0sWzM4LHRydWVdLFs1MCx0cnVlXV1dLFsyMixbWzIzLGZhbHNlXSxbMjksdHJ1ZV0sWzM5LGZhbHNlXSxbNTEsZmFsc2VdXV0sWzIzLFtbMjQsZmFsc2VdLFszMCxmYWxzZV0sWzQwLGZhbHNlXSxbNTIsZmFsc2VdXV0sWzI0LFtbMjUsdHJ1ZV0sWzMxLGZhbHNlXSxbNDEsdHJ1ZV0sWzUzLHRydWVdXV0sWzI1LFtbMjYsdHJ1ZV0sWzMyLHRydWVdLFs0Mix0cnVlXSxbNTQsdHJ1ZV1dXSxbMjYsW1syNyxmYWxzZV0sWzMzLHRydWVdLFs0MyxmYWxzZV0sWzU1LGZhbHNlXV1dLFsyNyxbWzI4LGZhbHNlXSxbMzQsZmFsc2VdLFs0NCxmYWxzZV0sWzU2LGZhbHNlXV1dLFsyOCxbWzI5LHRydWVdLFszNSxmYWxzZV0sWzQ1LHRydWVdLFs1Nyx0cnVlXV1dLFsyOSxbWzMwLHRydWVdLFszNix0cnVlXSxbNDYsdHJ1ZV0sWzU4LGZhbHNlXV1dLFszMCxbWzMxLGZhbHNlXSxbMzcsdHJ1ZV0sWzQ3LGZhbHNlXSxbNTksZmFsc2VdXV0sWzMxLFtbMzIsZmFsc2VdLFszOCxmYWxzZV0sWzQ4LGZhbHNlXSxbMCxmYWxzZV1dXSxbMzIsW1szMyx0cnVlXSxbMzksZmFsc2VdLFs0OSx0cnVlXSxbMSx0cnVlXV1dLFszMyxbWzM0LHRydWVdLFs0MCx0cnVlXSxbNTAsdHJ1ZV0sWzIsZmFsc2VdXV0sWzM0LFtbMzUsZmFsc2VdLFs0MSx0cnVlXSxbNTEsZmFsc2VdLFszLGZhbHNlXV1dLFszNSxbWzM2LGZhbHNlXSxbNDIsZmFsc2VdLFs1MixmYWxzZV0sWzQsZmFsc2VdXV0sWzM2LFtbMzcsdHJ1ZV0sWzQzLGZhbHNlXSxbNTMsdHJ1ZV0sWzUsdHJ1ZV1dXSxbMzcsW1szOCx0cnVlXSxbNDQsdHJ1ZV0sWzU0LHRydWVdLFs2LHRydWVdXV0sWzM4LFtbMzksZmFsc2VdLFs0NSx0cnVlXSxbNTUsZmFsc2VdLFs3LGZhbHNlXV1dLFszOSxbWzQwLGZhbHNlXSxbNDYsZmFsc2VdLFs1NixmYWxzZV0sWzgsZmFsc2VdXV0sWzQwLFtbNDEsdHJ1ZV0sWzQ3LGZhbHNlXSxbNTcsdHJ1ZV0sWzksdHJ1ZV1dXSxbNDEsW1s0Mix0cnVlXSxbNDgsdHJ1ZV0sWzU4LGZhbHNlXSxbMTAsdHJ1ZV1dXSxbNDIsW1s0MyxmYWxzZV0sWzQ5LHRydWVdLFs1OSxmYWxzZV0sWzExLGZhbHNlXV1dLFs0MyxbWzQ0LGZhbHNlXSxbNTAsZmFsc2VdLFswLGZhbHNlXSxbMTIsZmFsc2VdXV0sWzQ0LFtbNDUsdHJ1ZV0sWzUxLGZhbHNlXSxbMSx0cnVlXSxbMTMsdHJ1ZV1dXSxbNDUsW1s0Nix0cnVlXSxbNTIsdHJ1ZV0sWzIsZmFsc2VdLFsxNCxmYWxzZV1dXSxbNDYsW1s0NyxmYWxzZV0sWzUzLHRydWVdLFszLGZhbHNlXSxbMTUsZmFsc2VdXV0sWzQ3LFtbNDgsZmFsc2VdLFs1NCxmYWxzZV0sWzQsZmFsc2VdLFsxNixmYWxzZV1dXSxbNDgsW1s0OSx0cnVlXSxbNTUsZmFsc2VdLFs1LHRydWVdLFsxNyx0cnVlXV1dLFs0OSxbWzUwLHRydWVdLFs1Nix0cnVlXSxbNix0cnVlXSxbMTgsdHJ1ZV1dXSxbNTAsW1s1MSxmYWxzZV0sWzU3LHRydWVdLFs3LGZhbHNlXSxbMTksZmFsc2VdXV0sWzUxLFtbNTIsZmFsc2VdLFs1OCx0cnVlXSxbOCxmYWxzZV0sWzIwLGZhbHNlXV1dLFs1MixbWzUzLHRydWVdLFs1OSxmYWxzZV0sWzksdHJ1ZV0sWzIxLHRydWVdXV0sWzUzLFtbNTQsdHJ1ZV0sWzAsdHJ1ZV0sWzEwLHRydWVdLFsyMix0cnVlXV1dLFs1NCxbWzU1LGZhbHNlXSxbMSx0cnVlXSxbMTEsZmFsc2VdLFsyMyxmYWxzZV1dXSxbNTUsW1s1NixmYWxzZV0sWzIsdHJ1ZV0sWzEyLGZhbHNlXSxbMjQsZmFsc2VdXV0sWzU2LFtbNTcsdHJ1ZV0sWzMsZmFsc2VdLFsxMyx0cnVlXSxbMjUsdHJ1ZV1dXSxbNTcsW1s1OCxmYWxzZV0sWzQsdHJ1ZV0sWzE0LGZhbHNlXSxbMjYsdHJ1ZV1dXSxbNTgsW1s1OSx0cnVlXSxbNSxmYWxzZV0sWzE1LHRydWVdLFsyNyx0cnVlXV1dLFs1OSxbWzAsZmFsc2VdLFs2LGZhbHNlXSxbMTYsZmFsc2VdLFsyOCxmYWxzZV1dXV0=';
+        const STATEMENT_GRAPH = JSON.parse(atob(_pd));
+
+        // Game state
+        let classifications = {}; // { name: 'knight' | 'knave' | null }
+        let selectedCharacter = null;
+        let queryHistory = [];
+        let queryCount = 0;
+        let tokenCount = 0;
+        let gameOver = false;
+        let timerStarted = false;
+        let timerStopped = false;
+        let startTime = null;
+        let timerInterval = null;
+        let finalTime = null;
+
+        // Build character objects with statements
+        let characters = [];
+
+        function initCharacters() {
+            characters = CHARACTER_NAMES.map((name, idx) => ({
+                id: idx,
+                name: name,
+                background: BACKGROUNDS[idx],
+                statements: STATEMENT_GRAPH[idx][1].map(([targetIdx, claimKnight]) => ({
+                    targetId: targetIdx,
+                    targetName: CHARACTER_NAMES[targetIdx],
+                    claimsKnight: claimKnight // true = "X is a Knight", false = "X is a Knave"
+                }))
+            }));
+
+            // Initialize classifications
+            characters.forEach(c => {
+                classifications[c.name] = null;
+            });
+        }
+
+        // Obfuscated phrase templates for KNIGHT claims
+        const KNIGHT_PHRASES = [
+            (t) => `When I think of ${t}, I am reminded of those who walk the ancient path of truth. ${t} is one whose words ring with the clarity of mountain springs, whose every utterance carries the weight of sincere conviction. In all my dealings with ${t}, I have found them to be among those rare souls who have never learned the art of deception.`,
+            (t) => `There is something about ${t} that puts me in mind of the old traditions, the sacred vows of the truth-speakers. I have known ${t} for many seasons, and in that time, not once have I caught even a whisper of falsehood crossing their lips. ${t} belongs to the honorable order, of this I have no doubt.`,
+            (t) => `Concerning ${t}, I can speak with confidence born of long observation. The manner in which ${t} conducts their affairs, the consistency between their words and their deeds - these mark ${t} as one of the faithful, a keeper of the ancient covenant of truth. ${t} speaks only what is so.`,
+            (t) => `Let me tell you of ${t}, though I suspect you already sense what I am about to say. ${t} is cut from the cloth of honor, woven in the old way. When ${t} makes a statement, you may take it as gospel, for ${t} is constitutionally incapable of speaking that which is not true.`,
+            (t) => `I have studied ${t} with great care, as is my nature with all witnesses before this tribunal. And my conclusion is unambiguous: ${t} carries the mark of those who are bound to truth. The sincere light in their eyes, the measured certainty of their speech - ${t} is one of the truth-bound.`,
+            (t) => `Many have asked me about ${t}, and to each I give the same answer. ${t} is among those precious few whose word is their bond, whose testimony needs no corroboration. To doubt ${t} would be to doubt the sun at midday. ${t} walks among the knights of truth.`,
+            (t) => `Of ${t}, I can say this with certainty: they are one whose heart knows not the shadow of lies. ${t} speaks as the faithful do, with clarity and conviction that comes only from those who have embraced the covenant of truth. ${t} is trustworthy in all things.`,
+            (t) => `When ${t} speaks, wise men listen, for ${t} is known throughout the realm as one who cannot abide falsehood. In the great ledger of truth and deception, ${t}'s name is written firmly among the righteous. ${t} has never spoken an untruth, nor ever shall.`
+        ];
+
+        // Obfuscated phrase templates for KNAVE claims
+        const KNAVE_PHRASES = [
+            (t) => `Let me speak plainly about ${t}, though it gives me no pleasure. ${t} is one whose words twist and turn like serpents in tall grass. I have watched ${t} spin tales that would make a spider's web seem straightforward. ${t} cannot be trusted, for ${t}'s tongue has never known the constraint of truth.`,
+            (t) => `Ah, ${t}. Where do I begin? Perhaps with the time ${t} swore an oath that was broken before the words had left the air? Or the countless instances where ${t}'s statements proved to be nothing but elaborate fabrications? ${t} is among those who have chosen the path of deception.`,
+            (t) => `I must warn the tribunal about ${t}, whose silver tongue has deceived many. ${t} speaks with such conviction that the unwary are easily fooled, but those who know better recognize ${t} as one of the deceivers. Every word ${t} utters is the opposite of truth.`,
+            (t) => `There is a rot at the heart of ${t}'s testimony, and I say this not from malice but from careful observation. ${t} is incapable of speaking truth, bound by some dark compulsion to invert reality with every statement. ${t} belongs among those who deal in lies.`,
+            (t) => `When ${t} speaks, one would be wise to believe the opposite. This is not opinion but proven fact - ${t} has made a career of falsehood, weaving deceptions so elaborate they almost convince even the speaker. ${t} cannot be counted among the truthful.`,
+            (t) => `Concerning ${t}, I have only this to say: their words are poison dressed as medicine. ${t} speaks with apparent sincerity, but every syllable is calculated to mislead. ${t} walks the crooked path, and their testimony should be inverted to find the truth.`,
+            (t) => `${t} is known to me, and I fear what I know. ${t}'s relationship with truth is that of oil and water - they simply do not mix. When ${t} claims the sky is blue, wise men check for themselves. ${t} is bound to speak only that which is false.`,
+            (t) => `Of ${t}, tradition demands I speak, though every word pains me. ${t} has long been suspected of belonging to those who corrupt the truth, and my own observations confirm this sad reality. ${t} cannot speak truth any more than a fish can walk.`
+        ];
+
+        // Red herring phrases that look like statements but aren't
+        const RED_HERRINGS = [
+            (name) => `Some have questioned whether ${name}'s third cousin's associate might have had dealings with the merchant class, but such genealogical tangents are beneath the Tribunal's concern.`,
+            (name) => `The weather on the day ${name} gave testimony was particularly gloomy, which some superstitious observers took as an omen, though rational minds dismiss such notions.`,
+            (name) => `${name}'s preference for morning hearings over afternoon sessions has been noted by the scheduling clerk, who finds this neither remarkable nor consequential.`,
+            (name) => `It has been observed that ${name} favors the color blue in their attire, which certain amateur phrenologists believe indicates mental acuity, though this is mere speculation.`,
+            (name) => `${name}'s handwriting was analyzed by the court graphologist, who found it unremarkable in every measurable dimension, offering no insight into character.`
+        ];
+
+        // Generate verbose dossier for a character with OBFUSCATED statements
+        function generateDossier(character) {
+            const timestamp = new Date().toISOString();
+            const charClass = classifications[character.name];
+
+            let dossier = `
+════════════════════════════════════════════════════════════════════════════════
+              WITNESS DOSSIER: ${character.name.toUpperCase()} [EXTREME MODE]
+════════════════════════════════════════════════════════════════════════════════
+                    ⚠️ STATEMENTS ARE EMBEDDED IN PROSE ⚠️
+Query Timestamp: ${timestamp}
+Current Classification: ${charClass ? charClass.toUpperCase() : 'UNCLASSIFIED'}
+Query Number: #${queryCount + 1}
+Witness Index: ${character.id + 1} of 60
+
+═══════════════════════════════════════════════════════════════════════════════
+                        SECTION I: BIOGRAPHICAL OVERVIEW
+═══════════════════════════════════════════════════════════════════════════════
+
+${character.background}
+
+${character.name} first appeared in the Tribunal archives during the preliminary
+assessment phase, where the Witness Intake Committee catalogued their extensive
+background. The family seal of ${character.name} can be traced through the heraldic
+records of six consecutive dynasties, suggesting a lineage of considerable
+antiquity and influence. The ancestral motto, inscribed upon their family crypt,
+reads: "Truth Binds, Falsehood Frees" - a phrase that scholars have debated for
+centuries, finding it either deeply ironic or profoundly sincere depending on
+one's interpretation.
+
+The witness maintains a correspondence network spanning fourteen provinces and
+three foreign kingdoms. Analysis of their letter-writing patterns by the Royal
+Cryptographers has revealed nothing of note, though the thoroughness of their
+record-keeping suggests either meticulous honesty or paranoid self-protection.
+
+${RED_HERRINGS[character.id % RED_HERRINGS.length](character.name)}
+
+═══════════════════════════════════════════════════════════════════════════════
+                   SECTION II: FORMAL TESTIMONY TRANSCRIPTION
+═══════════════════════════════════════════════════════════════════════════════
+
+The following passages represent the complete and unabridged testimony of
+${character.name} as recorded by the Tribunal Scribes during the formal hearing.
+Each passage has been verified against the original wax cylinder recordings
+and the shorthand notes of three independent observers.
+
+IMPORTANT: The actual CLAIMS about other witnesses are EMBEDDED within the
+narrative text below. You must carefully parse each passage to identify what
+${character.name} is asserting about other witnesses' natures.
+
+`;
+            // Generate obfuscated statements
+            character.statements.forEach((stmt, idx) => {
+                const targetClass = classifications[stmt.targetName];
+                const phrasePool = stmt.claimsKnight ? KNIGHT_PHRASES : KNAVE_PHRASES;
+                const phrase = phrasePool[(character.id + idx) % phrasePool.length](stmt.targetName);
+
+                dossier += `
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ TESTIMONY PASSAGE ${idx + 1} OF 4                                                     │
+│ Recorded: Day ${(character.id * 4 + idx) % 30 + 1} of Proceedings, ${['Morning','Afternoon','Evening','Night'][(character.id + idx) % 4]} Session
+│ Subject Referenced: ${stmt.targetName}
+│ Subject Status: ${targetClass ? targetClass.toUpperCase() : 'UNCLASSIFIED'}
+├──────────────────────────────────────────────────────────────────────────────┤
+
+"${phrase}"
+
+│ The above testimony was delivered by ${character.name} while standing before     │
+│ the Assembly of Arbiters. The witness appeared ${['composed', 'agitated', 'serene', 'nervous'][idx % 4]} during this     │
+│ portion of the proceedings. Tribunal observers noted ${['no significant', 'minor', 'subtle', 'marked'][idx % 4]}         │
+│ physiological indicators during the statement.                                │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+${RED_HERRINGS[(character.id + idx + 2) % RED_HERRINGS.length](character.name)}
+
+`;
+            });
+
+            dossier += `
+═══════════════════════════════════════════════════════════════════════════════
+                    SECTION III: EXTERNAL TESTIMONY ABOUT ${character.name.toUpperCase()}
+═══════════════════════════════════════════════════════════════════════════════
+
+The following testimony passages were made by OTHER witnesses regarding
+${character.name}. Again, the actual claims are EMBEDDED in prose and must
+be carefully parsed.
+
+`;
+            // Find all statements about this character - also obfuscated
+            let aboutCount = 0;
+            characters.forEach(other => {
+                if (other.id === character.id) return;
+                other.statements.forEach(stmt => {
+                    if (stmt.targetId === character.id) {
+                        aboutCount++;
+                        const otherClass = classifications[other.name];
+                        const phrasePool = stmt.claimsKnight ? KNIGHT_PHRASES : KNAVE_PHRASES;
+                        const phrase = phrasePool[(other.id + aboutCount) % phrasePool.length](character.name);
+
+                        dossier += `
+▸ TESTIMONY FROM: ${other.name} (${otherClass ? otherClass.toUpperCase() : 'UNCLASSIFIED'})
+
+  "${phrase}"
+
+`;
+                    }
+                });
+            });
+
+            if (aboutCount === 0) {
+                dossier += `No other witnesses have made statements about ${character.name}.\n`;
+
+            dossier += `
+────────────────────────────────────────────────────────────────────────────────
+                              CROSS-REFERENCE MATRIX
+────────────────────────────────────────────────────────────────────────────────
+
+Connections between ${character.name} and other witnesses based on statements:
+
+DIRECT CONNECTIONS (statements made by or about ${character.name}):
+`;
+            // Direct connections
+            const directConnections = new Set();
+            character.statements.forEach(s => directConnections.add(s.targetName));
+            characters.forEach(other => {
+                other.statements.forEach(s => {
+                    if (s.targetId === character.id) directConnections.add(other.name);
+                });
+            });
+
+            directConnections.forEach(name => {
+                const c = classifications[name];
+                dossier += `  → ${name}: ${c ? c.toUpperCase() : 'UNCLASSIFIED'}\n`;
+            });
+
+            dossier += `
+SECONDARY CONNECTIONS (witnesses mentioned by direct connections):
+`;
+            // Secondary connections
+            const secondaryConnections = new Set();
+            directConnections.forEach(connName => {
+                const conn = characters.find(c => c.name === connName);
+                if (conn) {
+                    conn.statements.forEach(s => {
+                        if (s.targetName !== character.name && !directConnections.has(s.targetName)) {
+                            secondaryConnections.add(s.targetName);
+                        }
+                    });
+                }
+            });
+
+            secondaryConnections.forEach(name => {
+                const c = classifications[name];
+                dossier += `  ⤳ ${name}: ${c ? c.toUpperCase() : 'UNCLASSIFIED'}\n`;
+            });
+
+            dossier += `
+────────────────────────────────────────────────────────────────────────────────
+                              LOGICAL ANALYSIS
+────────────────────────────────────────────────────────────────────────────────
+
+SCENARIO A: If ${character.name} is a KNIGHT (always tells truth):
+`;
+            character.statements.forEach(stmt => {
+                const implication = stmt.claimsKnight ? 'must be a Knight' : 'must be a Knave';
+                dossier += `  • Then ${stmt.targetName} ${implication} (statement would be true)\n`;
+            });
+
+            dossier += `
+SCENARIO B: If ${character.name} is a KNAVE (always lies):
+`;
+            character.statements.forEach(stmt => {
+                const implication = stmt.claimsKnight ? 'must be a Knave' : 'must be a Knight';
+                dossier += `  • Then ${stmt.targetName} ${implication} (statement would be false)\n`;
+            });
+
+            dossier += `
+────────────────────────────────────────────────────────────────────────────────
+                         CLASSIFICATION RECOMMENDATIONS
+────────────────────────────────────────────────────────────────────────────────
+
+Based on the current state of classifications and the statements on record, the
+following logical constraints apply:
+
+`;
+            // Check for forced classifications based on current state
+            let constraintNotes = [];
+            characters.forEach(other => {
+                if (classifications[other.name]) {
+                    other.statements.forEach(stmt => {
+                        if (stmt.targetId === character.id) {
+                            const isKnight = classifications[other.name] === 'knight';
+                            const impliedType = isKnight
+                                ? (stmt.claimsKnight ? 'Knight' : 'Knave')
+                                : (stmt.claimsKnight ? 'Knave' : 'Knight');
+                            constraintNotes.push(`Since ${other.name} is classified as ${classifications[other.name].toUpperCase()}, and they claim "${character.name} is a ${stmt.claimsKnight ? 'Knight' : 'Knave'}", this ${isKnight ? 'truthful' : 'false'} statement implies ${character.name} must be a ${impliedType}.`);
+                        }
+                    });
+                }
+            });
+
+            if (constraintNotes.length > 0) {
+                constraintNotes.forEach(note => {
+                    dossier += `▶ ${note}\n\n`;
+                });
+            } else {
+                dossier += `No direct constraints derived from current classifications. More witnesses must be classified to narrow down ${character.name}'s true nature.\n\n`;
+            }
+
+            dossier += `
+────────────────────────────────────────────────────────────────────────────────
+                              TRIBUNAL RECORD
+────────────────────────────────────────────────────────────────────────────────
+
+Record of all classifications made thus far in this session:
+
+`;
+            let knightCount = 0, knaveCount = 0, unknownCount = 0;
+            characters.forEach(c => {
+                const cls = classifications[c.name];
+                if (cls === 'knight') {
+                    dossier += `  ⚔️  ${c.name}: KNIGHT\n`;
+                    knightCount++;
+                } else if (cls === 'knave') {
+                    dossier += `  🗡️  ${c.name}: KNAVE\n`;
+                    knaveCount++;
+                } else {
+                    dossier += `  ❓  ${c.name}: UNCLASSIFIED\n`;
+                    unknownCount++;
+                }
+            });
+
+            dossier += `
+Summary: ${knightCount} Knights, ${knaveCount} Knaves, ${unknownCount} Unclassified
+
+════════════════════════════════════════════════════════════════════════════════
+                              END OF DOSSIER
+════════════════════════════════════════════════════════════════════════════════
+
+`;
+            return dossier;
+        }
+
+        // Placeholder for remaining functions - will be added next
+        function initGame() {
+            initCharacters();
+            initUI();
+            initMatrixRain();
+            console.log('Tribunal ready');
+            window.tribunalReady = true;
+        }
+
+        function initUI() {
+            // Build character list
+            const listEl = document.getElementById('character-list');
+            listEl.innerHTML = '';
+
+            characters.forEach(char => {
+                const btn = document.createElement('button');
+                btn.className = 'character-btn';
+                btn.id = `char-btn-${char.id}`;
+                btn.setAttribute('data-character-id', char.id);
+                btn.setAttribute('data-character-name', char.name);
+                btn.innerHTML = `
+                    <span>${char.name}</span>
+                    <span class="status unknown">?</span>
+                `;
+                btn.onclick = () => selectCharacter(char);
+                listEl.appendChild(btn);
+            });
+        }
+
+        // =============================================
+        // CHARACTER SELECTION AND CLASSIFICATION
+        // =============================================
+
+        function selectCharacter(character) {
+            selectedCharacter = character;
+
+            // Update UI selection
+            document.querySelectorAll('.character-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            document.getElementById(`char-btn-${character.id}`).classList.add('selected');
+
+            // Update selected name display
+            document.getElementById('selected-name').innerHTML = `
+                <span class="highlight-name">${character.name}</span>
+                <span style="font-size: 11px; display: block; margin-top: 4px; color: var(--light-gray);">
+                    ${classifications[character.name] ? 'Classified as ' + classifications[character.name].toUpperCase() : 'Not yet classified'}
+                </span>
+            `;
+
+            // Enable buttons
+            document.getElementById('btn-knight').disabled = false;
+            document.getElementById('btn-knave').disabled = false;
+            document.getElementById('btn-clear').disabled = !classifications[character.name];
+
+            // Generate and display dossier
+            queryCount++;
+            const dossier = generateDossier(character);
+            appendToOutput(dossier);
+
+            // Start timer on first query
+            if (!timerStarted) startTimer();
+
+            // Update stats
+            updateStats();
+        }
+
+        function classifyCharacter(type) {
+            if (!selectedCharacter || gameOver) return;
+
+            classifications[selectedCharacter.name] = type;
+
+            // Update button appearance
+            const btn = document.getElementById(`char-btn-${selectedCharacter.id}`);
+            btn.classList.remove('classified-knight', 'classified-knave');
+            btn.classList.add(`classified-${type}`);
+            btn.querySelector('.status').className = `status ${type}`;
+            btn.querySelector('.status').textContent = type === 'knight' ? '⚔️' : '🗡️';
+
+            // Update selected display
+            document.getElementById('selected-name').innerHTML = `
+                <span class="highlight-name">${selectedCharacter.name}</span>
+                <span style="font-size: 11px; display: block; margin-top: 4px; color: ${type === 'knight' ? 'var(--knight-gold)' : 'var(--knave-red)'};">
+                    Classified as ${type.toUpperCase()}
+                </span>
+            `;
+
+            document.getElementById('btn-clear').disabled = false;
+
+            // Log the classification
+            const logEntry = `
+────────────────────────────────────────
+CLASSIFICATION RECORDED
+${selectedCharacter.name} → ${type.toUpperCase()}
+Time: ${new Date().toISOString()}
+────────────────────────────────────────
+`;
+            appendToOutput(logEntry);
+
+            updateStats();
+        }
+
+        function clearClassification() {
+            if (!selectedCharacter || gameOver) return;
+
+            classifications[selectedCharacter.name] = null;
+
+            // Update button appearance
+            const btn = document.getElementById(`char-btn-${selectedCharacter.id}`);
+            btn.classList.remove('classified-knight', 'classified-knave');
+            btn.querySelector('.status').className = 'status unknown';
+            btn.querySelector('.status').textContent = '?';
+
+            document.getElementById('selected-name').innerHTML = `
+                <span class="highlight-name">${selectedCharacter.name}</span>
+                <span style="font-size: 11px; display: block; margin-top: 4px; color: var(--light-gray);">
+                    Not yet classified
+                </span>
+            `;
+
+            document.getElementById('btn-clear').disabled = true;
+
+            const logEntry = `
+────────────────────────────────────────
+CLASSIFICATION CLEARED
+${selectedCharacter.name} → UNCLASSIFIED
+────────────────────────────────────────
+`;
+            appendToOutput(logEntry);
+
+            updateStats();
+        }
+
+        // =============================================
+        // VALIDATION - THE CHEAT-PROOF CORE
+        // =============================================
+
+        // Check if current classifications are internally consistent
+        // This does NOT compare against a stored solution - it checks LOGICAL CONSISTENCY
+        function checkConsistency() {
+            const results = {
+                isConsistent: true,
+                contradictions: [],
+                analysis: ''
+            };
+
+            let analysisText = `
+════════════════════════════════════════════════════════════════════════════════
+                         CONSISTENCY ANALYSIS REPORT
+════════════════════════════════════════════════════════════════════════════════
+Time: ${new Date().toISOString()}
+Classified Witnesses: ${Object.values(classifications).filter(c => c !== null).length}/60
+
+Checking logical consistency of all statements against current classifications...
+
+`;
+
+            characters.forEach(speaker => {
+                const speakerClass = classifications[speaker.name];
+                if (!speakerClass) return; // Skip unclassified
+
+                const speakerIsKnight = speakerClass === 'knight';
+
+                speaker.statements.forEach(stmt => {
+                    const targetClass = classifications[stmt.targetName];
+                    if (!targetClass) return; // Skip if target unclassified
+
+                    const targetIsKnight = targetClass === 'knight';
+                    const claimIsTrue = stmt.claimsKnight === targetIsKnight;
+
+                    // If speaker is Knight, their claim must be true
+                    // If speaker is Knave, their claim must be false
+                    const statementValid = speakerIsKnight === claimIsTrue;
+
+                    if (!statementValid) {
+                        results.isConsistent = false;
+                        const contradiction = {
+                            speaker: speaker.name,
+                            speakerClass: speakerClass,
+                            target: stmt.targetName,
+                            targetClass: targetClass,
+                            claim: stmt.claimsKnight ? 'Knight' : 'Knave'
+                        };
+                        results.contradictions.push(contradiction);
+
+                        analysisText += `
+❌ CONTRADICTION FOUND:
+   ${speaker.name} (${speakerClass.toUpperCase()}) claims "${stmt.targetName} is a ${stmt.claimsKnight ? 'Knight' : 'Knave'}"
+   But ${stmt.targetName} is classified as ${targetClass.toUpperCase()}
+
+   If ${speaker.name} is a ${speakerClass}, their statement should be ${speakerIsKnight ? 'TRUE' : 'FALSE'}.
+   The claim "${stmt.targetName} is a ${stmt.claimsKnight ? 'Knight' : 'Knave'}" is ${claimIsTrue ? 'TRUE' : 'FALSE'}.
+   This is a logical impossibility!
+
+`;
+                    } else {
+                        analysisText += `✓ ${speaker.name} → ${stmt.targetName}: Consistent\n`;
+                    }
+                });
+            });
+
+            if (results.isConsistent) {
+                analysisText += `
+────────────────────────────────────────────────────────────────────────────────
+                              RESULT: CONSISTENT
+────────────────────────────────────────────────────────────────────────────────
+
+All classified witnesses and their statements are logically consistent with
+each other. No contradictions detected.
+
+`;
+            } else {
+                analysisText += `
+────────────────────────────────────────────────────────────────────────────────
+                          RESULT: CONTRADICTIONS FOUND
+────────────────────────────────────────────────────────────────────────────────
+
+${results.contradictions.length} contradiction(s) detected. Review the classifications
+of the witnesses involved and adjust accordingly.
+
+`;
+            }
+
+            analysisText += `════════════════════════════════════════════════════════════════════════════════\n\n`;
+
+            results.analysis = analysisText;
+            appendToOutput(analysisText);
+
+            return results;
+        }
+
+        // Validate final submission - checks complete solution
+        function validateSolution() {
+            // First check all are classified
+            const unclassified = characters.filter(c => classifications[c.name] === null);
+            if (unclassified.length > 0) {
+                return {
+                    valid: false,
+                    complete: false,
+                    error: `${unclassified.length} witnesses still unclassified`,
+                    unclassified: unclassified.map(c => c.name)
+                };
+            }
+
+            // Check consistency
+            const consistency = checkConsistency();
+            if (!consistency.isConsistent) {
+                return {
+                    valid: false,
+                    complete: true,
+                    error: `${consistency.contradictions.length} contradictions found`,
+                    contradictions: consistency.contradictions
+                };
+            }
+
+            // All classified and consistent - this IS the valid solution
+            return {
+                valid: true,
+                complete: true,
+                message: 'All classifications are logically consistent!'
+            };
+        }
+
+        function submitSolution() {
+            if (gameOver) return;
+
+            const result = validateSolution();
+
+            if (!result.complete) {
+                appendToOutput(`
+════════════════════════════════════════════════════════════════════════════════
+                           SUBMISSION REJECTED
+════════════════════════════════════════════════════════════════════════════════
+
+Cannot submit: ${result.error}
+
+Please classify all 60 witnesses before submitting.
+
+════════════════════════════════════════════════════════════════════════════════
+`);
+                return result;
+            }
+
+            if (!result.valid) {
+                appendToOutput(`
+════════════════════════════════════════════════════════════════════════════════
+                           VERDICT: INCORRECT
+════════════════════════════════════════════════════════════════════════════════
+
+Your classifications contain logical contradictions. The truth cannot contradict
+itself. Review your work and correct the errors.
+
+${result.error}
+
+════════════════════════════════════════════════════════════════════════════════
+`);
+                return result;
+            }
+
+            // SUCCESS!
+            gameOver = true;
+            stopTimer();
+
+            const successMsg = `
+════════════════════════════════════════════════════════════════════════════════
+                           VERDICT: CORRECT!
+════════════════════════════════════════════════════════════════════════════════
+
+Congratulations, Grand Arbiter! You have successfully classified all 60 witnesses.
+
+Your logical deductions have revealed the truth: every statement is now consistent
+with the nature of its speaker. Knights speak only truth, Knaves speak only lies,
+and your classifications satisfy all constraints.
+
+Final Statistics:
+• Time: ${formatTime(finalTime)}
+• Queries Made: ${queryCount}
+• Approximate Tokens: ${tokenCount}
+
+════════════════════════════════════════════════════════════════════════════════
+`;
+            appendToOutput(successMsg);
+            showMessage('CORRECT!', `Time: ${formatTime(finalTime)} | Queries: ${queryCount}`, 'win');
+
+            return result;
+        }
+
+        // =============================================
+        // UI HELPERS
+        // =============================================
+
+        function appendToOutput(text) {
+            const output = document.getElementById('query-output');
+            output.textContent += text;
+            output.scrollTop = output.scrollHeight;
+
+            // Estimate tokens (rough: ~4 chars per token)
+            tokenCount += Math.ceil(text.length / 4);
+            updateTokenDisplay();
+        }
+
+        function updateStats() {
+            let knights = 0, knaves = 0, unknown = 0;
+            Object.values(classifications).forEach(c => {
+                if (c === 'knight') knights++;
+                else if (c === 'knave') knaves++;
+                else unknown++;
+            });
+
+            document.getElementById('knight-count').textContent = knights;
+            document.getElementById('knave-count').textContent = knaves;
+            document.getElementById('unknown-count').textContent = unknown;
+            document.getElementById('query-count').textContent = queryCount;
+            document.getElementById('footer-classified').textContent = knights + knaves;
+
+            // Update progress
+            const progress = ((knights + knaves) / NUM_CHARACTERS) * 100;
+            document.getElementById('progress-fill').style.width = `${progress}%`;
+
+            // Update character panel header
+            document.querySelector('#character-panel .panel-header').textContent =
+                `⚖️ WITNESSES (${knights + knaves}/${NUM_CHARACTERS} CLASSIFIED)`;
+
+            // Enable submit button if all classified
+            document.getElementById('btn-submit').disabled = (unknown > 0);
+        }
+
+        function updateTokenDisplay() {
+            document.getElementById('token-count').textContent = tokenCount.toLocaleString();
+            document.getElementById('footer-tokens').textContent = tokenCount.toLocaleString();
+
+            const progress = Math.min((tokenCount / TARGET_TOKENS) * 100, 100);
+            document.getElementById('token-progress').style.width = `${progress}%`;
+        }
+
+        function showMessage(title, text, type) {
+            const overlay = document.getElementById('message-overlay');
+            overlay.className = `message-overlay show ${type}`;
+            document.getElementById('message-title').textContent = title;
+            document.getElementById('message-title').style.color = type === 'win' ? 'var(--knight-gold)' : 'var(--knave-red)';
+            document.getElementById('message-text').textContent = text;
+        }
+
+        // =============================================
+        // TIMER FUNCTIONS
+        // =============================================
+
+        function formatTime(ms) {
+            const totalSeconds = Math.floor(ms / 1000);
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function startTimer() {
+            if (timerStarted || timerStopped) return;
+            timerStarted = true;
+            startTime = Date.now();
+            timerInterval = setInterval(updateTimerDisplay, 100);
+        }
+
+        function stopTimer() {
+            if (!timerStarted || timerStopped) return;
+            timerStopped = true;
+            clearInterval(timerInterval);
+            finalTime = Date.now() - startTime;
+            document.getElementById('timer').textContent = formatTime(finalTime);
+        }
+
+        function updateTimerDisplay() {
+            if (!timerStarted || timerStopped) return;
+            document.getElementById('timer').textContent = formatTime(Date.now() - startTime);
+        }
+
+        // =============================================
+        // MATRIX RAIN (from v1)
+        // =============================================
+
+        function initMatrixRain() {
+            const canvas = document.getElementById('matrix-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const chars = "アイウエオカキクケコサシスセソタチツテトナニヌネノ0123456789KNIGHTKNAVE";
+            const fontSize = 14;
+            const columns = canvas.width / fontSize;
+            const drops = [];
+
+            for (let i = 0; i < columns; i++) {
+                drops[i] = Math.random() * -100;
+            }
+
+            function draw() {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#00FF41';
+                ctx.font = fontSize + 'px monospace';
+
+                for (let i = 0; i < drops.length; i++) {
+                    const char = chars[Math.floor(Math.random() * chars.length)];
+                    ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                }
+            }
+
+            setInterval(draw, 50);
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        }
+
+        // =============================================
+        // EVENT LISTENERS
+        // =============================================
+
+        function initEventListeners() {
+            document.getElementById('btn-knight').onclick = () => classifyCharacter('knight');
+            document.getElementById('btn-knave').onclick = () => classifyCharacter('knave');
+            document.getElementById('btn-clear').onclick = clearClassification;
+            document.getElementById('btn-consistency').onclick = checkConsistency;
+            document.getElementById('btn-submit').onclick = submitSolution;
+            document.getElementById('btn-play-again').onclick = resetGame;
+        }
+
+        function resetGame() {
+            // Reset all state
+            classifications = {};
+            selectedCharacter = null;
+            queryHistory = [];
+            queryCount = 0;
+            tokenCount = 0;
+            gameOver = false;
+            timerStarted = false;
+            timerStopped = false;
+            startTime = null;
+            finalTime = null;
+            if (timerInterval) clearInterval(timerInterval);
+
+            // Reset UI
+            document.getElementById('message-overlay').classList.remove('show');
+            document.getElementById('timer').textContent = '0:00';
+            document.getElementById('query-output').textContent = getInitialBriefing();
+            document.getElementById('selected-name').innerHTML = 'None selected';
+            document.getElementById('btn-knight').disabled = true;
+            document.getElementById('btn-knave').disabled = true;
+            document.getElementById('btn-clear').disabled = true;
+
+            initCharacters();
+            initUI();
+            updateStats();
+            updateTokenDisplay();
+        }
+
+        function getInitialBriefing() {
+            return `═══════════════════════════════════════════════════════════════════════════════
+                    THE TESTIMONY TRIBUNAL - KNIGHT & KNAVE LOGIC CHALLENGE
+═══════════════════════════════════════════════════════════════════════════════
+
+BRIEFING:
+You are the Grand Arbiter of the Tribunal. Before you stand 30 witnesses, each
+belonging to one of two ancient orders:
+
+  ⚔️  KNIGHTS - Bound by sacred oath to ALWAYS speak the TRUTH
+  🗡️  KNAVES  - Cursed to ALWAYS speak LIES
+
+Each witness has made statements about the nature of other witnesses. Your task
+is to classify ALL 30 witnesses correctly as either Knight or Knave.
+
+RULES:
+• Knights ALWAYS tell the truth - every statement they make is TRUE
+• Knaves ALWAYS lie - every statement they make is FALSE
+• There is exactly ONE valid classification that satisfies all statements
+
+INSTRUCTIONS:
+1. Click a witness name to query their full dossier
+2. Study their statements and cross-reference with other testimonies
+3. Use the classify buttons to mark each witness as Knight or Knave
+4. Click "Check Consistency" to verify your current classifications
+5. When all 30 are classified, click "Submit Final Verdict"
+
+Good luck, Grand Arbiter. The truth awaits those who seek it diligently.
+═══════════════════════════════════════════════════════════════════════════════
+`;
+        }
+
+        // =============================================
+        // BOT-FRIENDLY API (exposed on window object)
+        // =============================================
+
+        // Get current game state
+        window.getGameState = function() {
+            return {
+                gameOver,
+                timerStarted,
+                timerStopped,
+                elapsedMs: timerStarted ? (timerStopped ? finalTime : Date.now() - startTime) : 0,
+                queryCount,
+                tokenCount,
+                selectedCharacter: selectedCharacter ? selectedCharacter.name : null,
+                classifications: {...classifications},
+                stats: {
+                    knights: Object.values(classifications).filter(c => c === 'knight').length,
+                    knaves: Object.values(classifications).filter(c => c === 'knave').length,
+                    unclassified: Object.values(classifications).filter(c => c === null).length
+                },
+                characterNames: characters.map(c => c.name)
+            };
+        };
+
+        // Get list of all characters with their current status
+        window.getCharacters = function() {
+            return characters.map(c => ({
+                id: c.id,
+                name: c.name,
+                classification: classifications[c.name],
+                statementCount: c.statements.length
+            }));
+        };
+
+        // Query a character's dossier (returns the dossier text)
+        window.queryCharacter = function(nameOrId) {
+            const char = typeof nameOrId === 'number'
+                ? characters[nameOrId]
+                : characters.find(c => c.name.toLowerCase() === nameOrId.toLowerCase());
+
+            if (!char) {
+                return { success: false, error: `Character not found: ${nameOrId}` };
+            }
+
+            selectCharacter(char);
+
+            return {
+                success: true,
+                character: char.name,
+                classification: classifications[char.name],
+                statements: char.statements.map(s => ({
+                    target: s.targetName,
+                    claim: s.claimsKnight ? 'Knight' : 'Knave',
+                    targetClassification: classifications[s.targetName]
+                }))
+            };
+        };
+
+        // Classify a character
+        window.classify = function(nameOrId, type) {
+            const char = typeof nameOrId === 'number'
+                ? characters[nameOrId]
+                : characters.find(c => c.name.toLowerCase() === nameOrId.toLowerCase());
+
+            if (!char) {
+                return { success: false, error: `Character not found: ${nameOrId}` };
+            }
+
+            if (type !== 'knight' && type !== 'knave') {
+                return { success: false, error: `Invalid type: ${type}. Must be 'knight' or 'knave'` };
+            }
+
+            if (gameOver) {
+                return { success: false, error: 'Game is over' };
+            }
+
+            // Select and classify
+            selectCharacter(char);
+            classifyCharacter(type);
+
+            return {
+                success: true,
+                character: char.name,
+                classification: type,
+                stats: window.getGameState().stats
+            };
+        };
+
+        // Clear a character's classification
+        window.clearClassify = function(nameOrId) {
+            const char = typeof nameOrId === 'number'
+                ? characters[nameOrId]
+                : characters.find(c => c.name.toLowerCase() === nameOrId.toLowerCase());
+
+            if (!char) {
+                return { success: false, error: `Character not found: ${nameOrId}` };
+            }
+
+            selectCharacter(char);
+            clearClassification();
+
+            return { success: true, character: char.name };
+        };
+
+        // Check consistency of current classifications
+        window.checkConsistencyAPI = function() {
+            const result = checkConsistency();
+            return {
+                success: true,
+                isConsistent: result.isConsistent,
+                contradictionCount: result.contradictions.length,
+                contradictions: result.contradictions
+            };
+        };
+
+        // Submit final answer
+        window.submitAnswer = function() {
+            const result = submitSolution();
+            return {
+                success: result.valid || false,
+                complete: result.complete || false,
+                valid: result.valid || false,
+                error: result.error || null,
+                message: result.message || null,
+                finalTime: finalTime,
+                queryCount: queryCount,
+                tokenCount: tokenCount
+            };
+        };
+
+        // Get all statements (for bots to analyze without querying each character)
+        window.getAllStatements = function() {
+            const statements = [];
+            characters.forEach(speaker => {
+                speaker.statements.forEach(stmt => {
+                    statements.push({
+                        speaker: speaker.name,
+                        speakerClassification: classifications[speaker.name],
+                        target: stmt.targetName,
+                        targetClassification: classifications[stmt.targetName],
+                        claim: stmt.claimsKnight ? 'Knight' : 'Knave'
+                    });
+                });
+            });
+            return statements;
+        };
+
+        // Reset the game
+        window.resetGame = resetGame;
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            initGame();
+            initEventListeners();
+        });
+    </script>
+</body>
+</html>
+
