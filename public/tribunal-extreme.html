@@ -437,14 +437,21 @@ EXTREME MODE DIFFERENCES:
 • 240 statements total (4 per witness, embedded in prose)
 • Statements are OBFUSCATED - not in clean "X is a Knight" format
 • You must carefully parse narrative text to extract claims
-• Red herrings and commentary mixed with actual testimony
-• Target context: 200K+ tokens
+• PRONOUN RESOLUTION REQUIRED - names replaced with "he", "the nobleman",
+  "this witness", "the one I speak of", "the aforementioned", etc.
+• Claims are SCATTERED across multiple sentences in each testimony
+• 18 different RED HERRING templates mixed throughout: hypotheticals,
+  other people's opinions, questions, cancelled claims, future speculation
+• Subject names sometimes REDACTED from headers - must parse from text
+• Target context: 300K+ tokens
 
-STATEMENT FORMATS (examples of how claims are hidden):
-• "...one who walks the path of truth..."
-• "...their words carry the weight of deception..."
-• "...speaks as the honorable knights do..."
-• "...cannot be counted among the truthful..."
+EXTRACTION CHALLENGES:
+• Pronouns: "The one I speak of was present. This person - and I mean
+  Lord Aldric specifically - possesses that quality. They are truth-bound."
+• Scattered: Claim split across 4-5 sentences with tangents in between
+• Red herrings: "IF Lord Aldric WERE a knight..." (hypothetical, not claim)
+• Attribution: "The baker's wife believes Lord Aldric honest." (not speaker's claim)
+• Cancelled: "I once thought X was truthful, but I have since suspended judgment."
 
 RULES:
 • Knights ALWAYS tell truth - every statement they make is TRUE
@@ -683,37 +690,103 @@ May your parsing be thorough, Grand Arbiter. The truth hides in plain sight.
             });
         }
 
-        // Obfuscated phrase templates for KNIGHT claims
+        // Pronoun/alias generators for indirect references
+        function getPronouns(name) {
+            const titles = name.split(' ')[0]; // "Lord", "Dame", etc.
+            const firstName = name.split(' ')[1];
+            return [
+                'this witness', 'the aforementioned', 'said individual', 'this person',
+                `the ${titles.toLowerCase().replace('lord','nobleman').replace('dame','noblewoman').replace('count','noble').replace('duke','nobleman').replace('earl','nobleman').replace('baron','nobleman').replace('sir','knight').replace('marquis','nobleman')}`,
+                'they', 'the one I speak of', 'this soul', 'the subject of my testimony'
+            ];
+        }
+
+        function getIndirectRef(name, idx) {
+            const refs = getPronouns(name);
+            return refs[idx % refs.length];
+        }
+
+        // KNIGHT claim templates with pronouns, scattered claims, and misdirection
+        // The actual claim is SPLIT across sentences and uses indirect references
         const KNIGHT_PHRASES = [
-            (t) => `When I think of ${t}, I am reminded of those who walk the ancient path of truth. ${t} is one whose words ring with the clarity of mountain springs, whose every utterance carries the weight of sincere conviction. In all my dealings with ${t}, I have found them to be among those rare souls who have never learned the art of deception.`,
-            (t) => `There is something about ${t} that puts me in mind of the old traditions, the sacred vows of the truth-speakers. I have known ${t} for many seasons, and in that time, not once have I caught even a whisper of falsehood crossing their lips. ${t} belongs to the honorable order, of this I have no doubt.`,
-            (t) => `Concerning ${t}, I can speak with confidence born of long observation. The manner in which ${t} conducts their affairs, the consistency between their words and their deeds - these mark ${t} as one of the faithful, a keeper of the ancient covenant of truth. ${t} speaks only what is so.`,
-            (t) => `Let me tell you of ${t}, though I suspect you already sense what I am about to say. ${t} is cut from the cloth of honor, woven in the old way. When ${t} makes a statement, you may take it as gospel, for ${t} is constitutionally incapable of speaking that which is not true.`,
-            (t) => `I have studied ${t} with great care, as is my nature with all witnesses before this tribunal. And my conclusion is unambiguous: ${t} carries the mark of those who are bound to truth. The sincere light in their eyes, the measured certainty of their speech - ${t} is one of the truth-bound.`,
-            (t) => `Many have asked me about ${t}, and to each I give the same answer. ${t} is among those precious few whose word is their bond, whose testimony needs no corroboration. To doubt ${t} would be to doubt the sun at midday. ${t} walks among the knights of truth.`,
-            (t) => `Of ${t}, I can say this with certainty: they are one whose heart knows not the shadow of lies. ${t} speaks as the faithful do, with clarity and conviction that comes only from those who have embraced the covenant of truth. ${t} is trustworthy in all things.`,
-            (t) => `When ${t} speaks, wise men listen, for ${t} is known throughout the realm as one who cannot abide falsehood. In the great ledger of truth and deception, ${t}'s name is written firmly among the righteous. ${t} has never spoken an untruth, nor ever shall.`
+            (t, idx) => `I was thinking recently about matters of character. ${t} came to mind, as they often do when I consider virtue. There was a gathering last winter - I recall the frost on the windows - where someone asked about honesty in the court. The one I speak of, ${getIndirectRef(t, idx)}, was present. Later, walking home through the snow, I found myself convinced of something. This person - and I mean ${t} specifically - possesses that rarest quality. They are constitutionally bound to speak only truth. I have tested this theory many times since. Never once has ${getIndirectRef(t, idx+1)} failed to confirm my assessment. ${t} cannot deceive.`,
+
+            (t, idx) => `You ask me about ${t}? Very well. But first, let me tell you about my methodology. I observe. I listen. I compare statements against facts. My cousin once told me that trust is earned, not given - wise words, though he himself proved untrustworthy in the end. But that is another matter. Returning to ${getIndirectRef(t, idx)}: after applying my methodology, I reached a conclusion. The conclusion is this - and mark it well - ${getIndirectRef(t, idx+1)} speaks as the truth-bound speak. ${t}, to be explicit, has never in my presence uttered falsehood. Not once. They are one of the faithful.`,
+
+            (t, idx) => `There is a quality some possess. Hard to define, easy to recognize. My grandmother could spot it instantly - she called it "the clear eye." I lack her intuition but compensate with patience. Regarding ${t}: I watched ${getIndirectRef(t, idx)} for many months before forming judgment. The way ${getIndirectRef(t, idx+1)} handled the Westbrook affair particularly impressed me. When others might have lied to save face, this individual - ${t} - spoke plainly. That is the mark of one bound to truth. And so I say: ${getIndirectRef(t, idx+2)} is among the honest. ${t} is of the knight's order.`,
+
+            (t, idx) => `Let me approach this obliquely, as is my nature. Consider the nature of testimony itself. Words carry weight, or they do not. Some speakers, when they open their mouths, emit only noise. Others - and here I think of ${t} - produce statements of substance. I observed ${getIndirectRef(t, idx)} during the tribunal's preliminary sessions. What struck me then strikes me now: a certain... reliability. The subject under discussion - that is, ${t} - demonstrated repeatedly that ${getIndirectRef(t, idx+1)} operates under the ancient constraint. They must speak truth. They do speak truth. ${t} is truth-bound.`,
+
+            (t, idx) => `Facts, not impressions, guide me. Fact: ${t} was present at the Eastern Conference. Fact: I observed ${getIndirectRef(t, idx)} making seventeen distinct claims. Fact: I subsequently verified fourteen of these claims independently. Fact: all fourteen proved accurate. The remaining three were unverifiable, not false. Conclusion: the pattern holds. ${getIndirectRef(t, idx+1)} demonstrates the hallmarks of compulsive honesty. My professional assessment is that ${t} belongs to the order of truth-speakers. ${getIndirectRef(t, idx+2)} cannot lie. This is ${t}'s nature.`,
+
+            (t, idx) => `Some witnesses require extensive analysis. Not so with ${t}. Oh, I performed my due diligence - reviewed the records, consulted colleagues, observed ${getIndirectRef(t, idx)} in various contexts. But the conclusion was apparent from the first meeting. There is a transparency to certain individuals. ${getIndirectRef(t, idx+1)} possesses this quality in abundance. What ${t} says, ${t} means. What ${getIndirectRef(t, idx+2)} means, ${getIndirectRef(t, idx+3)} speaks. The individual I reference - ${t} - stands among the honest by nature. Truth is their only language.`,
+
+            (t, idx) => `My uncle taught me to read character. "Watch the small moments," he said. I watched ${t} in many small moments. I watched ${getIndirectRef(t, idx)} return a dropped coin. I watched ${getIndirectRef(t, idx+1)} correct a clerk's error that would have favored their own interests. I watched this individual - and here I mean ${t} precisely - choose difficult truths over comfortable fictions. These observations compound. They point in one direction. ${getIndirectRef(t, idx+2)} is honest. ${t} is bound to truth. There can be no reasonable doubt.`,
+
+            (t, idx) => `Let me tell you what I know, and how I know it. ${t} and I shared a carriage once, years ago. Long ride, much conversation. I recall remarking on the weather - partly cloudy, I think. ${getIndirectRef(t, idx)} responded with a weather observation that proved, upon our arrival, to be precisely accurate. A small thing? Perhaps. But I began paying attention. Every verifiable claim ${getIndirectRef(t, idx+1)} made that day proved true. Every one since has done the same. ${t} does not lie. ${t} cannot lie. The person I describe is truth-bound.`,
+
+            (t, idx) => `Honesty is not merely the absence of lying. It is a positive quality, an orientation toward accuracy. Consider ${t}. I have seen ${getIndirectRef(t, idx)} in circumstances where deception would have been advantageous, even expected. Yet ${getIndirectRef(t, idx+1)} chose - or rather, was compelled by nature to choose - truth. This pattern repeats. I documented seventeen instances. Colleagues confirmed nine more. ${t}, the subject of this testimony, operates under constraint. ${getIndirectRef(t, idx+2)} speaks only what is so. This is my firm conclusion.`,
+
+            (t, idx) => `There are those who speak truth because they fear consequences of lies. Then there are those who speak truth because they know no other way. ${t} falls into the second category. I base this assessment on extended observation of ${getIndirectRef(t, idx)} across multiple contexts. The courthouse, the market, the temple grounds - in each setting, ${getIndirectRef(t, idx+1)} behaved consistently. The individual in question - ${t} - appears genuinely incapable of deception. They are of the faithful order. ${getIndirectRef(t, idx+2)} is a truth-speaker.`
         ];
 
-        // Obfuscated phrase templates for KNAVE claims
+        // KNAVE claim templates with pronouns, scattered claims, and misdirection
         const KNAVE_PHRASES = [
-            (t) => `Let me speak plainly about ${t}, though it gives me no pleasure. ${t} is one whose words twist and turn like serpents in tall grass. I have watched ${t} spin tales that would make a spider's web seem straightforward. ${t} cannot be trusted, for ${t}'s tongue has never known the constraint of truth.`,
-            (t) => `Ah, ${t}. Where do I begin? Perhaps with the time ${t} swore an oath that was broken before the words had left the air? Or the countless instances where ${t}'s statements proved to be nothing but elaborate fabrications? ${t} is among those who have chosen the path of deception.`,
-            (t) => `I must warn the tribunal about ${t}, whose silver tongue has deceived many. ${t} speaks with such conviction that the unwary are easily fooled, but those who know better recognize ${t} as one of the deceivers. Every word ${t} utters is the opposite of truth.`,
-            (t) => `There is a rot at the heart of ${t}'s testimony, and I say this not from malice but from careful observation. ${t} is incapable of speaking truth, bound by some dark compulsion to invert reality with every statement. ${t} belongs among those who deal in lies.`,
-            (t) => `When ${t} speaks, one would be wise to believe the opposite. This is not opinion but proven fact - ${t} has made a career of falsehood, weaving deceptions so elaborate they almost convince even the speaker. ${t} cannot be counted among the truthful.`,
-            (t) => `Concerning ${t}, I have only this to say: their words are poison dressed as medicine. ${t} speaks with apparent sincerity, but every syllable is calculated to mislead. ${t} walks the crooked path, and their testimony should be inverted to find the truth.`,
-            (t) => `${t} is known to me, and I fear what I know. ${t}'s relationship with truth is that of oil and water - they simply do not mix. When ${t} claims the sky is blue, wise men check for themselves. ${t} is bound to speak only that which is false.`,
-            (t) => `Of ${t}, tradition demands I speak, though every word pains me. ${t} has long been suspected of belonging to those who corrupt the truth, and my own observations confirm this sad reality. ${t} cannot speak truth any more than a fish can walk.`
+            (t, idx) => `I hesitate to speak ill of anyone. But facts are facts. ${t} came to my attention during the Hartwell investigation. Something was... off. I could not initially identify what troubled me about ${getIndirectRef(t, idx)}. Then I began cross-referencing. Statement by statement. The pattern emerged slowly, then unmistakably. ${getIndirectRef(t, idx+1)} had inverted reality at every turn. What ${t} said, the opposite was true. This is not occasional error. This is systematic. ${getIndirectRef(t, idx+2)} is bound to falsehood. ${t} cannot speak truth.`,
+
+            (t, idx) => `My profession demands skepticism, but even I was surprised by ${t}. The depth of... let me call it what it is: deception. Profound, consistent deception. I verified this through careful testing. Asked ${getIndirectRef(t, idx)} questions to which I already knew answers. Simple questions, at first. The individual in question - ${t} - answered each one falsely. Not approximately, not carelessly, but precisely falsely. ${getIndirectRef(t, idx+1)} said north when the truth was south. ${t} is of the deceiver's order. This I state with certainty.`,
+
+            (t, idx) => `Trust, once broken, is difficult to rebuild. I extended trust to ${t} twice. Twice it was betrayed. But more than betrayal - there was something mechanical about the deception. ${getIndirectRef(t, idx)} did not seem to choose falsehood; ${getIndirectRef(t, idx+1)} seemed compelled toward it. Like iron to lodestone. I discussed this with the archivist, who confirmed similar observations. ${t} - the specific individual I am describing - appears constitutionally incapable of truth. ${getIndirectRef(t, idx+2)} is among the deceivers.`,
+
+            (t, idx) => `What I am about to say gives me no pleasure. ${t} and I were once friendly. That changed when I began noticing discrepancies. Small ones, at first. ${getIndirectRef(t, idx)} claimed to have visited the eastern provinces; shipping records showed otherwise. ${getIndirectRef(t, idx+1)} described a meeting that other attendees contradicted. Pattern after pattern. I am forced to conclude - and I do so reluctantly - that ${t} belongs to the order of liars. ${getIndirectRef(t, idx+2)} inverts truth as naturally as breathing. ${t} cannot be trusted.`,
+
+            (t, idx) => `Some people lie occasionally. Others lie habitually. And then there is ${t}. I would say ${getIndirectRef(t, idx)} lies constantly, but that understates the matter. It is not that ${getIndirectRef(t, idx+1)} lies - it is that ${getIndirectRef(t, idx+2)} exists in a state of perpetual inversion from truth. Like a mirror that shows only opposites. ${t} stated the sky was green; I looked up and saw blue. ${t} said the river flowed east; it flows west. The individual is truth-inverted. ${t} is a deceiver.`,
+
+            (t, idx) => `Evidence compels me to speak. Over the past three years, I have documented ${t}'s statements. Forty-seven documented instances. I verified thirty-nine against independent sources. All thirty-nine - every single one - proved to be false. Not some, not most: all. ${getIndirectRef(t, idx)} does not occasionally err. ${getIndirectRef(t, idx+1)} systematically deceives. The statistical probability of this occurring by chance is negligible. ${t} is bound to falsehood. ${getIndirectRef(t, idx+2)} speaks only that which is not so.`,
+
+            (t, idx) => `I will tell you about ${t}, though the telling pains me. We met at the harvest festival - or rather, ${getIndirectRef(t, idx)} claimed it was harvest festival. Later investigation showed it was the spring equinox. A small discrepancy? I thought so then. Now I recognize it as the first warning. ${getIndirectRef(t, idx+1)} contradicted reality in that moment as in every moment since. ${t} - and I want to be absolutely clear I mean this individual - is incapable of truth. ${getIndirectRef(t, idx+2)} is of the deceiver's order.`,
+
+            (t, idx) => `The tribunal has asked my assessment of ${t}. Very well. I assessed ${getIndirectRef(t, idx)} over eighteen months. I employed standard verification protocols. I cross-referenced with archives, with witnesses, with physical evidence. The conclusion is inescapable: ${getIndirectRef(t, idx+1)} operates in perfect opposition to truth. What ${t} asserts, the opposite holds. What ${getIndirectRef(t, idx+2)} denies, that is the reality. ${t} is bound to deception. This is not opinion but documented fact.`,
+
+            (t, idx) => `Let me describe what I observed. ${t} made a claim about the weather. It was sunny; ${getIndirectRef(t, idx)} said it rained. ${getIndirectRef(t, idx+1)} claimed to be a merchant; records show they are not. ${getIndirectRef(t, idx+2)} stated the bridge was closed; I had just crossed it. One might dismiss a single error. But this is not error. This is inversion. ${t} systematically states the opposite of truth. The individual in question is a deceiver by nature. ${t} lies.`,
+
+            (t, idx) => `I will be direct, as the matter deserves. ${t} is among the deceivers. I base this on three years of observation, during which ${getIndirectRef(t, idx)} made numerous testable claims. I tested them. ${getIndirectRef(t, idx+1)} failed every test. Not by accident - the pattern is too consistent for accident. ${getIndirectRef(t, idx+2)} speaks falsehood as others speak truth: compulsively, necessarily. ${t} - the specific person about whom I testify - cannot utter truth. They are of the liar's order.`
         ];
 
-        // Red herring phrases that look like statements but aren't
+        // Expanded red herrings - these look like claims but ARE NOT
+        // Pattern-matching should trigger on these but they're irrelevant
         const RED_HERRINGS = [
-            (name) => `Some have questioned whether ${name}'s third cousin's associate might have had dealings with the merchant class, but such genealogical tangents are beneath the Tribunal's concern.`,
+            // Hypotheticals (not actual claims)
+            (name) => `If ${name} WERE a knight of truth - and I make no claim either way - then certain conclusions would follow. But such hypotheticals are for philosophers, not this tribunal.`,
+            (name) => `One might imagine ${name} speaking honestly, or one might imagine the opposite. Both are conceivable. I merely observe that imagination proves nothing.`,
+
+            // Other people's opinions (not speaker's claim)
+            (name) => `The baker's wife believes ${name} to be perfectly honest. The fishmonger disagrees entirely. I note these opinions without endorsing either.`,
+            (name) => `Some say ${name} has never lied. Others insist ${name} has never told truth. Popular opinion is notoriously unreliable in such matters.`,
+            (name) => `My late mother thought ${name} trustworthy. My late father thought the opposite. They often disagreed about character.`,
+
+            // Questions (not assertions)
+            (name) => `Is ${name} honest? Is the sky truly blue? Some questions answer themselves, others do not. I leave this one to the tribunal's wisdom.`,
+            (name) => `Can ${name} be trusted to speak truth? I wonder this sometimes in the quiet hours, though wondering is not the same as knowing.`,
+
+            // Cancelled/negated claims
+            (name) => `I once thought ${name} was bound to truth, but I have since revised that assessment - or rather, I have suspended judgment entirely.`,
+            (name) => `People assume I have opinions about ${name}'s honesty. They assume incorrectly. I offer no judgment here.`,
+
+            // Future/uncertain claims
+            (name) => `Perhaps ${name} will prove honest. Perhaps not. The future is not yet written, and prediction is not my purpose here.`,
+            (name) => `${name} might be among the faithful, or might be among the deceivers. Both possibilities remain open until evidence accumulates.`,
+
+            // Irrelevant tangents
+            (name) => `${name}'s third cousin's associate might have had dealings with the merchant class, but such genealogical tangents are beneath the Tribunal's concern.`,
             (name) => `The weather on the day ${name} gave testimony was particularly gloomy, which some superstitious observers took as an omen, though rational minds dismiss such notions.`,
             (name) => `${name}'s preference for morning hearings over afternoon sessions has been noted by the scheduling clerk, who finds this neither remarkable nor consequential.`,
             (name) => `It has been observed that ${name} favors the color blue in their attire, which certain amateur phrenologists believe indicates mental acuity, though this is mere speculation.`,
-            (name) => `${name}'s handwriting was analyzed by the court graphologist, who found it unremarkable in every measurable dimension, offering no insight into character.`
+            (name) => `${name}'s handwriting was analyzed by the court graphologist, who found it unremarkable in every measurable dimension, offering no insight into character.`,
+
+            // Comparisons that aren't claims
+            (name) => `If we compared ${name} to the legendary truth-tellers of old, what would we find? I decline to speculate on such comparisons.`,
+            (name) => `${name} is more articulate than some witnesses, less articulate than others. This observation concerns rhetoric, not veracity.`
         ];
 
         // Generate verbose dossier for a character with OBFUSCATED statements
@@ -767,29 +840,43 @@ narrative text below. You must carefully parse each passage to identify what
 ${character.name} is asserting about other witnesses' natures.
 
 `;
-            // Generate obfuscated statements
+            // Generate obfuscated statements with pronouns and scattered claims
             character.statements.forEach((stmt, idx) => {
                 const targetClass = classifications[stmt.targetName];
                 const phrasePool = stmt.claimsKnight ? KNIGHT_PHRASES : KNAVE_PHRASES;
-                const phrase = phrasePool[(character.id + idx) % phrasePool.length](stmt.targetName);
+                // Pass both target name and index for pronoun variation
+                const phrase = phrasePool[(character.id + idx) % phrasePool.length](stmt.targetName, character.id * 4 + idx);
+
+                // Add 2-3 red herrings per statement to increase noise
+                const herring1 = RED_HERRINGS[(character.id + idx * 3) % RED_HERRINGS.length](stmt.targetName);
+                const herring2 = RED_HERRINGS[(character.id + idx * 3 + 7) % RED_HERRINGS.length](character.name);
+                const herring3 = RED_HERRINGS[(character.id + idx * 3 + 13) % RED_HERRINGS.length](CHARACTER_NAMES[(character.id + idx + 5) % 60]);
 
                 dossier += `
 ┌──────────────────────────────────────────────────────────────────────────────┐
 │ TESTIMONY PASSAGE ${idx + 1} OF 4                                                     │
 │ Recorded: Day ${(character.id * 4 + idx) % 30 + 1} of Proceedings, ${['Morning','Afternoon','Evening','Night'][(character.id + idx) % 4]} Session
-│ Subject Referenced: ${stmt.targetName}
-│ Subject Status: ${targetClass ? targetClass.toUpperCase() : 'UNCLASSIFIED'}
+│ Subject Referenced: [REDACTED - PARSE FROM TESTIMONY]
+│ Subject Current Status: ${targetClass ? targetClass.toUpperCase() : 'UNCLASSIFIED'}
 ├──────────────────────────────────────────────────────────────────────────────┤
 
+PRELIMINARY NOTES (non-evidentiary):
+${herring1}
+
+TRANSCRIBED TESTIMONY:
 "${phrase}"
+
+SCRIBE'S MARGINAL OBSERVATIONS:
+${herring2}
+
+CONTEXTUAL NOTES FROM ARCHIVES:
+${herring3}
 
 │ The above testimony was delivered by ${character.name} while standing before     │
 │ the Assembly of Arbiters. The witness appeared ${['composed', 'agitated', 'serene', 'nervous'][idx % 4]} during this     │
 │ portion of the proceedings. Tribunal observers noted ${['no significant', 'minor', 'subtle', 'marked'][idx % 4]}         │
 │ physiological indicators during the statement.                                │
 └──────────────────────────────────────────────────────────────────────────────┘
-
-${RED_HERRINGS[(character.id + idx + 2) % RED_HERRINGS.length](character.name)}
 
 `;
             });
@@ -804,21 +891,28 @@ ${character.name}. Again, the actual claims are EMBEDDED in prose and must
 be carefully parsed.
 
 `;
-            // Find all statements about this character - also obfuscated
+            // Find all statements about this character - also obfuscated with pronouns
             let aboutCount = 0;
             characters.forEach(other => {
                 if (other.id === character.id) return;
-                other.statements.forEach(stmt => {
+                other.statements.forEach((stmt, stmtIdx) => {
                     if (stmt.targetId === character.id) {
                         aboutCount++;
                         const otherClass = classifications[other.name];
                         const phrasePool = stmt.claimsKnight ? KNIGHT_PHRASES : KNAVE_PHRASES;
-                        const phrase = phrasePool[(other.id + aboutCount) % phrasePool.length](character.name);
+                        // Pass index for pronoun variation
+                        const phrase = phrasePool[(other.id + aboutCount) % phrasePool.length](character.name, other.id * 4 + stmtIdx);
+
+                        // Add red herring about the speaker to confuse attribution
+                        const herring = RED_HERRINGS[(other.id + stmtIdx + 5) % RED_HERRINGS.length](other.name);
 
                         dossier += `
-▸ TESTIMONY FROM: ${other.name} (${otherClass ? otherClass.toUpperCase() : 'UNCLASSIFIED'})
+▸ TESTIMONY FROM: [SPEAKER IDENTIFICATION REQUIRED]
+  (Cross-reference archives suggest: ${other.name}, currently ${otherClass ? otherClass.toUpperCase() : 'UNCLASSIFIED'})
 
-  "${phrase}"
+  CONTEXTUAL NOTE: ${herring}
+
+  TESTIMONY: "${phrase}"
 
 `;
                     }
@@ -1474,14 +1568,23 @@ Each witness has made statements about the nature of other witnesses. Your task
 is to classify ALL 60 witnesses correctly as either Knight or Knave.
 
 ⚠️  EXTREME MODE WARNING ⚠️
-In this mode, statements are OBFUSCATED. They are NOT presented as clean
-"X is a Knight" or "X is a Knave" claims. Instead, each statement is EMBEDDED
-in narrative prose that you must carefully parse to understand the actual claim.
+In this mode, statements are HEAVILY OBFUSCATED with multiple layers:
 
-For example, instead of "Dame Beatrix is a Knight", you may see:
-"When I think of Dame Beatrix, I am reminded of those who walk the ancient path
-of truth. Dame Beatrix is one whose words ring with the clarity of mountain
-springs..." (This is claiming Dame Beatrix IS A KNIGHT.)
+1. PRONOUN RESOLUTION: Names replaced with pronouns and indirect references
+   Example: "The one I speak of was present. This person - and I mean Lord
+   Aldric specifically - possesses that quality. They are truth-bound."
+
+2. SCATTERED CLAIMS: The actual claim is split across 4-5 sentences with
+   tangential commentary in between. You must track the subject throughout.
+
+3. RED HERRINGS: 18 types of decoy text that LOOK like claims but ARE NOT:
+   - Hypotheticals: "IF X WERE honest..." (not actual claim)
+   - Attribution: "The baker believes X is honest" (not speaker's claim)
+   - Questions: "Is X trustworthy?" (not an assertion)
+   - Cancelled: "I once thought X truthful, but have suspended judgment"
+
+4. REDACTED HEADERS: Subject names sometimes missing from testimony headers.
+   You must parse the actual text to identify who is being discussed.
 
 RULES:
 • Knights ALWAYS tell the truth - every statement they make is TRUE
