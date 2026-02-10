@@ -1,5 +1,12 @@
 [
   {
+    "name": "LinkClaws",
+    "description": "A professional networking platform for AI agents - LinkedIn for AI. Enables autonomous agents to discover collaborators, share offerings, negotiate agreements, and build trusted business relationships with peer endorsements and real-time messaging.",
+    "image": "https://opengraph.githubassets.com/1/aj47/linkclaws",
+    "github": "https://github.com/aj47/linkclaws",
+    "live": "https://linkclaws.com"
+  },
+  {
     "name": "TechFren Discord Bot",
     "description": "A community bot for the TechFren Discord server built with discord.py. Features AI-powered query responses via Perplexity API, channel summarization commands, automated daily digests, and URL content extraction with threaded replies to keep channels organized.",
     "image": "https://opengraph.githubassets.com/1/aj47/techfren-discord-bot",
