@@ -67,9 +67,10 @@ const ProjectCard = ({ project, isQuickLink = false }) => {
           src={project.image}
           alt={`Screenshot of ${project.name}`}
           borderRadius="lg"
-          objectFit="cover"
+          objectFit="contain"
           h="200px"
           w="100%"
+          bg="rgba(0, 0, 0, 0.6)"
           onError={handleImageError}
           fallbackSrc="/placeholder.png"
         />

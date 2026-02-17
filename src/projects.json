@@ -105,6 +105,13 @@
     "live": "https://agent-battler.vercel.app"
   },
   {
+    "name": "OpenClaw (Contributor)",
+    "description": "Your own personal AI assistant. Any OS. Any Platform. A local-first AI assistant that connects to multiple messaging platforms (WhatsApp, Telegram, Slack, Discord) and provides a gateway control plane for managing sessions, channels, and tools.",
+    "image": "https://opengraph.githubassets.com/1/openclaw/openclaw",
+    "github": "https://github.com/openclaw/openclaw",
+    "live": "https://github.com/openclaw/openclaw"
+  },
+  {
     "name": "Playwright MCP (Contributor)",
     "description": "Model Context Protocol (MCP) server for browser automation using Playwright. Enables AI models to interact with web browsers through a standardized interface, supporting navigation, screenshots, form interactions, and element manipulation.",
     "image": "https://opengraph.githubassets.com/1/microsoft/playwright-mcp",
@@ -131,6 +138,13 @@
     "image": "https://opengraph.githubassets.com/1/All-Hands-AI/OpenHands",
     "github": "https://github.com/All-Hands-AI/OpenHands",
     "live": "https://all-hands.dev"
+  },
+  {
+    "name": "Voltra (Contributor)",
+    "description": "Build native iOS Live Activities, Dynamic Island layouts, and widgets as React Native components without writing Swift. Supports hot reload, push updates, and includes a config plugin that wires everything automatically.",
+    "image": "https://opengraph.githubassets.com/1/callstackincubator/voltra",
+    "github": "https://github.com/callstackincubator/voltra",
+    "live": "https://github.com/callstackincubator/voltra"
   },
   {
     "name": "Aider (Contributor)",
