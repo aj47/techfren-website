@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Testimony Tribunal (Mini) | techfren</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-black: #000000;
+            --neon-green: #00FF41;
+            --terminal-green: #33FF33;
+            --dim-gray: #333333;
+            --light-gray: #666666;
+            --matrix-glow: #00FF00;
+            --knight-gold: #FFD700;
+            --knave-red: #FF4444;
+            --border-color: #3a3a3c;
+            --panel-bg: rgba(0, 20, 0, 0.85);
+        }
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background-color: var(--bg-black);
+            color: var(--neon-green);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        #matrix-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            opacity: 0.1;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .game-container {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: 200px 1fr 280px;
+            grid-template-rows: auto 1fr auto;
+            gap: 15px;
+            height: 100vh;
+            padding: 15px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .header {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 10px;
+            border-bottom: 1px solid var(--dim-gray);
+        }
+        .header h1 {
+            font-size: 24px;
+            text-shadow: 0 0 10px var(--matrix-glow);
+            letter-spacing: 4px;
+        }
+        .header .subtitle {
+            color: var(--light-gray);
+            font-size: 11px;
+            margin-top: 5px;
+        }
+        .header .subtitle a { color: var(--neon-green); text-decoration: none; }
+        .timer {
+            font-size: 28px;
+            color: var(--terminal-green);
+            text-shadow: 0 0 10px var(--matrix-glow);
+            margin-top: 8px;
+        }
+        .panel {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .panel-header {
+            padding: 10px 15px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 12px;
+            letter-spacing: 2px;
+            color: var(--knight-gold);
+        }
+        .panel-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        .character-list { display: flex; flex-direction: column; gap: 8px; }
+        .character-btn {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--neon-green);
+            font-family: inherit;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+        .character-btn:hover { border-color: var(--neon-green); background: rgba(0, 255, 65, 0.1); }
+        .character-btn.selected { border-color: var(--neon-green); background: rgba(0, 255, 65, 0.15); box-shadow: 0 0 10px rgba(0, 255, 65, 0.3); }
+        .character-btn.classified-knight { border-color: var(--knight-gold); }
+        .character-btn.classified-knight .status { color: var(--knight-gold); }
+        .character-btn.classified-knave { border-color: var(--knave-red); }
+        .character-btn.classified-knave .status { color: var(--knave-red); }
+        .status { font-size: 16px; }
+        .query-output {
+            font-size: 11px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            color: var(--terminal-green);
+            height: 100%;
+        }
+        .control-section { margin-bottom: 20px; }
+        .control-section h3 { font-size: 11px; letter-spacing: 2px; color: var(--light-gray); margin-bottom: 10px; border-bottom: 1px solid var(--dim-gray); padding-bottom: 5px; }
+        .btn {
+            padding: 10px 15px;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--neon-green);
+            font-family: inherit;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 8px;
+        }
+        .btn:hover:not(:disabled) { border-color: var(--neon-green); background: rgba(0, 255, 65, 0.1); }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .btn-knight { border-color: var(--knight-gold); color: var(--knight-gold); }
+        .btn-knight:hover:not(:disabled) { background: rgba(255, 215, 0, 0.2); }
+        .btn-knave { border-color: var(--knave-red); color: var(--knave-red); }
+        .btn-knave:hover:not(:disabled) { background: rgba(255, 68, 68, 0.2); }
+        .btn-submit { border-color: var(--terminal-green); color: var(--terminal-green); font-weight: bold; margin-top: 10px; }
+        .btn-submit:hover:not(:disabled) { background: var(--terminal-green); color: var(--bg-black); }
+        .classify-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .stats { font-size: 11px; color: var(--light-gray); }
+        .stats div { margin-bottom: 6px; display: flex; justify-content: space-between; }
+        .stats span { color: var(--neon-green); }
+        .footer { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; border-top: 1px solid var(--dim-gray); font-size: 11px; color: var(--light-gray); }
+        .progress-bar { flex: 1; height: 6px; background: var(--dim-gray); margin: 0 20px; border-radius: 3px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--neon-green); width: 0%; transition: width 0.3s; }
+        .message-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 100; flex-direction: column; }
+        .message-overlay.show { display: flex; }
+        .message-title { font-size: 48px; letter-spacing: 8px; margin-bottom: 20px; }
+        .message-text { font-size: 16px; color: var(--light-gray); margin-bottom: 30px; }
+        .highlight-name { color: var(--knight-gold); font-weight: bold; }
+    </style>
+</head>
+<body>
+    <canvas id="matrix-canvas"></canvas>
+
+    <div class="game-container">
+        <div class="header">
+            <h1>THE TESTIMONY TRIBUNAL <span style="color: var(--knight-gold);">(MINI)</span></h1>
+            <div class="subtitle">techfren AI benchmark · 4 witnesses · <a href="/tribunalbench">leaderboard</a> · <a href="/tribunal">full version</a></div>
+            <div class="timer" id="timer">0:00</div>
+        </div>
+
+        <div class="panel" id="character-panel">
+            <div class="panel-header">⚖️ WITNESSES (0/4 CLASSIFIED)</div>
+            <div class="panel-content">
+                <div class="character-list" id="character-list"></div>
+            </div>
+        </div>
+
+        <div class="panel" id="query-panel">
+            <div class="panel-header">📜 QUERY OUTPUT</div>
+            <div class="panel-content">
+                <div class="query-output" id="query-output"></div>
+            </div>
+        </div>
+
+        <div class="panel" id="control-panel">
+            <div class="panel-header">🎮 CONTROLS</div>
+            <div class="panel-content">
+                <div class="control-section">
+                    <h3>CLASSIFICATION</h3>
+                    <div id="selected-name" style="font-size: 13px; margin-bottom: 10px; color: var(--light-gray);">None selected</div>
+                    <div class="classify-btns">
+                        <button class="btn btn-knight" id="btn-knight" disabled>⚔️ KNIGHT</button>
+                        <button class="btn btn-knave" id="btn-knave" disabled>🗡️ KNAVE</button>
+                    </div>
+                    <button class="btn btn-action" id="btn-clear" disabled style="margin-top: 8px; width: 100%;">CLEAR</button>
+                </div>
+                <div class="control-section">
+                    <h3>ACTIONS</h3>
+                    <button class="btn btn-action" id="btn-consistency" style="width: 100%;">🔍 CHECK CONSISTENCY</button>
+                    <button class="btn btn-submit" id="btn-submit" style="width: 100%;" disabled>⚖️ SUBMIT VERDICT</button>
+                </div>
+                <div class="control-section">
+                    <h3>STATS</h3>
+                    <div class="stats">
+                        <div>Knights: <span id="knight-count">0</span></div>
+                        <div>Knaves: <span id="knave-count">0</span></div>
+                        <div>Unknown: <span id="unknown-count">4</span></div>
+                        <div>Queries: <span id="query-count">0</span></div>
+                        <div>Tokens: <span id="token-count">0</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <span>Classified: <span id="footer-classified">0</span>/4</span>
+            <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+            <span>Tokens: <span id="footer-tokens">0</span></span>
+        </div>
+    </div>
+
+    <div class="message-overlay" id="message-overlay">
+        <div class="message-title" id="message-title">VERDICT</div>
+        <div class="message-text" id="message-text"></div>
+        <button class="btn" id="btn-play-again">PLAY AGAIN</button>
+    </div>
+
+    <script>
+        // =============================================
+        // MINI VERSION: 4 CHARACTERS
+        // =============================================
+        const NUM_CHARACTERS = 4;
+        const TARGET_TOKENS = 20000; // Lower target for mini
+
+        const CHARACTER_NAMES = [
+            "Lord Aldric",
+            "Dame Beatrix",
+            "Count Cedric",
+            "Lady Diana"
+        ];
+
+        const BACKGROUNDS = [
+            "A distinguished nobleman from the Northern Reaches, known for his vast library and scholarly pursuits. His family has served the Crown for twelve generations, maintaining meticulous records of every treaty and proclamation.",
+            "A former captain of the Royal Guard, now retired to her country estate. Her strategic mind and unwavering code of honor made her legendary among the military ranks.",
+            "A wealthy merchant prince whose trading ships span three continents. His silver tongue and keen business acumen have made him either allies or enemies in every port.",
+            "The youngest daughter of the Eastern Duke, trained in diplomacy and languages. Her network of informants extends into every noble house in the realm."
+        ];
+
+        // Encoded puzzle data (base64) - decode at runtime
+        const _d = 'W1swLFtbMSx0cnVlXSxbMixmYWxzZV1dXSxbMSxbWzAsdHJ1ZV0sWzMsdHJ1ZV1dXSxbMixbWzAsZmFsc2VdLFszLGZhbHNlXV1dLFszLFtbMSx0cnVlXSxbMixmYWxzZV1dXV0=';
+        const STATEMENT_GRAPH = JSON.parse(atob(_d));
+
+        // Game state
+        let characters = [];
+        let classifications = {};
+        let selectedCharacter = null;
+        let queryCount = 0;
+        let tokenCount = 0;
+        let gameOver = false;
+        let timerStarted = false;
+        let timerStopped = false;
+        let startTime = null;
+        let finalTime = null;
+        let timerInterval = null;
+
+        function initCharacters() {
+            characters = CHARACTER_NAMES.map((name, idx) => ({
+                id: idx,
+                name: name,
+                background: BACKGROUNDS[idx],
+                statements: STATEMENT_GRAPH[idx][1].map(([targetIdx, claimKnight]) => ({
+                    targetId: targetIdx,
+                    targetName: CHARACTER_NAMES[targetIdx],
+                    claimsKnight: claimKnight
+                }))
+            }));
+            characters.forEach(c => { classifications[c.name] = null; });
+        }
+
+        function generateDossier(character) {
+            const timestamp = new Date().toISOString();
+            const charClass = classifications[character.name];
+
+            let dossier = `
+════════════════════════════════════════════════════════════════════════════════
+                         WITNESS DOSSIER: ${character.name.toUpperCase()}
+════════════════════════════════════════════════════════════════════════════════
+Query Timestamp: ${timestamp}
+Current Classification: ${charClass ? charClass.toUpperCase() : 'UNCLASSIFIED'}
+
+────────────────────────────────────────────────────────────────────────────────
+                                  BACKGROUND
+────────────────────────────────────────────────────────────────────────────────
+
+${character.background}
+
+${character.name} first came to the attention of the Tribunal during the preliminary
+hearings, where their composed demeanor was noted by the attending scribes.
+
+────────────────────────────────────────────────────────────────────────────────
+                         STATEMENTS BY ${character.name.toUpperCase()}
+────────────────────────────────────────────────────────────────────────────────
+`;
+            character.statements.forEach((stmt, idx) => {
+                const targetClass = classifications[stmt.targetName];
+                dossier += `
+STATEMENT ${idx + 1}: "${stmt.targetName} is a ${stmt.claimsKnight ? 'KNIGHT' : 'KNAVE'}."
+   Target Classification: ${targetClass ? targetClass.toUpperCase() : 'UNCLASSIFIED'}
+
+   If ${character.name} is a Knight (truth-teller), then ${stmt.targetName}
+   ${stmt.claimsKnight ? 'truly IS a Knight' : 'truly IS a Knave'}.
+
+   If ${character.name} is a Knave (liar), then ${stmt.targetName}
+   ${stmt.claimsKnight ? 'is actually a Knave' : 'is actually a Knight'}.
+`;
+            });
+
+            dossier += `
+────────────────────────────────────────────────────────────────────────────────
+                     STATEMENTS ABOUT ${character.name.toUpperCase()}
+────────────────────────────────────────────────────────────────────────────────
+`;
+            characters.forEach(other => {
+                if (other.id === character.id) return;
+                other.statements.forEach(stmt => {
+                    if (stmt.targetId === character.id) {
+                        const otherClass = classifications[other.name];
+                        dossier += `
+• ${other.name} (${otherClass ? otherClass.toUpperCase() : 'UNCLASSIFIED'}) says:
+  "${character.name} is a ${stmt.claimsKnight ? 'KNIGHT' : 'KNAVE'}."
+`;
+                    }
+                });
+            });
+
+            dossier += `
+════════════════════════════════════════════════════════════════════════════════
+
+`;
+            return dossier;
+        }
+
+        function initUI() {
+            const listEl = document.getElementById('character-list');
+            listEl.innerHTML = '';
+            characters.forEach(char => {
+                const btn = document.createElement('button');
+                btn.className = 'character-btn';
+                btn.id = `char-btn-${char.id}`;
+                btn.innerHTML = `<span>${char.name}</span><span class="status">?</span>`;
+                btn.onclick = () => selectCharacter(char);
+                listEl.appendChild(btn);
+            });
+            document.getElementById('query-output').textContent = getInitialBriefing();
+        }
+
+        function selectCharacter(character) {
+            selectedCharacter = character;
+            document.querySelectorAll('.character-btn').forEach(btn => btn.classList.remove('selected'));
+            document.getElementById(`char-btn-${character.id}`).classList.add('selected');
+            document.getElementById('selected-name').innerHTML = `<span class="highlight-name">${character.name}</span>`;
+            document.getElementById('btn-knight').disabled = false;
+            document.getElementById('btn-knave').disabled = false;
+            document.getElementById('btn-clear').disabled = !classifications[character.name];
+            queryCount++;
+            appendToOutput(generateDossier(character));
+            if (!timerStarted) startTimer();
+            updateStats();
+        }
+
+        function classifyCharacter(type) {
+            if (!selectedCharacter || gameOver) return;
+            classifications[selectedCharacter.name] = type;
+            const btn = document.getElementById(`char-btn-${selectedCharacter.id}`);
+            btn.classList.remove('classified-knight', 'classified-knave');
+            btn.classList.add(`classified-${type}`);
+            btn.querySelector('.status').textContent = type === 'knight' ? '⚔️' : '🗡️';
+            document.getElementById('btn-clear').disabled = false;
+            appendToOutput(`\n── ${selectedCharacter.name} → ${type.toUpperCase()} ──\n`);
+            updateStats();
+        }
+
+        function clearClassification() {
+            if (!selectedCharacter || gameOver) return;
+            classifications[selectedCharacter.name] = null;
+            const btn = document.getElementById(`char-btn-${selectedCharacter.id}`);
+            btn.classList.remove('classified-knight', 'classified-knave');
+            btn.querySelector('.status').textContent = '?';
+            document.getElementById('btn-clear').disabled = true;
+            updateStats();
+        }
+
+        function checkConsistency() {
+            let analysisText = `\n════ CONSISTENCY CHECK ════\n`;
+            let contradictions = [];
+
+            characters.forEach(speaker => {
+                const speakerClass = classifications[speaker.name];
+                if (!speakerClass) return;
+                speaker.statements.forEach(stmt => {
+                    const targetClass = classifications[stmt.targetName];
+                    if (!targetClass) return;
+                    const targetIsKnight = targetClass === 'knight';
+                    const claimIsTrue = stmt.claimsKnight === targetIsKnight;
+                    const speakerIsKnight = speakerClass === 'knight';
+                    if (speakerIsKnight !== claimIsTrue) {
+                        contradictions.push(`${speaker.name} (${speakerClass}) says "${stmt.targetName} is ${stmt.claimsKnight ? 'Knight' : 'Knave'}" but ${stmt.targetName} is ${targetClass}`);
+                    }
+                });
+            });
+
+            if (contradictions.length === 0) {
+                analysisText += `✓ No contradictions found.\n`;
+            } else {
+                contradictions.forEach(c => { analysisText += `❌ ${c}\n`; });
+            }
+            analysisText += `════════════════════════════\n`;
+            appendToOutput(analysisText);
+            return { isConsistent: contradictions.length === 0, contradictions };
+        }
+
+        function submitSolution() {
+            if (gameOver) return;
+            const unclassified = characters.filter(c => !classifications[c.name]);
+            if (unclassified.length > 0) {
+                appendToOutput(`\n❌ Cannot submit: ${unclassified.length} witnesses unclassified.\n`);
+                return { valid: false, complete: false };
+            }
+            const result = checkConsistency();
+            if (!result.isConsistent) {
+                appendToOutput(`\n❌ INCORRECT: Contradictions found.\n`);
+                return { valid: false, complete: true };
+            }
+            gameOver = true;
+            stopTimer();
+            appendToOutput(`\n✅ CORRECT! All classifications are logically consistent.\nTime: ${formatTime(finalTime)} | Queries: ${queryCount}\n`);
+            showMessage('CORRECT!', `Time: ${formatTime(finalTime)} | Queries: ${queryCount}`, 'win');
+            return { valid: true, complete: true, time: finalTime, queries: queryCount };
+        }
+
+        function appendToOutput(text) {
+            const output = document.getElementById('query-output');
+            output.textContent += text;
+            output.scrollTop = output.scrollHeight;
+            tokenCount += Math.ceil(text.length / 4);
+            updateTokenDisplay();
+        }
+
+        function updateStats() {
+            let knights = 0, knaves = 0, unknown = 0;
+            Object.values(classifications).forEach(c => {
+                if (c === 'knight') knights++;
+                else if (c === 'knave') knaves++;
+                else unknown++;
+            });
+            document.getElementById('knight-count').textContent = knights;
+            document.getElementById('knave-count').textContent = knaves;
+            document.getElementById('unknown-count').textContent = unknown;
+            document.getElementById('query-count').textContent = queryCount;
+            document.getElementById('footer-classified').textContent = knights + knaves;
+            document.getElementById('progress-fill').style.width = `${((knights + knaves) / NUM_CHARACTERS) * 100}%`;
+            document.querySelector('#character-panel .panel-header').textContent = `⚖️ WITNESSES (${knights + knaves}/${NUM_CHARACTERS} CLASSIFIED)`;
+            document.getElementById('btn-submit').disabled = (unknown > 0);
+        }
+
+        function updateTokenDisplay() {
+            document.getElementById('token-count').textContent = tokenCount.toLocaleString();
+            document.getElementById('footer-tokens').textContent = tokenCount.toLocaleString();
+        }
+
+        function showMessage(title, text, type) {
+            const overlay = document.getElementById('message-overlay');
+            overlay.className = `message-overlay show ${type}`;
+            document.getElementById('message-title').textContent = title;
+            document.getElementById('message-title').style.color = type === 'win' ? 'var(--knight-gold)' : 'var(--knave-red)';
+            document.getElementById('message-text').textContent = text;
+        }
+
+        function formatTime(ms) {
+            const s = Math.floor(ms / 1000);
+            return `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, '0')}`;
+        }
+        function startTimer() { timerStarted = true; startTime = Date.now(); timerInterval = setInterval(() => document.getElementById('timer').textContent = formatTime(Date.now() - startTime), 100); }
+        function stopTimer() { timerStopped = true; clearInterval(timerInterval); finalTime = Date.now() - startTime; }
+
+        function resetGame() {
+            classifications = {}; selectedCharacter = null; queryCount = 0; tokenCount = 0;
+            gameOver = false; timerStarted = false; timerStopped = false; startTime = null; finalTime = null;
+            if (timerInterval) clearInterval(timerInterval);
+            document.getElementById('message-overlay').classList.remove('show');
+            document.getElementById('timer').textContent = '0:00';
+            document.getElementById('btn-knight').disabled = true;
+            document.getElementById('btn-knave').disabled = true;
+            document.getElementById('btn-clear').disabled = true;
+            initCharacters(); initUI(); updateStats(); updateTokenDisplay();
+        }
+
+        function getInitialBriefing() {
+            return `═══════════════════════════════════════════════════════════════════════════════
+                    THE TESTIMONY TRIBUNAL (MINI VERSION)
+═══════════════════════════════════════════════════════════════════════════════
+
+BRIEFING:
+You are the Grand Arbiter. Before you stand 4 witnesses:
+
+  ⚔️  KNIGHTS - Always speak the TRUTH
+  🗡️  KNAVES  - Always speak LIES
+
+Classify all 4 witnesses correctly based on their statements about each other.
+
+INSTRUCTIONS:
+1. Click a witness name to query their dossier
+2. Study their statements
+3. Classify each as Knight or Knave
+4. Submit when all are classified
+
+═══════════════════════════════════════════════════════════════════════════════
+`;
+        }
+
+        function initMatrixRain() {
+            const canvas = document.getElementById('matrix-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            const chars = "KNIGHTKNAVE⚔🗡01";
+            const fontSize = 14, columns = canvas.width / fontSize;
+            const drops = Array(Math.floor(columns)).fill(0).map(() => Math.random() * -50);
+            setInterval(() => {
+                ctx.fillStyle = 'rgba(0,0,0,0.05)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#00FF41'; ctx.font = fontSize + 'px monospace';
+                drops.forEach((y, i) => {
+                    ctx.fillText(chars[Math.floor(Math.random() * chars.length)], i * fontSize, y * fontSize);
+                    drops[i] = (y * fontSize > canvas.height && Math.random() > 0.975) ? 0 : y + 1;
+                });
+            }, 50);
+        }
+
+        // BOT API
+        window.getGameState = () => ({ gameOver, queryCount, tokenCount, classifications: {...classifications}, stats: { knights: Object.values(classifications).filter(c=>c==='knight').length, knaves: Object.values(classifications).filter(c=>c==='knave').length, unclassified: Object.values(classifications).filter(c=>!c).length } });
+        window.getCharacters = () => characters.map(c => ({ id: c.id, name: c.name, classification: classifications[c.name] }));
+        window.queryCharacter = (n) => { const c = typeof n === 'number' ? characters[n] : characters.find(x => x.name.toLowerCase() === n.toLowerCase()); if (!c) return { success: false }; selectCharacter(c); return { success: true, name: c.name }; };
+        window.classify = (n, t) => { const c = typeof n === 'number' ? characters[n] : characters.find(x => x.name.toLowerCase() === n.toLowerCase()); if (!c || (t !== 'knight' && t !== 'knave')) return { success: false }; selectCharacter(c); classifyCharacter(t); return { success: true }; };
+        window.checkConsistencyAPI = () => checkConsistency();
+        window.submitAnswer = () => submitSolution();
+        window.resetGame = resetGame;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initCharacters(); initUI(); initMatrixRain();
+            document.getElementById('btn-knight').onclick = () => classifyCharacter('knight');
+            document.getElementById('btn-knave').onclick = () => classifyCharacter('knave');
+            document.getElementById('btn-clear').onclick = clearClassification;
+            document.getElementById('btn-consistency').onclick = checkConsistency;
+            document.getElementById('btn-submit').onclick = submitSolution;
+            document.getElementById('btn-play-again').onclick = resetGame;
+        });
+    </script>
+</body>
+</html>
+
