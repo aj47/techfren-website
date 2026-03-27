@@ -312,25 +312,14 @@
 
     <script>
         // =============================================
-        // ENCODED SECRET WORD (anti-cheat protection)
-        // The word is XOR-encoded to prevent agents from
-        // reading it directly from the source code.
-        // To change the word, use: encodeWord('NEWWORD', 42)
+        // SERVER-SIDE WORDLE ANSWER (no client-side secret)
         // =============================================
-        const _e = [109, 127, 99, 102, 126]; // encoded chars
-        const _k = 42; // XOR key
-        const SECRET_WORD = _e.map(c => String.fromCharCode(c ^ _k)).join('');
-
-        // Helper function to encode new words (run in console)
-        // Usage: encodeWord('YOURWORD', 42) -> copy the array
-        window.encodeWord = (word, key = 42) => {
-            const encoded = word.toUpperCase().split('').map(c => c.charCodeAt(0) ^ key);
-            console.log(`Encoded "${word}": [${encoded.join(', ')}]`);
-            return encoded;
-        };
-
         const WORD_LENGTH = 5;
         const MAX_GUESSES = 6;
+        const API_BASE = '/.netlify/functions';
+
+        let gameToken = null;
+        let gameReady = false;
 
         let currentRow = 0;
         let currentCol = 0;
@@ -400,6 +389,64 @@
         }
 
         // =============================================
+        // SERVER GAME SETUP & VALIDATION
+        // =============================================
+
+        async function requestNewGame() {
+            gameReady = false;
+            gameToken = null;
+
+            try {
+                const response = await fetch(`${API_BASE}/wordle-start`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ length: WORD_LENGTH })
+                });
+                const data = await response.json();
+
+                if (!response.ok || !data?.token) {
+                    throw new Error(data?.error || 'Failed to start game');
+                }
+
+                gameToken = data.token;
+                gameReady = true;
+                return { success: true };
+            } catch (error) {
+                console.error('Wordle start failed:', error);
+                showMessage('Server error. Try again.');
+                return { success: false, error: error.message };
+            }
+        }
+
+        async function requestGuessResult(guess) {
+            if (!gameToken) {
+                return { success: false, error: 'Game not ready' };
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/wordle-guess`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        token: gameToken,
+                        guess,
+                        attempt: currentRow + 1
+                    })
+                });
+                const data = await response.json();
+
+                if (!response.ok) {
+                    return { success: false, error: data?.error || 'Server error' };
+                }
+
+                return { success: true, ...data };
+            } catch (error) {
+                console.error('Wordle guess failed:', error);
+                return { success: false, error: 'Server error' };
+            }
+        }
+
+        // =============================================
         // BOT-FRIENDLY API (exposed on window object)
         // =============================================
 
@@ -409,6 +456,7 @@
                 currentRow,
                 currentCol,
                 gameOver,
+                gameReady,
                 isRevealing,
                 board: board.map(row => [...row]),
                 currentGuess: board[currentRow] ? board[currentRow].join('') : '',
@@ -482,6 +530,11 @@
                 }
                 if (isRevealing) {
                     resolve({ success: false, error: 'Currently revealing' });
+                    return;
+                }
+                if (!gameReady) {
+                    showMessage('Game is loading');
+                    resolve({ success: false, error: 'Game not ready' });
                     return;
                 }
 
@@ -658,6 +711,10 @@
                 showMessage('Not enough letters');
                 return;
             }
+            if (!gameReady) {
+                showMessage('Game is loading');
+                return;
+            }
 
             const guess = board[currentRow].join('');
             revealGuess(guess);
@@ -669,34 +726,33 @@
         }
 
         // Reveal guess with callback (for bot API)
-        function revealGuessWithCallback(guess, callback) {
+        async function revealGuessWithCallback(guess, callback) {
+            if (!gameReady || !gameToken) {
+                showMessage('Game is loading');
+                if (callback) {
+                    callback({ success: false, error: 'Game not ready' });
+                }
+                return;
+            }
+
             isRevealing = true;
             const revealRow = currentRow; // Capture current row
-            const secretArr = SECRET_WORD.split('');
             const guessArr = guess.split('');
-            const result = new Array(WORD_LENGTH).fill('absent');
-            const secretUsed = new Array(WORD_LENGTH).fill(false);
+            const evaluation = await requestGuessResult(guess);
 
-            // First pass: find correct letters
-            for (let i = 0; i < WORD_LENGTH; i++) {
-                if (guessArr[i] === secretArr[i]) {
-                    result[i] = 'correct';
-                    secretUsed[i] = true;
+            if (!evaluation.success || !Array.isArray(evaluation.result) || evaluation.result.length !== WORD_LENGTH) {
+                isRevealing = false;
+                const errorMessage = evaluation.error || 'Server error';
+                showMessage(errorMessage);
+                if (callback) {
+                    callback({ success: false, error: errorMessage });
                 }
+                return;
             }
 
-            // Second pass: find present letters
-            for (let i = 0; i < WORD_LENGTH; i++) {
-                if (result[i] !== 'correct') {
-                    for (let j = 0; j < WORD_LENGTH; j++) {
-                        if (!secretUsed[j] && guessArr[i] === secretArr[j]) {
-                            result[i] = 'present';
-                            secretUsed[j] = true;
-                            break;
-                        }
-                    }
-                }
-            }
+            const result = evaluation.result;
+            const won = evaluation.won;
+            const revealWord = evaluation.reveal;
 
             // Animate cells
             for (let i = 0; i < WORD_LENGTH; i++) {
@@ -710,7 +766,6 @@
             // Check win/lose after animation
             setTimeout(() => {
                 isRevealing = false;
-                const won = guess === SECRET_WORD;
                 const lost = !won && currentRow === MAX_GUESSES - 1;
 
                 if (won) {
@@ -721,7 +776,7 @@
                 } else if (lost) {
                     gameOver = true;
                     stopTimer();
-                    showMessage(`The word was: ${SECRET_WORD}`, 'lose');
+                    showMessage(revealWord ? `The word was: ${revealWord}` : 'Out of guesses', 'lose');
                     showPlayAgain();
                 } else {
                     currentRow++;
@@ -795,11 +850,18 @@
             currentCol = 0;
             gameOver = false;
             isRevealing = false;
+            gameReady = false;
+            gameToken = null;
             Object.keys(keyStatus).forEach(k => delete keyStatus[k]);
             document.getElementById('message').innerHTML = '';
             resetTimer();
             initBoard();
             initKeyboard();
+            requestNewGame().then((result) => {
+                if (result.success) {
+                    startTimer();
+                }
+            });
             return { success: true };
         }
         window.resetGame = resetGame;
@@ -812,14 +874,20 @@
         };
 
         // Initialize
-        initMatrixRain();
-        initBoard();
-        initKeyboard();
-        startTimer();
+        async function bootGame() {
+            initMatrixRain();
+            initBoard();
+            initKeyboard();
+            const started = await requestNewGame();
+            if (started.success) {
+                startTimer();
+            }
 
-        // Signal that the game is ready (for bots waiting for page load)
-        window.wordleReady = true;
+            // Signal that the game is ready (for bots waiting for page load)
+            window.wordleReady = true;
+        }
+
+        bootGame();
     </script>
 </body>
 </html>
-
