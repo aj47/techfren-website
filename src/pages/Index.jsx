@@ -103,7 +103,7 @@ const Index = () => {
   </p>
 </Box>
         </Box>
-        <CollapsibleSection title="Social Links" defaultOpen={false}>
+        <CollapsibleSection title="Social Links" defaultOpen={true}>
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
             <ProjectCard
               project={{
@@ -204,7 +204,7 @@ const Index = () => {
             />
           </SimpleGrid>
         </CollapsibleSection>
-        <CollapsibleSection title="My Open Source Projects" defaultOpen={true}>
+        <CollapsibleSection title="My Open Source Projects" defaultOpen={false}>
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
             {projects
               .filter(project => !project.name.includes("Contributor"))
