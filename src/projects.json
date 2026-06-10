@@ -147,6 +147,13 @@
     "live": "https://github.com/callstackincubator/voltra"
   },
   {
+    "name": "llamafile (Contributor)",
+    "description": "Distribute and run LLMs with a single executable file. llamafile packages llama.cpp with Cosmopolitan Libc so local AI models can run on multiple operating systems without installation or setup.",
+    "image": "https://opengraph.githubassets.com/1/Mozilla-Ocho/llamafile",
+    "github": "https://github.com/Mozilla-Ocho/llamafile",
+    "live": "https://github.com/Mozilla-Ocho/llamafile"
+  },
+  {
     "name": "Aider (Contributor)",
     "description": "AI pair programming in your terminal. Aider lets you pair program with LLMs to start a new project or build on your existing codebase, supporting 100+ programming languages and multiple LLM providers.",
     "image": "https://opengraph.githubassets.com/1/aider-chat/aider",
