@@ -105,6 +105,13 @@
     "live": "https://agent-battler.vercel.app"
   },
   {
+    "name": "Hermes Agent (Contributor)",
+    "description": "A self-improving AI agent from Nous Research with a built-in learning loop. Creates and improves skills from experience, remembers context across sessions, supports multiple messaging platforms, scheduled automations, subagents, and flexible model providers.",
+    "image": "https://opengraph.githubassets.com/1/NousResearch/hermes-agent",
+    "github": "https://github.com/NousResearch/hermes-agent",
+    "live": "https://hermes-agent.nousresearch.com"
+  },
+  {
     "name": "OpenClaw (Contributor)",
     "description": "Your own personal AI assistant. Any OS. Any Platform. A local-first AI assistant that connects to multiple messaging platforms (WhatsApp, Telegram, Slack, Discord) and provides a gateway control plane for managing sessions, channels, and tools.",
     "image": "https://opengraph.githubassets.com/1/openclaw/openclaw",
