@@ -1,4 +1,5 @@
 # Handle SPA routing - redirect all non-asset requests to index.html
 # Assets should be served directly
+/discord   https://discord.gg/cK9WeQ7jPq   302
 /assets/*  /assets/:splat  200
 /*         /index.html     200
