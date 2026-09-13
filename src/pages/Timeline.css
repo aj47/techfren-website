@@ -1,0 +1,102 @@
+.build-page { --build-green: #adf574; --build-muted: #9ba598; background: #0b100c; color: #f0f3ec; min-height: 100vh; font-family: Roboto, Arial, sans-serif; }
+.build-page *, .build-modal-image { box-sizing: border-box; }
+.build-shell { max-width: 1560px; margin: 0 auto; padding: 0 56px; }
+.build-page a { text-decoration: none; }
+.build-page button { font: inherit; }
+.build-page a:focus-visible, .build-page button:focus-visible, .build-rail:focus-visible, .build-date h2:focus-visible { outline: 2px solid var(--build-green); outline-offset: 5px; }
+.build-nav { height: 100px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #283026; }
+.build-logo { color: #f0f3ec; font-family: 'Press Start 2P', monospace; font-size: 19px; letter-spacing: -1px; }
+.build-logo span { color: var(--build-green); }
+.build-nav nav { display: flex; align-items: center; gap: 32px; font-size: 14px; }
+.build-nav nav a { color: var(--build-muted); min-height: 44px; display: inline-flex; gap: 5px; align-items: center; }
+.build-nav nav a:hover, .build-nav nav a[aria-current] { color: var(--build-green); }
+.build-intro { display: flex; align-items: flex-end; justify-content: space-between; gap: 32px; padding: 64px 0 44px; }
+.build-eyebrow { font-family: monospace; font-size: 12px; letter-spacing: 2px; display: flex; align-items: center; gap: 10px; color: var(--build-green); margin: 0 0 20px; }
+.build-eyebrow > span { width: 6px; height: 6px; background: var(--build-green); }
+.build-intro h1 { font-family: Roboto, Arial, sans-serif; font-size: clamp(46px, 5.3vw, 78px); font-weight: 500; line-height: 1.05; letter-spacing: -4px; margin: 0 0 24px; }
+.build-intro h1 span { color: var(--build-green); }
+.build-lede { color: #abb4a8; font-size: 16px; line-height: 1.7; margin: 0; }
+.build-range { border-left: 1px solid #3e4e36; padding-left: 24px; display: flex; flex-direction: column; gap: 9px; flex-shrink: 0; margin-bottom: 5px; }
+.build-range > span { font-family: monospace; color: var(--build-muted); font-size: 11px; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
+.build-range strong { font-size: 22px; font-weight: 400; }
+.build-toolbar { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #283026; padding: 14px 0 25px; }
+.build-dates-note { color: var(--build-muted); font: 11px/1.6 monospace; }
+.build-jumps { display: flex; gap: 6px; }
+.build-jumps button { cursor: pointer; color: #bdc8b8; background: transparent; border: 1px solid transparent; min-height: 44px; padding: 8px 14px; font-size: 13px; border-radius: 3px; }
+.build-jumps button:hover { background: #1b2618; border-color: #3b5130; color: var(--build-green); }
+.build-hint { display: flex; align-items: center; gap: 12px; color: var(--build-muted); font-family: monospace; font-size: 12px; }
+.build-rail { overflow-x: auto; scrollbar-color: #4a5f3c #151d13; scrollbar-width: thin; padding: 7px 0 18px; }
+.build-periods, .build-projects { list-style: none; margin: 0; padding: 0; }
+.build-periods { display: grid; grid-template-columns: repeat(var(--period-count, 4), minmax(265px, 1fr)); }
+.build-period { border-top: 1px solid #5d784b; padding: 0 24px 0 0; scroll-margin-top: 20px; }
+.build-period:last-child { padding-right: 0; }
+.build-date { padding: 24px 0 28px; position: relative; }
+.build-node { position: absolute; width: 9px; height: 9px; border: 2px solid var(--build-green); background: #0b100c; border-radius: 50%; top: -5px; left: 0; }
+.build-period:last-child .build-node { background: var(--build-green); }
+.build-date h2 { font-family: monospace; font-size: 17px; font-weight: 500; margin: 0 0 8px; color: var(--build-green); width: fit-content; }
+.build-date p { color: var(--build-muted); font-size: 12px; margin: 0; }
+.build-projects { display: flex; flex-direction: column; gap: 25px; }
+.build-card { border: 1px solid #2c3529; border-radius: 5px; background: #121910; overflow: hidden; max-width: 440px; }
+.build-preview { display: flex; align-items: center; justify-content: center; cursor: zoom-in; background: #060906; border: 0; border-bottom: 1px solid #2c3529; width: 100%; height: 155px; padding: 14px; position: relative; overflow: hidden; }
+.build-screenshot { display: block; width: 100%; height: 100%; overflow: hidden; }
+.build-screenshot--pocoj { width: 96px; }
+.build-screenshot--x-video { width: 123px; }
+.build-expand { position: absolute; bottom: 8px; right: 8px; background: #182114; color: #c2d6b3; border: 1px solid #3d4b34; padding: 6px; border-radius: 3px; }
+.build-preview:hover .build-expand { color: #0b100c; background: var(--build-green); }
+.build-card-copy { padding: 18px 18px 12px; }
+.build-category { color: #a7bb98; font-family: monospace; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; margin: 0 0 8px; }
+.build-card h3 { font-family: Roboto, Arial, sans-serif; font-size: 19px; font-weight: 500; line-height: 1.25; letter-spacing: -.3px; margin: 0 0 10px; }
+.build-description { color: #a5af9e; font-size: 13px; line-height: 1.6; margin: 0 0 10px; }
+.build-page .build-action, .build-action { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; line-height: 1.4; min-height: 44px; color: #adf574; background: none; border: 0; cursor: pointer; text-decoration: none; }
+.build-action:hover { text-decoration: underline; text-underline-offset: 4px; }
+.build-next { display: flex; gap: 12px; margin: 30px 8px; color: var(--build-green); }
+.build-next > span { font-size: 30px; line-height: 1; }
+.build-next p { font-size: 15px; line-height: 1.8; }
+.build-next p span { font-size: 12px; color: var(--build-muted); }
+.build-note { font-family: monospace; color: #9ba598; font-size: 11px; line-height: 1.7; margin: 20px 0 36px; }
+.build-footer { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 26px 0; border-top: 1px solid #283026; color: var(--build-muted); font-size: 12px; }
+.build-footer a { color: #d4ddce; display: flex; align-items: center; gap: 9px; min-height: 44px; }
+.build-modal-image { height: 340px; background: #060906; padding: 20px; display: flex; justify-content: center; }
+.build-modal-image .build-screenshot--pocoj { width: 200px; }
+.build-modal-image .build-screenshot--x-video { width: 270px; }
+.build-modal-note { color: #a5af9e; font-size: 12px; margin-top: 12px; }
+.build-skip { position: fixed; top: -100px; left: 16px; padding: 12px; background: #adf574; color: #0b100c; z-index: 10; }
+.build-skip:focus { top: 16px; }
+@media (max-width: 1100px) {
+  .build-shell { padding: 0 32px; }
+  .build-range { display: none; }
+  .build-periods { grid-template-columns: repeat(var(--period-count, 4), 285px); }
+  .build-period:last-child { padding-right: 24px; }
+}
+@media (max-width: 700px) {
+  .build-shell { padding: 0 22px; }
+  .build-nav { height: 80px; }
+  .build-logo { font-size: 15px; }
+  .build-nav nav { gap: 16px; font-size: 12px; }
+  .build-nav nav a:first-child { display: none; }
+  .build-intro { padding: 42px 0 30px; }
+  .build-intro h1 { font-size: 48px; letter-spacing: -2.5px; }
+  .build-eyebrow { font-size: 10px; letter-spacing: 1.5px; }
+  .build-lede { font-size: 14px; }
+  .build-desktop-break, .build-hint { display: none; }
+  .build-toolbar { padding: 10px 0 20px; }
+  .build-toolbar { flex-wrap: wrap; gap: 10px; }
+  .build-jumps { width: 100%; justify-content: space-between; gap: 0; }
+  .build-jumps button { padding: 8px; font-size: 12px; }
+  .build-rail { overflow: visible; padding-top: 0; }
+  .build-periods { display: block; padding-left: 5px; }
+  .build-period, .build-period:last-child { border-top: 0; border-left: 1px solid #5d784b; padding: 0 0 34px 22px; }
+  .build-date { padding: 0 0 22px; }
+  .build-node { top: 5px; left: -27px; }
+  .build-date h2 { font-size: 18px; }
+  .build-projects { gap: 20px; }
+  .build-preview { height: 175px; }
+  .build-card-copy { padding: 20px 20px 14px; }
+  .build-card h3 { font-size: 21px; }
+  .build-description { font-size: 14px; }
+  .build-footer { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .build-modal-image { height: 240px; padding: 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .build-page *, .build-page *::before, .build-page *::after { scroll-behavior: auto !important; animation: none !important; transition: none !important; }
+}

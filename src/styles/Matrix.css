@@ -1,0 +1,89 @@
+/* The original TechFren visual identity, shared by the combined portfolio and timeline. */
+.matrix-page { --build-green: #00ff00; --build-muted: #8dff8d; position: relative; isolation: isolate; background: #000; color: #00ff00; }
+.matrix-page > .build-shell { position: relative; z-index: 1; }
+.matrix-page.work-home .build-nav { height: 70px; justify-content: flex-end; }
+.matrix-page .matrix-rain-control { position: fixed; right: 16px; bottom: max(16px, env(safe-area-inset-bottom)); z-index: 20; min-height: 44px; padding: 10px 14px; border: 1px solid #00ff00; border-radius: 6px; background: #000; color: #00ff00; font: 12px monospace; cursor: pointer; box-shadow: 0 0 8px #00ff0050; }
+.matrix-rain-control:hover { background: #002900; }
+.matrix-page .work-footer, .matrix-page .build-footer { padding-bottom: 80px; }
+.matrix-page .build-nav, .matrix-page .work-footer, .matrix-page .build-footer { border-color: #00a800; background: rgba(0, 0, 0, .72); }
+.matrix-page .build-logo, .matrix-page .build-nav nav a, .matrix-page .work-footer a, .matrix-page .build-footer a { color: #00ff00; text-shadow: 0 0 8px #00ff0070; }
+.matrix-page .build-logo:hover, .matrix-page .build-nav nav a:hover { text-shadow: 0 0 12px #00ff00; }
+.matrix-page .work-hero { display: block; text-align: center; padding: 32px 0; }
+.matrix-page .work-hero h1 { display: flex; justify-content: center; font-family: 'Press Start 2P', monospace; font-size: clamp(28px, 5vw, 60px); font-weight: 400; letter-spacing: 0; line-height: 1.4; margin: 0 auto 22px; color: #00ff00; text-shadow: 0 0 10px #00ff00; }
+.matrix-type { overflow: hidden; white-space: nowrap; width: 8ch; animation: matrix-type 1.6s steps(8, end) both; }
+.matrix-cursor { animation: matrix-cursor 1s steps(1) infinite; }
+.matrix-page .work-socials { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); max-width: 384px; justify-content: center; gap: 0; margin: 0 auto 20px; }
+.matrix-page .work-socials a { color: #00ff00; background: rgba(0, 0, 0, .8); font-size: 32px; width: 48px; height: 48px; border: 0; }
+.matrix-page .work-socials a:hover { background: #00ff001a; filter: drop-shadow(0 0 6px #00ff00); }
+.matrix-portrait { display: block; width: 128px; height: 128px; object-fit: cover; border-radius: 10%; margin: 0 auto 16px; }
+.home-quick-links { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; max-width: 720px; margin: 24px auto 0; }
+.home-quick-links a { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 56px; padding: 10px 14px; color: #00ff00; font-size: 14px; border: 1px solid #00ff00; border-radius: 6px; background: rgba(0, 0, 0, .9); box-shadow: 0 0 8px #00ff0060; }
+.home-quick-links a:hover { background: #002900; box-shadow: 0 0 12px #00ff0090; }
+.home-quick-links svg { flex-shrink: 0; font-size: 20px; }
+.matrix-page.work-home #work { scroll-margin-top: 24px; padding-bottom: 80px; }
+.matrix-page .work-hero .build-lede { margin: 0 auto; color: #00ff00; text-shadow: 0 0 5px #00ff00; }
+.matrix-page .work-summary { display: flex; justify-content: center; gap: 40px; border: 0; padding: 0; margin: 26px auto 0; }
+.matrix-page .work-summary dd { font: 400 18px/1.6 'Press Start 2P', monospace; color: #00ff00; text-shadow: 0 0 8px #00ff0070; }
+.matrix-page .work-summary dt { color: #8dff8d; }
+.matrix-page .work-controls { border: 1px solid #00ff00; box-shadow: 0 0 10px #00ff0070; border-radius: 8px; padding: 14px; background: rgba(0, 0, 0, .9); }
+.matrix-page .work-filter { color: #00ff00; border-color: #008000; }
+.matrix-page .work-filter span { color: #8dff8d; }
+.matrix-page .work-filter[aria-pressed="true"] { color: #000; background: #00ff00; border-color: #00ff00; box-shadow: 0 0 10px #00ff0060; }
+.matrix-page .work-filter[aria-pressed="true"] span { color: #003300; }
+.matrix-page .work-filter:hover:not([aria-pressed="true"]) { background: #00ff0024; border-color: #00ff00; }
+.matrix-page .work-search { background: #000; color: #00ff00; border-color: #00ff00; }
+.matrix-page .work-search input { color: #00ff00; }
+.matrix-page .work-search input::placeholder { color: #86db86; }
+.matrix-page .work-section-header { background: rgba(0, 0, 0, .82); padding: 18px; border: 1px solid #00ff00; border-radius: 6px; box-shadow: 0 0 8px #00ff0050; }
+.matrix-page .work-section-header h2, .matrix-page .work-empty h2 { font-family: 'Press Start 2P', monospace; font-size: 18px; font-weight: 400; line-height: 1.65; letter-spacing: 0; text-shadow: 0 0 8px #00ff0090; }
+.matrix-page .work-section-header p, .matrix-page .build-lede, .matrix-page .build-date p, .matrix-page .work-results, .matrix-page .build-note, .matrix-page .work-footer, .matrix-page .build-footer { color: #8dff8d; }
+.matrix-page .build-intro h1 { font-family: 'Press Start 2P', monospace; font-size: clamp(25px, 4vw, 48px); font-weight: 400; line-height: 1.5; letter-spacing: 0; text-shadow: 0 0 10px #00ff0090; }
+.matrix-page .build-range { border-color: #00ff00; }
+.matrix-page .build-period { border-color: #00ff00; }
+.matrix-page .build-node { background: #000; box-shadow: 0 0 8px #00ff00; }
+.matrix-page .build-date { text-shadow: 0 0 5px #00ff0070; }
+.matrix-page .build-date p { background: rgba(0, 0, 0, .8); width: fit-content; }
+.matrix-page .build-jumps button { color: #00ff00; background: rgba(0, 0, 0, .85); }
+.matrix-page .build-jumps button:hover { background: #002900; border-color: #00ff00; }
+.matrix-page .build-card { border: 2px solid #00ff00; border-radius: 8px; background: rgba(0, 0, 0, .9); box-shadow: 0 0 10px #00ff0070; }
+.matrix-page .build-preview { background: rgba(0, 0, 0, .85); border-color: #008000; }
+.matrix-page .build-card h3, .matrix-page .work-project h3 { color: #00ff00; font-family: 'Press Start 2P', monospace; font-size: 12px; font-weight: 400; line-height: 1.75; letter-spacing: 0; text-shadow: 0 0 5px #00ff0080; overflow-wrap: anywhere; }
+.matrix-page .build-category { color: #00ff00; }
+.matrix-page .build-description, .matrix-page .work-project-description { color: #8dff8d; }
+.matrix-page .build-action { color: #00ff00; }
+.matrix-page .build-expand { background: #000; color: #00ff00; border-color: #00ff00; }
+.matrix-page .build-expand:hover { color: #000; }
+.matrix-page .build-repo-links { border-color: #007500; }
+.matrix-page .work-archive { gap: 24px; }
+.matrix-page .work-archive > li { border: 2px solid #00ff00; background: rgba(0, 0, 0, .9); border-radius: 8px; box-shadow: 0 0 10px #00ff0060; }
+.matrix-page .work-project { padding: 20px; }
+.matrix-page .work-project-image { border-color: #008000; background: #000; }
+.matrix-page .work-image-fallback { color: #00ff00; }
+.matrix-page .work-empty { background: rgba(0, 0, 0, .9); border-color: #00ff00; }
+.matrix-dialog { box-shadow: 0 0 20px #00ff0080 !important; }
+.matrix-dialog .build-action, .matrix-dialog .build-modal-note { color: #00ff00; }
+.matrix-dialog .build-modal-image { background: #000; }
+@keyframes matrix-type { from { width: 0; } to { width: 8ch; } }
+@keyframes matrix-cursor { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+@media (max-width: 700px) {
+  .matrix-page .work-hero { padding-top: 24px; }
+  .matrix-page .work-hero h1 { margin-bottom: 16px; }
+  .matrix-portrait { width: 96px; height: 96px; margin-bottom: 12px; }
+  .home-quick-links { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 20px; }
+  .home-quick-links a { min-height: 52px; font-size: 12px; padding: 8px; gap: 7px; }
+  .home-quick-links svg { font-size: 17px; }
+  .matrix-page .work-summary { gap: 18px; }
+  .matrix-page .work-summary dd { font-size: 14px; }
+  .matrix-page .work-summary dt { font-size: 10px; max-width: 90px; }
+  .matrix-page .work-socials { gap: 0; margin-bottom: 16px; }
+  .matrix-page .work-socials a { width: 44px; height: 44px; font-size: 28px; }
+  .matrix-page .work-section-header { padding: 14px; }
+  .matrix-page .work-section-header h2 { font-size: 14px; overflow-wrap: anywhere; }
+  .matrix-page .work-project { padding: 16px; grid-template-columns: 72px minmax(0, 1fr); gap: 8px 12px; }
+  .matrix-page .work-project-image { width: 72px; }
+  .matrix-page .work-project h3 { font-size: 11px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .matrix-page .matrix-type { width: 8ch; animation: none; }
+  .matrix-page .matrix-cursor { animation: none; opacity: 1; }
+}

@@ -8,6 +8,12 @@ export const generateSitemap = async () => {
   // Static pages
   const staticPages = [
     {
+      url: '/timeline',
+      lastmod: currentDate,
+      changefreq: 'weekly',
+      priority: '0.9'
+    },
+    {
       url: '/',
       lastmod: currentDate,
       changefreq: 'weekly',

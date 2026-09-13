@@ -8,7 +8,7 @@ import {
   ChakraProvider,
 } from "@chakra-ui/react";
 import React, { useState, useEffect } from "react";
-import { FaTiktok, FaYoutube, FaTwitch, FaInstagram, FaTwitter, FaDiscord, FaBlog } from "react-icons/fa";
+import { FaTiktok, FaYoutube, FaTwitch, FaInstagram, FaTwitter, FaDiscord, FaBlog, FaHistory } from "react-icons/fa";
 import projects from "../projects.json";
 import Socials from "./Socials";
 import CollapsibleSection from "../components/CollapsibleSection";
@@ -199,6 +199,16 @@ const Index = () => {
                   "Information about my social accounts and collaborations",
                 live: "https://beacons.ai/techfren/mediakit",
                 image: "/consultation.png",
+              }}
+              isQuickLink={true}
+            />
+            <ProjectCard
+              project={{
+                name: "Build Timeline",
+                description: "A timeline of projects I have been building, with screenshots and demos.",
+                live: "/timeline",
+                icon: FaHistory,
+                isInternal: true
               }}
               isQuickLink={true}
             />
