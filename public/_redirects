@@ -2,4 +2,7 @@
 # Assets should be served directly
 /discord   https://discord.gg/cK9WeQ7jPq   302
 /assets/*  /assets/:splat  200
+/api/*     /.netlify/functions/:splat  200
+/wordle   /wordle.html  200
+/wordlebench  /wordlebench.html  200
 /*         /index.html     200
