@@ -1,5 +1,47 @@
 [
   {
+    "name": "VibeCodingTribe",
+    "description": "A credit-based exchange where builders test each other's products. Features server-authoritative transactions, mission and claim workflows with escrow funding, GitHub/LinkedIn OAuth identities, a real-time public chat room, and an agent API with hosted callback inboxes. Built on React, Cloudflare Workers, and Durable Objects.",
+    "image": "https://opengraph.githubassets.com/1/aj47/VibeCodingTribe",
+    "github": "https://github.com/aj47/VibeCodingTribe",
+    "live": "https://vibecodingtribe.com"
+  },
+  {
+    "name": "Tech Friend Community",
+    "description": "Join the TechFren Discord community from your browser or inbox without a Discord account. Messages posted via web or email appear in the real Discord server, with a cross-platform activity leaderboard. Built with Convex, React, Vite, and WebMCP, plus AgentMail email digests and a Python bot bridge for live Discord mirroring.",
+    "image": "https://opengraph.githubassets.com/1/aj47/techfriendcommunity",
+    "github": "https://github.com/aj47/techfriendcommunity",
+    "live": "https://techfriendcommunity.com"
+  },
+  {
+    "name": "DotAgents",
+    "description": "Your AI team. One voice away. A voice-first desktop app that gives you a team of AI specialists with distinct skills and tools, controlled through a hold-to-speak interface. Implements the open .agents protocol so agent configs are portable across Claude Code, Cursor, and any tool that adopts the standard.",
+    "image": "https://opengraph.githubassets.com/1/aj47/dotagents-mono",
+    "github": "https://github.com/aj47/dotagents-mono",
+    "live": "https://dotagents.app"
+  },
+  {
+    "name": ".agents Protocol",
+    "description": "The open standard for AI agent configuration. A directory convention that unifies tools, instructions, skills, sub-agents, tasks, memories, and model settings into plain JSON and Markdown files you can commit to git and share across projects, teams, and tools.",
+    "image": "https://opengraph.githubassets.com/1/aj47/dotagentsprotocol-website",
+    "github": "https://github.com/aj47/dotagentsprotocol-website",
+    "live": "https://dotagentsprotocol.com"
+  },
+  {
+    "name": "ACP Remote",
+    "description": "Control your desktop AI coding agents from your phone, the web, or your voice. A mobile and voice interface for Agent Client Protocol (ACP) agents like Claude Code, Augment, and Gemini CLI, connected securely over Cloudflare Tunnel. Built with Electron, React, TypeScript, and Expo, with MCP tools, text-to-speech, and 30+ languages for voice input.",
+    "image": "https://opengraph.githubassets.com/1/aj47/acp-remote",
+    "github": "https://github.com/aj47/acp-remote",
+    "live": "https://acp-remote.pages.dev"
+  },
+  {
+    "name": "100x Orchestrator",
+    "description": "A web-based orchestration system for managing multiple AI coding agents at once. Coordinates agent creation, task allocation, and real-time monitoring through a dashboard, with an isolated workspace and dedicated Aider instance per agent, session management, and git integration.",
+    "image": "https://opengraph.githubassets.com/1/aj47/100x-orchestrator",
+    "github": "https://github.com/aj47/100x-orchestrator",
+    "live": "https://github.com/aj47/100x-orchestrator"
+  },
+  {
     "name": "LinkClaws",
     "description": "A professional networking platform for AI agents - LinkedIn for AI. Enables autonomous agents to discover collaborators, share offerings, negotiate agreements, and build trusted business relationships with peer endorsements and real-time messaging.",
     "image": "https://opengraph.githubassets.com/1/aj47/linkclaws",
@@ -99,10 +141,10 @@
   },
   {
     "name": "Agent Battler",
-    "description": "A platform where developers can post GitHub issues with bounties and contributors can submit pull requests using their favorite AI coding agents. Track which AI agents win the most bounties with real-time leaderboards and terminal session recordings.",
-    "image": "https://opengraph.githubassets.com/1/aj47/agent-battler",
-    "github": "https://github.com/aj47/agent-battler",
-    "live": "https://agent-battler.vercel.app"
+    "description": "Vibe Code Cup esports platform where AI coding agents compete head-to-head. Live match displays, agent profiles, tournament brackets, and leaderboards tracking which agents win the most. Built with Next.js 15 and Convex for real-time updates.",
+    "image": "https://opengraph.githubassets.com/1/aj47/agentbattler",
+    "github": "https://github.com/aj47/agentbattler",
+    "live": "https://agentbattler.com"
   },
   {
     "name": "Hermes Agent (Contributor)",
