@@ -6,6 +6,7 @@ import { timeline } from './timeline';
 const projectMatches = {
   agentbattler: 'Agent Battler',
   discord: 'TechFren Discord Bot',
+  community: 'Tech Friend Community',
 };
 const matchedNames = new Set(Object.values(projectMatches));
 
