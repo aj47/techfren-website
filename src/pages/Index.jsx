@@ -3,12 +3,12 @@ import {
   Container,
   Heading,
   SimpleGrid,
-  Text,
   Image,
   ChakraProvider,
 } from "@chakra-ui/react";
-import React, { useState, useEffect } from "react";
-import { FaTiktok, FaYoutube, FaTwitch, FaInstagram, FaTwitter, FaDiscord, FaBlog, FaHistory } from "react-icons/fa";
+import { useState, useEffect } from "react";
+import { FaTiktok, FaYoutube, FaTwitch, FaInstagram, FaTwitter, FaDiscord, FaBlog, FaFolderOpen } from "react-icons/fa";
+import { Link as RouterLink } from "react-router-dom";
 import projects from "../projects.json";
 import Socials from "./Socials";
 import CollapsibleSection from "../components/CollapsibleSection";
@@ -18,22 +18,6 @@ import SEO from "../components/SEO";
 import theme from "../theme";
 import "@fontsource/press-start-2p";
 import "@fontsource/roboto";
-
-async function fetchTikTokThumbnail(url) {
-  try {
-    const encodedUrl = encodeURIComponent(url);
-    const apiUrl = `https://www.tiktok.com/oembed?url=${encodedUrl}`;
-    const response = await fetch(apiUrl);
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-    const data = await response.json();
-    console.log(data.thumbnail_url, "data");
-    return data.thumbnail_url;
-  } catch (error) {
-    console.error("Error fetching TikTok oEmbed data:", error);
-  }
-}
 
 const AnimatedTitle = () => {
   const [title, setTitle] = useState("");
@@ -102,6 +86,26 @@ const Index = () => {
     open source AI and other technology.
   </p>
 </Box>
+          <Box display="flex" justifyContent="center" mb={6}>
+            <Box
+              as={RouterLink}
+              to="/projects"
+              display="inline-flex"
+              alignItems="center"
+              minH="44px"
+              px={5}
+              borderWidth="2px"
+              borderColor="#00ff00"
+              borderRadius="md"
+              bg="black"
+              color="#00ff00"
+              fontWeight="bold"
+              _hover={{ bg: "#003300", textDecoration: "none" }}
+              _focusVisible={{ outline: "2px solid white", outlineOffset: "4px" }}
+            >
+              See my projects →
+            </Box>
+          </Box>
         </Box>
         <CollapsibleSection title="Social Links" defaultOpen={true}>
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
@@ -204,10 +208,10 @@ const Index = () => {
             />
             <ProjectCard
               project={{
-                name: "Build Timeline",
-                description: "A timeline of projects I have been building, with screenshots and demos.",
-                live: "/timeline",
-                icon: FaHistory,
+                name: "Projects",
+                description: "Explore projects I've built and open source work I've contributed to.",
+                live: "/projects",
+                icon: FaFolderOpen,
                 isInternal: true
               }}
               isQuickLink={true}

@@ -1,10 +1,12 @@
 # Timeline content
 
-Edit `src/timeline.js` to add or update milestones. The page is at `/timeline`, linked from the homepage. Each group contains an approximate period and project entries. A project supports a YouTube `videoId`, optional `seconds`, `linkLabel`, and a screenshot `crop` (x, y, width, height). A plain `url` is also supported. Without a destination, the UI offers the screenshot viewer instead.
+Archived feature notes: the public timeline was replaced by the shareable `/projects` page on September 24, 2026. Visits to `/timeline` now redirect to `/projects`; the implementation details below describe the former page.
+
+The former page used `src/timeline.js` for milestones and was linked from the homepage at `/timeline`. Each group contains an approximate period and project entries. A project supports a YouTube `videoId`, optional `seconds`, `linkLabel`, and a screenshot `crop` (x, y, width, height). A plain `url` is also supported. Without a destination, the UI offered the screenshot viewer instead.
 
 ## Homepage entry
 
-The original homepage layout, social links, copy, and project archive remain in place. Its existing Quick Links section now includes a Build Timeline card that opens `/timeline`. The standalone route is registered in `src/App.jsx`; `public/_redirects` provides the static-host SPA fallback for direct visits. Timeline milestones are in `src/timeline.js`, with existing repository links enriched by `src/portfolio.js`.
+The original homepage layout, social links, copy, and project archive remained in place. Its Quick Links section included a Build Timeline card that opened `/timeline`. The standalone route was registered in `src/App.jsx`; `public/_redirects` provided the static-host SPA fallback for direct visits. Timeline milestones are in `src/timeline.js`, with existing repository links enriched by `src/portfolio.js`.
 
 Timeline entries and approximate periods remain separate from the homepage project archive; exact build days are not invented.
 
