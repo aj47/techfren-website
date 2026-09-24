@@ -8,7 +8,6 @@ import {
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import { FaTiktok, FaYoutube, FaTwitch, FaInstagram, FaTwitter, FaDiscord, FaBlog, FaFolderOpen } from "react-icons/fa";
-import { Link as RouterLink } from "react-router-dom";
 import projects from "../projects.json";
 import Socials from "./Socials";
 import CollapsibleSection from "../components/CollapsibleSection";
@@ -86,26 +85,6 @@ const Index = () => {
     open source AI and other technology.
   </p>
 </Box>
-          <Box display="flex" justifyContent="center" mb={6}>
-            <Box
-              as={RouterLink}
-              to="/projects"
-              display="inline-flex"
-              alignItems="center"
-              minH="44px"
-              px={5}
-              borderWidth="2px"
-              borderColor="#00ff00"
-              borderRadius="md"
-              bg="black"
-              color="#00ff00"
-              fontWeight="bold"
-              _hover={{ bg: "#003300", textDecoration: "none" }}
-              _focusVisible={{ outline: "2px solid white", outlineOffset: "4px" }}
-            >
-              See my projects →
-            </Box>
-          </Box>
         </Box>
         <CollapsibleSection title="Social Links" defaultOpen={true}>
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
