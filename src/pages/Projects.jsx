@@ -2,11 +2,22 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FiArrowUpRight, FiCheck, FiCopy, FiGithub, FiSearch } from 'react-icons/fi';
 import projects from '../projects.json';
+import { projectLink, timeline } from '../timeline';
 import SEO from '../components/SEO';
 import './Projects.css';
 
 const pageUrl = 'https://www.techfren.net/projects';
-const ownProjects = projects.filter(project => !project.name.includes('(Contributor)'));
+const milestones = timeline.flatMap(group => group.projects);
+const featuredBuildIds = ['opencourt', 'hook-ledger', 'pocoj', 'transcribe'];
+const featuredBuilds = featuredBuildIds.map(id => {
+  const project = milestones.find(milestone => milestone.id === id);
+  return {
+    ...project,
+    live: projectLink(project),
+    linkLabel: project.linkLabel === 'Short' ? 'Watch short' : 'Watch demo',
+  };
+});
+const ownProjects = [...featuredBuilds, ...projects.filter(project => !project.name.includes('(Contributor)'))];
 const contributions = projects.filter(project => project.name.includes('(Contributor)'));
 
 function ProjectPreview({ project }) {
@@ -14,7 +25,11 @@ function ProjectPreview({ project }) {
 
   return (
     <div className="projects-card-image">
-      {project.image && !imageFailed ? (
+      {project.crop ? (
+        <svg viewBox={project.crop.join(' ')} aria-hidden="true" focusable="false">
+          <image href="/timeline-assets/build-timeline-reference.png" width="1506" height="730" />
+        </svg>
+      ) : project.image && !imageFailed ? (
         <img
           src={project.image}
           alt=""
@@ -44,7 +59,7 @@ function ProjectList({ items }) {
               <div className="projects-card-links">
                 {hasWebsite && (
                   <a href={project.live} target="_blank" rel="noopener noreferrer">
-                    View project <FiArrowUpRight aria-hidden="true" />
+                    {project.linkLabel || 'View project'} <FiArrowUpRight aria-hidden="true" />
                   </a>
                 )}
                 {project.github && (
