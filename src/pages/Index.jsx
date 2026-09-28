@@ -77,19 +77,18 @@ const Index = () => {
             <Image
               src="/hero.jpg"
               alt="Hero image"
-              maxW={200}
+              maxW={{ base: 120, md: 160 }}
               width="90%"
               borderRadius="10%"
             />
           </Box>
 <Box display="flex" justifyContent="center" mb={6}>
   <p>
-    open source AI and other technology.
+    Your tech friend building and testing in public
   </p>
 </Box>
           <StatsBar />
         </Box>
-        <LatestContent />
         <CollapsibleSection title="Social Links">
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
             <ProjectCard
@@ -220,6 +219,9 @@ const Index = () => {
               ))}
           </SimpleGrid>
         </CollapsibleSection>
+        <Box mt={8}>
+          <LatestContent />
+        </Box>
       </Container>
     </ChakraProvider>
   );

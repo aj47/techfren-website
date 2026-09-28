@@ -1,26 +1,24 @@
 import { useEffect, useState } from "react";
-import { Box, Link, SimpleGrid, Text } from "@chakra-ui/react";
+import { Box, Link, Text, Wrap, WrapItem } from "@chakra-ui/react";
 import { creatorStats, DISCORD_INVITE, formatCount } from "../creatorStats";
 
 const Stat = ({ value, label, href }) => (
-  <Link
-    href={href}
-    isExternal
-    _hover={{ textDecoration: "none", bg: "rgba(0, 255, 0, 0.1)" }}
-    display="block"
-    border="1px solid #00ff00"
-    borderRadius="md"
-    bg="rgba(0, 0, 0, 0.8)"
-    px={3}
-    py={3}
-  >
-    <Text fontSize={{ base: "xl", md: "2xl" }} fontWeight="bold" lineHeight="1.2">
-      {value}
-    </Text>
-    <Text fontSize="xs" textShadow="none" opacity={0.85} mt={1}>
-      {label}
-    </Text>
-  </Link>
+  <WrapItem>
+    <Link
+      href={href}
+      isExternal
+      _hover={{ textDecoration: "none", bg: "rgba(0, 255, 0, 0.1)" }}
+      border="1px solid #00ff00"
+      borderRadius="full"
+      bg="rgba(0, 0, 0, 0.8)"
+      px={{ base: 2, md: 3 }}
+      py={1}
+    >
+      <Text as="span" fontSize={{ base: "xs", md: "sm" }} textShadow="none">
+        <Text as="span" fontSize="inherit" fontWeight="bold">{value}</Text> {label}
+      </Text>
+    </Link>
+  </WrapItem>
 );
 
 const StatsBar = () => {
@@ -41,16 +39,16 @@ const StatsBar = () => {
   }, []);
 
   return (
-    <Box maxW="3xl" mx="auto" mb={6}>
-      <SimpleGrid columns={{ base: 2, md: 4 }} spacing={3}>
+    <Box maxW="3xl" mx="auto">
+      <Wrap justify="center" spacing={{ base: 1.5, md: 2 }}>
         <Stat
           value={`${formatCount(creatorStats.totalFollowers)}+`}
-          label="followers across platforms"
+          label="followers"
           href="https://beacons.ai/techfren/mediakit"
         />
         <Stat
           value={formatCount(creatorStats.youtubeSubscribers)}
-          label="YouTube subscribers"
+          label="YouTube subs"
           href="https://youtube.com/@techfren?sub_confirmation=1"
         />
         <Stat
@@ -60,10 +58,10 @@ const StatsBar = () => {
         />
         <Stat
           value={`${repoStars}★`}
-          label={`${creatorStats.topRepo.name} on GitHub`}
+          label={creatorStats.topRepo.name}
           href={`https://github.com/${creatorStats.topRepo.repo}`}
         />
-      </SimpleGrid>
+      </Wrap>
     </Box>
   );
 };
