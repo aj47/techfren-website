@@ -13,6 +13,8 @@ import Socials from "./Socials";
 import CollapsibleSection from "../components/CollapsibleSection";
 import DigitalRain from "../components/DigitalRain";
 import ProjectCard from "../components/ProjectCard";
+import StatsBar from "../components/StatsBar";
+import LatestContent from "../components/LatestContent";
 import SEO from "../components/SEO";
 import theme from "../theme";
 import "@fontsource/press-start-2p";
@@ -85,8 +87,10 @@ const Index = () => {
     open source AI and other technology.
   </p>
 </Box>
+          <StatsBar />
         </Box>
-        <CollapsibleSection title="Social Links" defaultOpen={true}>
+        <LatestContent />
+        <CollapsibleSection title="Social Links">
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
             <ProjectCard
               project={{
