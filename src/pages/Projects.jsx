@@ -18,6 +18,8 @@ const featuredBuilds = featuredBuildIds.map(id => {
   };
 });
 const ownProjects = [...featuredBuilds, ...projects.filter(project => !project.name.includes('(Contributor)'))];
+// Move OpenCourt (first) down 4 places
+ownProjects.splice(4, 0, ownProjects.shift());
 const contributions = projects.filter(project => project.name.includes('(Contributor)'));
 
 function ProjectPreview({ project }) {
