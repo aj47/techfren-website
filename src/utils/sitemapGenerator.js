@@ -14,6 +14,12 @@ export const generateSitemap = async () => {
       priority: '0.9'
     },
     {
+      url: '/mediakit',
+      lastmod: currentDate,
+      changefreq: 'monthly',
+      priority: '0.8'
+    },
+    {
       url: '/',
       lastmod: currentDate,
       changefreq: 'weekly',

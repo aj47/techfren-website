@@ -4,6 +4,7 @@ import Index from "./pages/Index.jsx";
 import Blog from "./pages/Blog.jsx";
 import BlogPost from "./pages/BlogPost.jsx";
 import Projects from "./pages/Projects.jsx";
+import MediaKit from "./pages/MediaKit.jsx";
 import PreloadResources from "./components/PreloadResources.jsx";
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/projects" element={<Projects />} />
+          <Route path="/mediakit" element={<MediaKit />} />
           <Route path="/timeline" element={<Navigate to="/projects" replace />} />
         </Routes>
       </Router>

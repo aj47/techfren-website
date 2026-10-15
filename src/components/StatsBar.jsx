@@ -6,7 +6,7 @@ const Stat = ({ value, label, href }) => (
   <WrapItem>
     <Link
       href={href}
-      isExternal
+      isExternal={href.startsWith("http")}
       _hover={{ textDecoration: "none", bg: "rgba(0, 255, 0, 0.1)" }}
       border="1px solid #00ff00"
       borderRadius="full"
@@ -44,7 +44,7 @@ const StatsBar = () => {
         <Stat
           value={`${formatCount(creatorStats.totalFollowers)}+`}
           label="followers"
-          href="https://beacons.ai/techfren/mediakit"
+          href="/mediakit"
         />
         <Stat
           value={formatCount(creatorStats.youtubeSubscribers)}
