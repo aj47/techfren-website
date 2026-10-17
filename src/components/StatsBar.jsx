@@ -47,11 +47,6 @@ const StatsBar = () => {
           href="/mediakit"
         />
         <Stat
-          value={formatCount(creatorStats.youtubeSubscribers)}
-          label="YouTube subs"
-          href="https://youtube.com/@techfren?sub_confirmation=1"
-        />
-        <Stat
           value={formatCount(discordMembers)}
           label="Discord members"
           href="https://discord.gg/cK9WeQ7jPq"
