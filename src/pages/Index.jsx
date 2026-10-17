@@ -183,8 +183,9 @@ const Index = () => {
                 name: "Media Kit",
                 description:
                   "Information about my social accounts and collaborations",
-                live: "https://beacons.ai/techfren/mediakit",
+                live: "/mediakit",
                 image: "/consultation.png",
+                isInternal: true
               }}
               isQuickLink={true}
             />
