@@ -2,35 +2,35 @@
   {
     "name": "VibeCodingTribe",
     "description": "A credit-based exchange where builders test each other's products. Features server-authoritative transactions, mission and claim workflows with escrow funding, GitHub/LinkedIn OAuth identities, a real-time public chat room, and an agent API with hosted callback inboxes. Built on React, Cloudflare Workers, and Durable Objects.",
-    "image": "https://opengraph.githubassets.com/1/aj47/VibeCodingTribe",
+    "image": "/project-thumbs/vibecodingtribe.jpg",
     "github": "https://github.com/aj47/VibeCodingTribe",
     "live": "https://vibecodingtribe.com"
   },
   {
     "name": "Tech Friend Community",
     "description": "Join the TechFren Discord community from your browser or inbox without a Discord account. Messages posted via web or email appear in the real Discord server, with a cross-platform activity leaderboard. Built with Convex, React, Vite, and WebMCP, plus AgentMail email digests and a Python bot bridge for live Discord mirroring.",
-    "image": "https://opengraph.githubassets.com/1/aj47/techfriendcommunity",
+    "image": "/project-thumbs/tech-friend-community.jpg",
     "github": "https://github.com/aj47/techfriendcommunity",
     "live": "https://techfriendcommunity.com"
   },
   {
     "name": "DotAgents",
     "description": "Your AI team. One voice away. A voice-first desktop app that gives you a team of AI specialists with distinct skills and tools, controlled through a hold-to-speak interface. Implements the open .agents protocol so agent configs are portable across Claude Code, Cursor, and any tool that adopts the standard.",
-    "image": "https://opengraph.githubassets.com/1/aj47/dotagents-mono",
+    "image": "/project-thumbs/dotagents.jpg",
     "github": "https://github.com/aj47/dotagents-mono",
     "live": "https://dotagents.app"
   },
   {
     "name": ".agents Protocol",
     "description": "The open standard for AI agent configuration. A directory convention that unifies tools, instructions, skills, sub-agents, tasks, memories, and model settings into plain JSON and Markdown files you can commit to git and share across projects, teams, and tools.",
-    "image": "https://opengraph.githubassets.com/1/aj47/dotagentsprotocol-website",
+    "image": "/project-thumbs/agents-protocol.jpg",
     "github": "https://github.com/aj47/dotagentsprotocol-website",
     "live": "https://dotagentsprotocol.com"
   },
   {
     "name": "ACP Remote",
     "description": "Control your desktop AI coding agents from your phone, the web, or your voice. A mobile and voice interface for Agent Client Protocol (ACP) agents like Claude Code, Augment, and Gemini CLI, connected securely over Cloudflare Tunnel. Built with Electron, React, TypeScript, and Expo, with MCP tools, text-to-speech, and 30+ languages for voice input.",
-    "image": "https://opengraph.githubassets.com/1/aj47/acp-remote",
+    "image": "/project-thumbs/acp-remote.jpg",
     "github": "https://github.com/aj47/acp-remote",
     "live": "https://acp-remote.pages.dev"
   },
@@ -44,7 +44,7 @@
   {
     "name": "LinkClaws",
     "description": "A professional networking platform for AI agents - LinkedIn for AI. Enables autonomous agents to discover collaborators, share offerings, negotiate agreements, and build trusted business relationships with peer endorsements and real-time messaging.",
-    "image": "https://opengraph.githubassets.com/1/aj47/linkclaws",
+    "image": "/project-thumbs/linkclaws.jpg",
     "github": "https://github.com/aj47/linkclaws",
     "live": "https://linkclaws.com"
   },
@@ -86,21 +86,21 @@
   {
     "name": "techfren-leaderboard",
     "description": "An interactive leaderboard showcasing unofficial Aider polyglot benchmarks for various LLM models, including smaller and lesser-known models that don't appear on the official leaderboard.",
-    "image": "/leaderboard.png",
+    "image": "/project-thumbs/leaderboard.jpg",
     "github": "https://github.com/aj47/techfren-leaderboard",
     "live": "https://leaderboard.techfren.net/"
   },
   {
     "name": "Awaken Ambience",
     "description": "A Python application for having voice, video, and screen sharing conversations with Google's Gemini 2.0 model. Features real-time multimodal input with audio responses.",
-    "image": "/awaken-ambience.png",
+    "image": "/project-thumbs/awaken-ambience.jpg",
     "github": "https://github.com/aj47/awaken-ambience",
     "live": "https://awakenambience.com/"
   },
   {
     "name": "Chaos Coder",
     "description": "A Next.js application that generates multiple variations of web applications simultaneously using AI. Each variation is unique in its implementation, styling, and features, helping developers explore different possibilities and approaches to building web applications.",
-    "image": "/chaos-coder.gif",
+    "image": "/project-thumbs/chaos-coder.jpg",
     "github": "https://github.com/aj47/chaos-coder",
     "live": "https://chaoscoder.net"
   },
@@ -135,21 +135,21 @@
   {
     "name": "BeriGame MMO Alpha",
     "description": "A proof of concept cross platform MMO Game",
-    "image": "/berigame.png",
+    "image": "/project-thumbs/berigame.jpg",
     "github": "https://github.com/aj47/berigame",
     "live": "https://alpha.berigame.com"
   },
   {
     "name": "Agent Battler",
     "description": "Vibe Code Cup esports platform where AI coding agents compete head-to-head. Live match displays, agent profiles, tournament brackets, and leaderboards tracking which agents win the most. Built with Next.js 15 and Convex for real-time updates.",
-    "image": "https://opengraph.githubassets.com/1/aj47/agentbattler",
+    "image": "/project-thumbs/agent-battler.jpg",
     "github": "https://github.com/aj47/agentbattler",
     "live": "https://agentbattler.com"
   },
   {
     "name": "Hermes Agent (Contributor)",
     "description": "A self-improving AI agent from Nous Research with a built-in learning loop. Creates and improves skills from experience, remembers context across sessions, supports multiple messaging platforms, scheduled automations, subagents, and flexible model providers.",
-    "image": "https://opengraph.githubassets.com/1/NousResearch/hermes-agent",
+    "image": "/project-thumbs/hermes-agent.jpg",
     "github": "https://github.com/NousResearch/hermes-agent",
     "live": "https://hermes-agent.nousresearch.com"
   },
@@ -170,21 +170,21 @@
   {
     "name": "big-AGI (Contributor)",
     "description": "An AI suite for professionals powered by state-of-the-art models. Features AI personas, multi-model chats, text-to-image, voice, code highlighting and execution, PDF import, and more with a polished UX.",
-    "image": "https://opengraph.githubassets.com/1/enricoros/big-AGI",
+    "image": "/project-thumbs/big-agi.jpg",
     "github": "https://github.com/enricoros/big-AGI",
     "live": "https://big-agi.com"
   },
   {
     "name": "Open Interpreter (Contributor)",
     "description": "A natural language interface that lets LLMs run code locally. Provides a ChatGPT-like terminal interface that can create and edit files, control browsers, analyze data, and more through natural language commands.",
-    "image": "https://opengraph.githubassets.com/1/OpenInterpreter/open-interpreter",
+    "image": "/project-thumbs/open-interpreter.jpg",
     "github": "https://github.com/OpenInterpreter/open-interpreter",
     "live": "https://openinterpreter.com"
   },
   {
     "name": "OpenHands (Contributor)",
     "description": "A platform for software development agents powered by AI. OpenHands agents can modify code, run commands, browse the web, call APIs, and perform tasks just like human developers.",
-    "image": "https://opengraph.githubassets.com/1/All-Hands-AI/OpenHands",
+    "image": "/project-thumbs/openhands.jpg",
     "github": "https://github.com/All-Hands-AI/OpenHands",
     "live": "https://all-hands.dev"
   },
@@ -205,7 +205,7 @@
   {
     "name": "Aider (Contributor)",
     "description": "AI pair programming in your terminal. Aider lets you pair program with LLMs to start a new project or build on your existing codebase, supporting 100+ programming languages and multiple LLM providers.",
-    "image": "https://opengraph.githubassets.com/1/aider-chat/aider",
+    "image": "/project-thumbs/aider.jpg",
     "github": "https://github.com/Aider-AI/aider",
     "live": "https://aider.chat"
   },
