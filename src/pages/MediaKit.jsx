@@ -1,12 +1,10 @@
 import { Link } from 'react-router-dom';
 import { FiArrowUpRight, FiMail } from 'react-icons/fi';
 import { mediaKit } from '../mediakit';
-import { formatCount } from '../creatorStats';
 import SEO from '../components/SEO';
 import './MediaKit.css';
 
 const mailto = `mailto:${mediaKit.email}?subject=${encodeURIComponent('Sponsorship enquiry')}`;
-const maxViews = Math.max(...mediaKit.tiktok.recentPosts.map(post => post.views));
 
 function SectionHeading({ kicker, title, children }) {
   return (
@@ -34,8 +32,6 @@ function PlatformList({ items, small }) {
 }
 
 export default function MediaKit() {
-  const { tiktok } = mediaKit;
-
   return (
     <div className="mk-page">
       <SEO
@@ -145,32 +141,8 @@ export default function MediaKit() {
             </div>
           </section>
 
-          <section className="mk-section" aria-labelledby="mk-tiktok">
-            <SectionHeading kicker="05 / TIKTOK STATS" title={<span id="mk-tiktok">TikTok performance</span>}>
-              {tiktok.synced}
-            </SectionHeading>
-            <dl className="mk-stats">
-              {tiktok.summary.map(stat => (
-                <div key={stat.label}><dt>{stat.label}</dt><dd>{stat.value}</dd></div>
-              ))}
-            </dl>
-            <p className="mk-subhead">Most recent posts · views</p>
-            <ol className="mk-bars">
-              {tiktok.recentPosts.map((post, index) => (
-                <li
-                  key={index}
-                  title={`${post.views.toLocaleString()} views · ${post.likes} likes · ${post.comments} comments`}
-                >
-                  <span className="mk-bar-value">{formatCount(post.views)}</span>
-                  <span className="mk-bar" style={{ height: `${Math.max(3, (post.views / maxViews) * 100)}%` }} />
-                  <span className="mk-bar-meta">{post.likes} ♥</span>
-                </li>
-              ))}
-            </ol>
-          </section>
-
           <section className="mk-cta" aria-labelledby="mk-contact">
-            <p className="mk-kicker">06 / CONTACT</p>
+            <p className="mk-kicker">05 / CONTACT</p>
             <h2 id="mk-contact">Collaborate with me<span>_</span></h2>
             <p>Send me your project details and timeline and I&apos;ll get back to you.</p>
             <div className="mk-actions">
