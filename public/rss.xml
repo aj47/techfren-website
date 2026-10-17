@@ -6,8 +6,8 @@
     <link>https://www.techfren.net/blog</link>
     <atom:link href="https://www.techfren.net/rss.xml" rel="self" type="application/rss+xml"/>
     <language>en-US</language>
-    <managingEditor>hello@techfren.net (techfren)</managingEditor>
-    <webMaster>hello@techfren.net (techfren)</webMaster>
+    <managingEditor>hi@techfren.net (techfren)</managingEditor>
+    <webMaster>hi@techfren.net (techfren)</webMaster>
     <lastBuildDate>Thu, 20 Jun 2025 00:00:00 GMT</lastBuildDate>
     <generator>techfren Blog</generator>
     <image>
@@ -23,7 +23,7 @@
       <link>https://www.techfren.net/blog/future-of-software</link>
       <guid isPermaLink="true">https://www.techfren.net/blog/future-of-software</guid>
       <pubDate>Thu, 20 Jun 2025 00:00:00 GMT</pubDate>
-      <author>hello@techfren.net (techfren)</author>
+      <author>hi@techfren.net (techfren)</author>
       <category>Technology</category>
       <category>Software Engineering</category>
       <category>AI</category>

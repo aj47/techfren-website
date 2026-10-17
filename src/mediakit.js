@@ -2,7 +2,7 @@
 // so it can be edited by hand. Images live in /public/mediakit.
 export const mediaKit = {
   handle: '@techfren',
-  email: 'hello@techfren.net',
+  email: 'hi@techfren.net',
   categories: ['technology & science', 'software', 'ai', 'education'],
   totalFollowers: '150.0K',
 

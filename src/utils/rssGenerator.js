@@ -6,7 +6,7 @@ export const generateRSSFeed = async () => {
   const feedTitle = 'techfren Blog';
   const feedDescription = 'Insights on software engineering, AI technology, and the future of development from techfren.';
   const feedAuthor = 'techfren';
-  const feedEmail = 'hello@techfren.net';
+  const feedEmail = 'hi@techfren.net';
 
   // Get blog posts (currently only future-of-software)
   const blogPosts = await loadBlogIndex();
@@ -54,7 +54,7 @@ export const generateAtomFeed = async () => {
   const feedTitle = 'techfren Blog';
   const feedDescription = 'Insights on software engineering, AI technology, and the future of development from techfren.';
   const feedAuthor = 'techfren';
-  const feedEmail = 'hello@techfren.net';
+  const feedEmail = 'hi@techfren.net';
   
   // Get blog posts (currently only future-of-software)
   const blogPosts = await loadBlogIndex();
