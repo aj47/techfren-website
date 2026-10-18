@@ -38,7 +38,7 @@ const SEO = ({
         "https://instagram.com/techfren",
         "https://youtube.com/@techfren",
         "https://twitch.tv/techfren",
-        "https://twitter.com/techfrenAJ"
+        "https://x.com/techfren"
       ]
     },
     "publisher": {
@@ -121,8 +121,8 @@ const SEO = ({
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={fullImageUrl} />
-      <meta name="twitter:creator" content="@techfrenAJ" />
-      <meta name="twitter:site" content="@techfrenAJ" />
+      <meta name="twitter:creator" content="@techfren" />
+      <meta name="twitter:site" content="@techfren" />
       
       {/* Additional Meta Tags */}
       <meta name="author" content={author} />

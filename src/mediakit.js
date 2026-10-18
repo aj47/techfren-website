@@ -1,5 +1,5 @@
-// Media kit content, copied from beacons.ai/techfren/mediakit and kept here
-// so it can be edited by hand. Images live in /public/mediakit.
+// Media kit content, kept here so it can be edited by hand.
+// Images live in /public/mediakit.
 export const mediaKit = {
   handle: '@techfren',
   email: 'hi@techfren.net',
@@ -9,20 +9,20 @@ export const mediaKit = {
   platforms: [
     { name: 'TikTok', followers: '78.3K', href: 'https://www.tiktok.com/@techfren' },
     { name: 'Instagram', followers: '47.2K', href: 'https://www.instagram.com/techfren' },
-    { name: 'YouTube', followers: '13.7K', href: 'https://www.youtube.com/channel/UC1RO76_HDT13u-lPXOA0t9A' },
+    { name: 'YouTube', followers: '13.7K', href: 'https://youtube.com/@techfren' },
     { name: 'Twitch', followers: '475', href: 'https://www.twitch.tv/techfren' },
   ],
   otherPlatforms: [
     { name: 'Threads', followers: '3.0K', href: 'https://www.threads.net/@techfren' },
     { name: 'Discord', followers: '3.0K', href: 'https://discord.com/invite/cK9WeQ7jPq' },
     { name: 'LinkedIn', followers: '2.2K', href: 'https://www.linkedin.com/in/techfren/' },
-    { name: 'X', followers: '1.9K', href: 'https://twitter.com/techfrenaj' },
+    { name: 'X', followers: '1.9K', href: 'https://x.com/techfren' },
     { name: 'GitHub', followers: '240', href: 'https://github.com/aj47/' },
   ],
 
   rates: [
-    { name: 'Dedicated YouTube video', description: 'A full video on my YouTube channel built around your product', price: '$5,000', featured: true },
-    { name: 'YouTube mid-roll integration', description: 'A sponsored segment inside one of my YouTube videos', price: '$2,000', featured: true },
+    { name: 'Dedicated video', description: 'A full YouTube video, or a short-form video crossposted to YouTube Shorts, Instagram Reels and TikTok, built around your product', price: '$5,000', badge: 'Video', featured: true },
+    { name: 'YouTube mid-roll integration', description: 'A sponsored segment inside one of my YouTube videos', price: '$2,000', badge: 'YouTube', featured: true },
     { name: 'Instagram / TikTok story', description: 'Story post on Instagram and TikTok', price: '$400' },
     { name: 'X / LinkedIn / Threads post', description: 'Text or image post on X, LinkedIn and Threads', price: '$200' },
     { name: 'Link on techfren.net quicklinks', description: '1 day. 14 days = $600', price: '$50' },

@@ -26,7 +26,7 @@ Latest stream: [What I’m Building + What’s Happening in Tech](https://www.yo
 | Hook Ledger | [25:48](https://www.youtube.com/watch?v=e6eIZd1zHOQ&t=1548s) | “This is my custom web app hook ledger” at 1548.16; full editing and scheduling walkthrough follows. |
 | OpenCourt | [37:11](https://www.youtube.com/watch?v=e6eIZd1zHOQ&t=2231s) | Tennis app introduction at 2231.12, followed by its debug view and analysis; named OpenCourt at 2408.48. |
 | Tech Friend Community | [1:20](https://www.youtube.com/watch?v=e6eIZd1zHOQ&t=80s) | Result shown at 80.32; domain at 86.64; Discord messages and leaderboard follow. |
-| 200k+ views on X | [Short](https://www.youtube.com/watch?v=yYGrFcTdjhk) | “An $80 Reset on My $200 ChatGPT Plan: Worth It?” Its description links the [original X post](https://x.com/techfrenAJ/status/2096781683060343100). The 200k+ milestone is supplied in AJ's sketch; AJ reports 240k in the stream at 3159.44. It is not a live analytics counter. |
+| 200k+ views on X | [Short](https://www.youtube.com/watch?v=yYGrFcTdjhk) | “An $80 Reset on My $200 ChatGPT Plan: Worth It?” Its description links the [original X post](https://x.com/techfren/status/2096781683060343100). The 200k+ milestone is supplied in AJ's sketch; AJ reports 240k in the stream at 3159.44. It is not a live analytics counter. |
 | 3D Pocoj avatar | [13:10](https://www.youtube.com/watch?v=e6eIZd1zHOQ&t=790s) | Avatar demonstration and character explanation at 790.64–808.40. |
 
 Dates describe approximate build milestones, not release or video-publication dates. AJ places AgentBattler on August 8 at stream time 2854.88, Ultra Live Transcribe around August 12 at 2829.36, and OpenCourt around September 1 at 2413.60. The remaining periods follow the supplied sketch.

@@ -1,5 +1,6 @@
 import { Link, HStack, IconButton, useColorMode } from "@chakra-ui/react";
-import { FaTiktok, FaYoutube, FaTwitch, FaInstagram, FaTwitter, FaDiscord } from "react-icons/fa";
+import { FaTiktok, FaYoutube, FaTwitch, FaInstagram, FaDiscord } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
 
 /**
  * A social media links component.
@@ -57,9 +58,9 @@ export default function Socials() {
       />
       <IconButton
         as={Link}
-        href="https://twitter.com/techfrenAJ"
-        icon={<FaTwitter />}
-        aria-label="Twitter"
+        href="https://x.com/techfren"
+        icon={<FaXTwitter />}
+        aria-label="X"
         isExternal
         {...iconButtonProps}
       />

@@ -7,7 +7,8 @@ import {
   ChakraProvider,
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
-import { FaTiktok, FaYoutube, FaTwitch, FaInstagram, FaTwitter, FaDiscord, FaBlog, FaFolderOpen } from "react-icons/fa";
+import { FaTiktok, FaYoutube, FaTwitch, FaInstagram, FaDiscord, FaBlog, FaFolderOpen } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
 import projects from "../projects.json";
 import Socials from "./Socials";
 import CollapsibleSection from "../components/CollapsibleSection";
@@ -129,10 +130,10 @@ const Index = () => {
             />
             <ProjectCard
               project={{
-                name: "Twitter",
-                description: "Follow me on Twitter",
-                live: "https://twitter.com/techfrenAJ",
-                icon: FaTwitter
+                name: "X",
+                description: "Follow me on X",
+                live: "https://x.com/techfren",
+                icon: FaXTwitter
               }}
               isQuickLink={true}
             />

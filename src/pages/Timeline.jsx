@@ -15,7 +15,7 @@ export default function Timeline() {
       <div className="build-shell">
         <header className="build-nav">
           <Link to="/" className="build-logo">techfren<span>_</span></Link>
-          <nav aria-label="Main navigation"><Link to="/">Home</Link><Link to="/timeline" aria-current="page">Timeline</Link><a href="https://www.youtube.com/@techfren" target="_blank" rel="noopener noreferrer">YouTube <FiArrowUpRight /></a></nav>
+          <nav aria-label="Main navigation"><Link to="/">Home</Link><Link to="/timeline" aria-current="page">Timeline</Link><a href="https://youtube.com/@techfren" target="_blank" rel="noopener noreferrer">YouTube <FiArrowUpRight /></a></nav>
         </header>
         <main id="builds">
           <section className="build-intro" aria-labelledby="build-title"><h1 id="build-title">Build timeline</h1></section>
