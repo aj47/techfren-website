@@ -88,4 +88,4 @@ The fate of the software engineer is a preview of a future where we are forced t
 **Related Topics:**
 - More insights on AI and software engineering coming soon
 
-**Stay Updated:** Follow [@techfrenAJ](https://twitter.com/techfrenAJ) for more insights on AI, software engineering, and the future of technology.
+**Stay Updated:** Follow [@techfren](https://x.com/techfren) for more insights on AI, software engineering, and the future of technology.

@@ -88,7 +88,7 @@ export default function MediaKit() {
             <div className="mk-rates">
               {mediaKit.rates.map(rate => (
                 <article key={rate.name} className={`mk-rate${rate.featured ? ' mk-rate--featured' : ''}`}>
-                  {rate.featured && <span className="mk-badge">YouTube</span>}
+                  {rate.featured && <span className="mk-badge">{rate.badge}</span>}
                   <h3>{rate.name}</h3>
                   <p>{rate.description}</p>
                   <strong className="mk-price">{rate.price}</strong>
@@ -153,7 +153,7 @@ export default function MediaKit() {
 
         <footer className="mk-footer">
           <Link to="/">← Back to TechFren</Link>
-          <a href="https://www.youtube.com/@techfren" target="_blank" rel="noopener noreferrer">YouTube <FiArrowUpRight aria-hidden="true" /></a>
+          <a href="https://youtube.com/@techfren" target="_blank" rel="noopener noreferrer">YouTube <FiArrowUpRight aria-hidden="true" /></a>
         </footer>
       </div>
     </div>

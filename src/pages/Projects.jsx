@@ -110,7 +110,7 @@ export default function Projects() {
           <nav aria-label="Main navigation">
             <Link to="/">Home</Link>
             <span aria-current="page">Projects</span>
-            <a href="https://www.youtube.com/@techfren" target="_blank" rel="noopener noreferrer">YouTube <FiArrowUpRight aria-hidden="true" /></a>
+            <a href="https://youtube.com/@techfren" target="_blank" rel="noopener noreferrer">YouTube <FiArrowUpRight aria-hidden="true" /></a>
           </nav>
         </header>
 

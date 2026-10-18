@@ -48,7 +48,7 @@ Make sure to follow me on my social channels for updates when new posts go live:
 
 - [TikTok](https://tiktok.com/@techfren) for quick tech tips
 - [YouTube](https://youtube.com/@techfren) for in-depth tutorials
-- [Twitter](https://twitter.com/techfrenAJ) for real-time thoughts
+- [X](https://x.com/techfren) for real-time thoughts
 - [Discord](https://discord.gg/cK9WeQ7jPq) for community discussions
 
 ## What's Next?
