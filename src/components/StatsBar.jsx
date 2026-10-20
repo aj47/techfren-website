@@ -23,18 +23,12 @@ const Stat = ({ value, label, href }) => (
 
 const StatsBar = () => {
   const [discordMembers, setDiscordMembers] = useState(creatorStats.discordMembers);
-  const [repoStars, setRepoStars] = useState(creatorStats.topRepo.stars);
 
   useEffect(() => {
-    // Both endpoints allow cross-origin reads; on failure keep the fallback values.
+    // The endpoint allows cross-origin reads; on failure keep the fallback value.
     fetch(`https://discord.com/api/v9/invites/${DISCORD_INVITE}?with_counts=true`)
       .then(res => (res.ok ? res.json() : null))
       .then(data => data?.approximate_member_count && setDiscordMembers(data.approximate_member_count))
-      .catch(() => {});
-
-    fetch(`https://api.github.com/repos/${creatorStats.topRepo.repo}`)
-      .then(res => (res.ok ? res.json() : null))
-      .then(data => data?.stargazers_count && setRepoStars(data.stargazers_count))
       .catch(() => {});
   }, []);
 
@@ -50,11 +44,6 @@ const StatsBar = () => {
           value={formatCount(discordMembers)}
           label="Discord members"
           href="https://discord.gg/cK9WeQ7jPq"
-        />
-        <Stat
-          value={`${repoStars}★`}
-          label={creatorStats.topRepo.name}
-          href={`https://github.com/${creatorStats.topRepo.repo}`}
         />
       </Wrap>
     </Box>

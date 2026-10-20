@@ -1,11 +1,10 @@
 // Audience numbers shown on the homepage. Total followers has no keyless
-// browser API, so update it by hand. Discord members and GitHub stars are
-// refreshed live and fall back to these values.
+// browser API, so update it by hand. Discord members are refreshed live and
+// fall back to this value.
 export const creatorStats = {
   asOf: '2026-09-28',
   totalFollowers: 130000,
   discordMembers: 3560,
-  topRepo: { name: 'SpeakMCP', repo: 'aj47/SpeakMCP', stars: 149 },
 };
 
 export const YOUTUBE_CHANNEL_ID = 'UC1RO76_HDT13u-lPXOA0t9A';

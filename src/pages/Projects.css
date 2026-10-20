@@ -27,15 +27,15 @@
 .projects-hero h1 { max-width: 850px; margin: 0 0 23px; font-size: clamp(42px, 6vw, 78px); font-weight: 700; line-height: 1.08; letter-spacing: -.045em; }
 .projects-hero h1 span { color: var(--projects-green); }
 .projects-intro { max-width: 650px; margin: 0; color: var(--projects-muted); font-size: 18px; line-height: 1.65; }
-.projects-role-nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; max-width: 780px; margin-top: 30px; }
+.projects-role-nav { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; max-width: 1040px; margin-top: 30px; }
 .projects-role-nav a { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 3px 15px; min-height: 76px; padding: 13px 18px; border: 1px solid var(--projects-green); border-radius: 4px; background: #0b170b; color: #f0fff0; }
-.projects-role-nav a + a { border-color: #789b85; background: #101814; }
+.projects-role-nav a:last-child { border-color: #789b85; background: #101814; }
 .projects-role-nav a:hover { background: #173018; }
-.projects-role-nav a + a:hover { background: #1b2b22; }
+.projects-role-nav a:last-child:hover { background: #1b2b22; }
 .projects-role-nav a span { font-size: 15px; font-weight: 700; }
 .projects-role-nav a small { grid-column: 1; color: var(--projects-muted); font: 12px monospace; }
 .projects-role-nav a svg { grid-column: 2; grid-row: 1 / 3; color: var(--projects-green); font-size: 20px; }
-.projects-role-nav a + a svg { color: #c5dfca; }
+.projects-role-nav a:last-child svg { color: #c5dfca; }
 .projects-share { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin-top: 32px; }
 .projects-share button { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; padding: 0 20px; border: 1px solid var(--projects-green); border-radius: 4px; background: var(--projects-green); color: #001800; font: 700 14px Roboto, Arial, sans-serif; cursor: pointer; }
 .projects-share button:hover { background: #bcffbc; }

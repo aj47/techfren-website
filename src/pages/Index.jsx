@@ -9,6 +9,7 @@ import {
 import { useState, useEffect } from "react";
 import { FaTiktok, FaYoutube, FaTwitch, FaInstagram, FaDiscord, FaBlog, FaFolderOpen } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
+import products from "../products.json";
 import projects from "../projects.json";
 import Socials from "./Socials";
 import CollapsibleSection from "../components/CollapsibleSection";
@@ -202,6 +203,14 @@ const Index = () => {
             />
           </SimpleGrid>
         </CollapsibleSection>
+        <CollapsibleSection title="Products" defaultOpen={true}>
+          <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
+            {products.map((product, index) => (
+              <ProjectCard key={index} project={product} />
+            ))}
+          </SimpleGrid>
+        </CollapsibleSection>
+
         <CollapsibleSection title="My Open Source Projects" defaultOpen={false}>
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
             {projects

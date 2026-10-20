@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FiArrowDown, FiArrowUpRight, FiCheck, FiCopy, FiGithub, FiSearch } from 'react-icons/fi';
+import { FiArrowDown, FiArrowUpRight, FiCheck, FiCopy, FiGithub, FiPlay, FiSearch } from 'react-icons/fi';
+import products from '../products.json';
 import projects from '../projects.json';
 import { projectLink, timeline } from '../timeline';
 import SEO from '../components/SEO';
@@ -56,13 +57,18 @@ function ProjectList({ items, kind }) {
           <article className={`projects-card projects-card--${kind}`} key={project.name}>
             <ProjectPreview project={project} />
             <div className="projects-card-body">
-              <span className="projects-card-kind">{kind === 'built' ? 'Built by me' : 'Contributed to'}</span>
+              <span className="projects-card-kind">{{ product: 'Product', built: 'Built by me', contributed: 'Contributed to' }[kind]}</span>
               <h3>{name}</h3>
               <p>{project.description}</p>
               <div className="projects-card-links">
                 {hasWebsite && (
                   <a href={project.live} target="_blank" rel="noopener noreferrer">
                     {project.linkLabel || 'View project'} <FiArrowUpRight aria-hidden="true" />
+                  </a>
+                )}
+                {project.playStore && (
+                  <a href={project.playStore} target="_blank" rel="noopener noreferrer">
+                    Google Play <FiPlay aria-hidden="true" />
                   </a>
                 )}
                 {project.github && (
@@ -83,6 +89,7 @@ export default function Projects() {
   const [query, setQuery] = useState('');
   const [copied, setCopied] = useState(false);
   const matches = project => `${project.name} ${project.description}`.toLowerCase().includes(query.trim().toLowerCase());
+  const visibleProducts = products.filter(matches);
   const visibleOwnProjects = ownProjects.filter(matches);
   const visibleContributions = contributions.filter(matches);
 
@@ -99,9 +106,9 @@ export default function Projects() {
     <div className="projects-page">
       <SEO
         title="Projects and contributions — techfren"
-        description="Explore projects AJ built and open source projects he contributed to at TechFren."
+        description="Explore products AJ shipped, projects AJ built, and open source projects AJ contributed to at TechFren."
         url="/projects"
-        tags={['techfren', 'projects', 'software', 'AI agents', 'open source']}
+        tags={['techfren', 'projects', 'products', 'software', 'AI agents', 'open source']}
       />
       <a className="projects-skip" href="#projects-list">Skip to projects</a>
       <div className="projects-shell">
@@ -118,8 +125,9 @@ export default function Projects() {
           <section className="projects-hero" aria-labelledby="projects-title">
             <p className="projects-eyebrow">TECHFREN / WORK</p>
             <h1 id="projects-title">Projects &amp; contributions<span>.</span></h1>
-            <p className="projects-intro">Explore the software I&apos;ve built and the open source projects I&apos;ve contributed to. Each entry links to a demo, website, or code where available.</p>
+            <p className="projects-intro">Explore the products I&apos;ve shipped, the software I&apos;ve built, and the open source projects I&apos;ve contributed to. Each entry links to a demo, website, or code where available.</p>
             <nav className="projects-role-nav" aria-label="Project groups">
+              <a href="#products"><span>Products</span><small>{products.length} {products.length === 1 ? 'product' : 'products'}</small><FiArrowDown aria-hidden="true" /></a>
               <a href="#built-projects"><span>Projects I&apos;ve built</span><small>{ownProjects.length} projects</small><FiArrowDown aria-hidden="true" /></a>
               <a href="#contributed-projects"><span>Projects I&apos;ve contributed to</span><small>{contributions.length} projects</small><FiArrowDown aria-hidden="true" /></a>
             </nav>
@@ -144,6 +152,14 @@ export default function Projects() {
             </label>
           </div>
 
+            <section className="projects-section projects-section--product" id="products" aria-labelledby="products-title">
+              <div className="projects-section-heading">
+                <div><h2 id="products-title">Products</h2><p>Closed-source apps I ship and maintain.</p></div>
+                <span>{visibleProducts.length} {visibleProducts.length === 1 ? 'product' : 'products'}</span>
+              </div>
+              {visibleProducts.length > 0 ? <ProjectList items={visibleProducts} kind="product" /> : <p className="projects-section-empty">No products match this search.</p>}
+            </section>
+
             <section className="projects-section" id="built-projects" aria-labelledby="own-projects-title">
               <div className="projects-section-heading">
                 <div><h2 id="own-projects-title">Projects I&apos;ve built</h2><p>Products, tools, and experiments I created.</p></div>
@@ -160,7 +176,7 @@ export default function Projects() {
               {visibleContributions.length > 0 ? <ProjectList items={visibleContributions} kind="contributed" /> : <p className="projects-section-empty">No contributions match this search.</p>}
             </section>
 
-          {visibleOwnProjects.length === 0 && visibleContributions.length === 0 && <p className="projects-visually-hidden" role="status">No projects match “{query}”. Try another search.</p>}
+          {visibleProducts.length === 0 && visibleOwnProjects.length === 0 && visibleContributions.length === 0 && <p className="projects-visually-hidden" role="status">No projects match “{query}”. Try another search.</p>}
         </main>
 
         <footer className="projects-footer">
