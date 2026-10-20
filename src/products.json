@@ -1,0 +1,9 @@
+[
+  {
+    "name": "Tennis Camera App",
+    "description": "Open a tennis match video and it finds every point. Watch the points back to back, export the whole match without the time between them, or make a vertical short of each point. Detection runs on your device, so the video never uploads. Available in the browser and on Google Play.",
+    "image": "/tennis-camera-app.jpg",
+    "live": "https://tenniscamera.app",
+    "playStore": "https://play.google.com/store/apps/details?id=app.tenniscamera.app"
+  }
+]
