@@ -17,7 +17,7 @@ import { useNavigate } from "react-router-dom";
 import LinkPreview from "./LinkPreview";
 import GitHubStats from "./GitHubStats";
 
-const ProjectCard = ({ project, isQuickLink = false }) => {
+const ProjectCard = ({ project, isQuickLink = false, descriptionLines }) => {
   const navigate = useNavigate();
   const linkUrl = project.live || project.github;
   const isContributor = project.name.includes("(Contributor)");
@@ -141,6 +141,8 @@ const ProjectCard = ({ project, isQuickLink = false }) => {
           <Text
             fontSize={isQuickLink ? "sm" : "sm"}
             color="#00ff00"
+            noOfLines={descriptionLines}
+            title={descriptionLines ? project.description : undefined}
             style={{
               wordBreak: "break-word",
               whiteSpace: "normal",
