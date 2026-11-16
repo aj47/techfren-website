@@ -17,7 +17,7 @@ import projects from "../projects.json";
 import Socials from "./Socials";
 import CollapsibleSection from "../components/CollapsibleSection";
 import DigitalRain from "../components/DigitalRain";
-import ProductSpotlight from "../components/ProductSpotlight";
+import FeaturedSpotlight from "../components/FeaturedSpotlight";
 import ProjectCard from "../components/ProjectCard";
 import StatsBar from "../components/StatsBar";
 import LatestContent from "../components/LatestContent";
@@ -26,12 +26,15 @@ import theme from "../theme";
 import "@fontsource/press-start-2p";
 import "@fontsource/roboto";
 
-// The home page shows the first few of AJ's own projects (projects.json order)
-// and keeps the rest one click away.
-const FEATURED_PROJECT_COUNT = 6;
+// The home page leads with the project marked "featured" in projects.json,
+// then shows the products and the first few of AJ's own projects (in
+// projects.json order). The rest stay one click away.
+const GRID_COUNT = 6;
 const ownProjects = projects.filter(project => !project.name.includes("(Contributor)"));
-const featuredProjects = ownProjects.slice(0, FEATURED_PROJECT_COUNT);
-const moreProjects = ownProjects.slice(FEATURED_PROJECT_COUNT);
+const featuredProject = ownProjects.find(project => project.featured);
+const otherProjects = ownProjects.filter(project => project !== featuredProject);
+const gridProjects = otherProjects.slice(0, GRID_COUNT - products.length);
+const moreProjects = otherProjects.slice(gridProjects.length);
 const contributions = projects.filter(project => project.name.includes("(Contributor)"));
 
 const SectionHeading = ({ title, action }) => (
@@ -224,12 +227,12 @@ const Index = () => {
             />
           </SimpleGrid>
         </CollapsibleSection>
-        <SectionHeading title="Products" />
-        <SimpleGrid columns={products.length > 1 ? { base: 1, lg: 2 } : 1} spacing={10}>
-          {products.map(product => (
-            <ProductSpotlight key={product.name} product={product} wide={products.length === 1} />
-          ))}
-        </SimpleGrid>
+        {featuredProject && (
+          <>
+            <SectionHeading title="Featured" />
+            <FeaturedSpotlight project={featuredProject} />
+          </>
+        )}
 
         <SectionHeading
           title="Projects"
@@ -240,7 +243,10 @@ const Index = () => {
           }
         />
         <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={{ base: 5, md: 10 }} mb={10}>
-          {featuredProjects.map(project => (
+          {products.map(product => (
+            <ProjectCard key={product.name} project={product} badge="Product" descriptionLines={3} />
+          ))}
+          {gridProjects.map(project => (
             <ProjectCard key={project.name} project={project} descriptionLines={3} />
           ))}
         </SimpleGrid>

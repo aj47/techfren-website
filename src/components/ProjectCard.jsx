@@ -11,13 +11,13 @@ import {
   Button,
   Icon,
 } from "@chakra-ui/react";
-import { FaGithub, FaExternalLinkAlt } from "react-icons/fa";
+import { FaGithub, FaExternalLinkAlt, FaGooglePlay } from "react-icons/fa";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import LinkPreview from "./LinkPreview";
 import GitHubStats from "./GitHubStats";
 
-const ProjectCard = ({ project, isQuickLink = false, descriptionLines }) => {
+const ProjectCard = ({ project, isQuickLink = false, descriptionLines, badge }) => {
   const navigate = useNavigate();
   const linkUrl = project.live || project.github;
   const isContributor = project.name.includes("(Contributor)");
@@ -125,16 +125,16 @@ const ProjectCard = ({ project, isQuickLink = false, descriptionLines }) => {
                   wordBreak: "break-word",
                   whiteSpace: "normal",
                   overflowWrap: "break-word",
-                  width: isContributor ? "85%" : "100%",
+                  width: isContributor || badge ? "85%" : "100%",
                   textAlign: isQuickLink ? "center" : "left"
                 }}
               >
                 {displayName}
               </Heading>
             </HStack>
-            {isContributor && (
+            {(isContributor || badge) && (
               <Badge colorScheme="green" ml={2} flexShrink={0}>
-                Contributor
+                {isContributor ? "Contributor" : badge}
               </Badge>
             )}
           </Flex>
@@ -164,6 +164,17 @@ const ProjectCard = ({ project, isQuickLink = false, descriptionLines }) => {
                 href={project.github}
                 aria-label="GitHub"
                 icon={<FaGithub />}
+                variant="ghost"
+                color="#00ff00"
+                _hover={{ bg: "rgba(0, 255, 0, 0.1)" }}
+              />
+            )}
+            {project.playStore && (
+              <IconButton
+                as="a"
+                href={project.playStore}
+                aria-label="Google Play"
+                icon={<FaGooglePlay />}
                 variant="ghost"
                 color="#00ff00"
                 _hover={{ bg: "rgba(0, 255, 0, 0.1)" }}
