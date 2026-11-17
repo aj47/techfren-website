@@ -8,7 +8,8 @@
   },
   {
     "name": "Tech Friend Community",
-    "description": "Join the TechFren Discord community from your browser or inbox without a Discord account. Messages posted via web or email appear in the real Discord server, with a cross-platform activity leaderboard. Built with Convex, React, Vite, and WebMCP, plus AgentMail email digests and a Python bot bridge for live Discord mirroring.",
+    "featured": true,
+    "description": "Join the TechFren Discord community from your browser or inbox without a Discord account. Messages posted via web or email appear in the real Discord server, with a cross-platform activity leaderboard. Built with Convex, React, and Vite, plus AgentMail email digests and a Python bot bridge for live Discord mirroring.",
     "image": "/project-thumbs/tech-friend-community.jpg",
     "github": "https://github.com/aj47/techfriendcommunity",
     "live": "https://techfriendcommunity.com"

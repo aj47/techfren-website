@@ -4,7 +4,6 @@ import { FaStar, FaCodeBranch, FaExclamationCircle } from 'react-icons/fa';
 
 const GitHubStats = ({ repoUrl }) => {
   const [stats, setStats] = useState(null);
-  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -28,14 +27,9 @@ const GitHubStats = ({ repoUrl }) => {
           const response = await fetch(`https://api.github.com/repos/${owner}/${repo}`);
 
           if (!response.ok) {
-            // If we get a 403 or other error, set default placeholder stats
+            // Rate limited or auth required: show no stats instead of placeholders
             if (response.status === 403) {
               console.warn('GitHub API rate limit exceeded or authentication required');
-              setStats({
-                stars: '★',
-                forks: '⑂',
-                issues: '!'
-              });
               setLoading(false);
               return;
             }
@@ -50,13 +44,6 @@ const GitHubStats = ({ repoUrl }) => {
           });
         } catch (err) {
           console.error('Error fetching GitHub stats:', err);
-          // Set placeholder stats on error
-          setStats({
-            stars: '★',
-            forks: '⑂',
-            issues: '!'
-          });
-          setError(err.message);
         }
       } finally {
         setLoading(false);
@@ -66,8 +53,7 @@ const GitHubStats = ({ repoUrl }) => {
     fetchStats();
   }, [repoUrl]);
 
-  if (loading) return null;
-  if (error && !stats) return null;
+  if (loading || !stats) return null;
 
   return (
     <HStack spacing={4} mt={2}>

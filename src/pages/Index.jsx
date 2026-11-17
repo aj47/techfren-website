@@ -1,12 +1,15 @@
 import {
   Box,
   Container,
+  Flex,
   Heading,
+  Link,
   SimpleGrid,
   Image,
   ChakraProvider,
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
+import { Link as RouterLink } from "react-router-dom";
 import { FaTiktok, FaYoutube, FaTwitch, FaInstagram, FaDiscord, FaBlog, FaFolderOpen } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import products from "../products.json";
@@ -14,6 +17,7 @@ import projects from "../projects.json";
 import Socials from "./Socials";
 import CollapsibleSection from "../components/CollapsibleSection";
 import DigitalRain from "../components/DigitalRain";
+import FeaturedSpotlight from "../components/FeaturedSpotlight";
 import ProjectCard from "../components/ProjectCard";
 import StatsBar from "../components/StatsBar";
 import LatestContent from "../components/LatestContent";
@@ -21,6 +25,26 @@ import SEO from "../components/SEO";
 import theme from "../theme";
 import "@fontsource/press-start-2p";
 import "@fontsource/roboto";
+
+// The home page leads with the project marked "featured" in projects.json,
+// then shows the products and the first few of AJ's own projects (in
+// projects.json order). The rest stay one click away.
+const GRID_COUNT = 6;
+const ownProjects = projects.filter(project => !project.name.includes("(Contributor)"));
+const featuredProject = ownProjects.find(project => project.featured);
+const otherProjects = ownProjects.filter(project => project !== featuredProject);
+const gridProjects = otherProjects.slice(0, GRID_COUNT - products.length);
+const moreProjects = otherProjects.slice(gridProjects.length);
+const contributions = projects.filter(project => project.name.includes("(Contributor)"));
+
+const SectionHeading = ({ title, action }) => (
+  <Flex justify="space-between" align="baseline" gap={4} wrap="wrap" mt={10} mb={5}>
+    <Heading as="h2" fontSize={{ base: "sm", md: "md" }} color="#00ff00">
+      {title}
+    </Heading>
+    {action}
+  </Flex>
+);
 
 const AnimatedTitle = () => {
   const [title, setTitle] = useState("");
@@ -203,31 +227,43 @@ const Index = () => {
             />
           </SimpleGrid>
         </CollapsibleSection>
-        <CollapsibleSection title="Products" defaultOpen={true}>
+        {featuredProject && (
+          <>
+            <SectionHeading title="Featured" />
+            <FeaturedSpotlight project={featuredProject} />
+          </>
+        )}
+
+        <SectionHeading
+          title="Projects"
+          action={
+            <Link as={RouterLink} to="/projects" color="#00ff00" fontSize="sm" whiteSpace="nowrap">
+              View all {products.length + projects.length} →
+            </Link>
+          }
+        />
+        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={{ base: 5, md: 10 }} mb={10}>
+          {products.map(product => (
+            <ProjectCard key={product.name} project={product} badge="Product" descriptionLines={3} />
+          ))}
+          {gridProjects.map(project => (
+            <ProjectCard key={project.name} project={project} descriptionLines={3} />
+          ))}
+        </SimpleGrid>
+
+        <CollapsibleSection title={`More Open Source Projects (${moreProjects.length})`}>
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
-            {products.map((product, index) => (
-              <ProjectCard key={index} project={product} />
+            {moreProjects.map(project => (
+              <ProjectCard key={project.name} project={project} />
             ))}
           </SimpleGrid>
         </CollapsibleSection>
 
-        <CollapsibleSection title="My Open Source Projects" defaultOpen={false}>
+        <CollapsibleSection title={`Open Source Contributions (${contributions.length})`}>
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
-            {projects
-              .filter(project => !project.name.includes("Contributor"))
-              .map((project, index) => (
-                <ProjectCard key={index} project={project} />
-              ))}
-          </SimpleGrid>
-        </CollapsibleSection>
-
-        <CollapsibleSection title="Open Source Contributions">
-          <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
-            {projects
-              .filter(project => project.name.includes("Contributor"))
-              .map((project, index) => (
-                <ProjectCard key={index} project={project} />
-              ))}
+            {contributions.map(project => (
+              <ProjectCard key={project.name} project={project} />
+            ))}
           </SimpleGrid>
         </CollapsibleSection>
         <Box mt={8}>
