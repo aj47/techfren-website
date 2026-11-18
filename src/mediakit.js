@@ -32,6 +32,7 @@ export const mediaKit = {
     { name: 'OpenAI', href: 'https://openai.com/', logo: 'openai' },
     { name: 'Mozilla', href: 'https://mozilla.org/', logo: 'mozilla' },
     { name: 'Microsoft', href: 'https://microsoft.com/', logo: 'microsoft' },
+    { name: 'GitHub', href: 'https://github.com/', logo: 'github' },
     { name: 'Replit', href: 'https://replit.com/', logo: 'replit' },
     { name: 'Warp', href: 'https://warp.dev/', logo: 'warp' },
     { name: 'Gamma', href: 'https://gamma.app/', logo: 'gamma' },
