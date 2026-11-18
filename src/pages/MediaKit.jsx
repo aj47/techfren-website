@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { FiArrowUpRight, FiMail } from 'react-icons/fi';
 import { mediaKit } from '../mediakit';
 import SEO from '../components/SEO';
+import SiteNav from '../components/SiteNav';
 import './MediaKit.css';
 
 const mailto = `mailto:${mediaKit.email}?subject=${encodeURIComponent('Sponsorship enquiry')}`;
@@ -42,14 +43,7 @@ export default function MediaKit() {
         tags={['techfren', 'media kit', 'sponsorship', 'AI', 'software', 'creator']}
       />
       <div className="mk-shell">
-        <header className="mk-nav">
-          <Link to="/" className="mk-logo">techfren<span>_</span></Link>
-          <nav aria-label="Main navigation">
-            <Link to="/">Home</Link>
-            <Link to="/projects">Projects</Link>
-            <span aria-current="page">Media kit</span>
-          </nav>
-        </header>
+        <SiteNav current="/mediakit" />
 
         <main>
           <section className="mk-hero" aria-labelledby="mk-title">

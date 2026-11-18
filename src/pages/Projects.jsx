@@ -5,6 +5,7 @@ import products from '../products.json';
 import projects from '../projects.json';
 import { projectLink, timeline } from '../timeline';
 import SEO from '../components/SEO';
+import SiteNav from '../components/SiteNav';
 import './Projects.css';
 
 const pageUrl = 'https://www.techfren.net/projects';
@@ -112,14 +113,7 @@ export default function Projects() {
       />
       <a className="projects-skip" href="#projects-list">Skip to projects</a>
       <div className="projects-shell">
-        <header className="projects-nav">
-          <Link to="/" className="projects-logo">techfren<span>_</span></Link>
-          <nav aria-label="Main navigation">
-            <Link to="/">Home</Link>
-            <span aria-current="page">Projects</span>
-            <a href="https://youtube.com/@techfren" target="_blank" rel="noopener noreferrer">YouTube <FiArrowUpRight aria-hidden="true" /></a>
-          </nav>
-        </header>
+        <SiteNav current="/projects" />
 
         <main>
           <section className="projects-hero" aria-labelledby="projects-title">
