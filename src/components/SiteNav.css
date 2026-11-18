@@ -1,0 +1,24 @@
+.site-nav { display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 84px; border-bottom: 1px solid #246b24; font-family: Roboto, Arial, sans-serif; position: relative; z-index: 1; }
+.site-nav a { text-decoration: none; }
+.site-nav a:focus-visible { outline: 2px solid #00ff00; outline-offset: 4px; }
+.site-nav-logo { color: #fff; font: 15px 'Press Start 2P', monospace; white-space: nowrap; }
+.site-nav-logo span { color: #00ff00; }
+.site-nav nav { display: flex; align-items: center; gap: 26px; }
+.site-nav nav > a, .site-nav nav > span { display: inline-flex; align-items: center; gap: 5px; min-height: 44px; color: #a6c9a6; font-size: 14px; }
+.site-nav nav > a:hover, .site-nav nav > span { color: #00ff00; }
+.site-nav nav > .site-nav-discord { gap: 8px; min-height: 40px; padding: 0 16px; border: 1px solid #00ff00; border-radius: 4px; background: #00ff00; color: #001800; font-weight: 700; white-space: nowrap; }
+.site-nav nav > .site-nav-discord:hover { background: #bcffbc; color: #001800; }
+.site-nav-discord svg { font-size: 18px; }
+
+@media (max-width: 650px) {
+  .site-nav { min-height: 72px; gap: 12px; }
+  .site-nav-logo { font-size: 12px; }
+  .site-nav nav { gap: 14px; }
+  .site-nav nav > a, .site-nav nav > span { font-size: 12px; }
+  .site-nav nav > .site-nav-secondary { display: none; }
+  .site-nav nav > .site-nav-discord { padding: 0 12px; }
+}
+
+@media (max-width: 380px) {
+  .site-nav nav > a:first-child, .site-nav nav > span:first-child { display: none; }
+}
