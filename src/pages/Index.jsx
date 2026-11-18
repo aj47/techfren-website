@@ -20,7 +20,6 @@ import DigitalRain from "../components/DigitalRain";
 import FeaturedSpotlight from "../components/FeaturedSpotlight";
 import ProjectCard from "../components/ProjectCard";
 import StatsBar from "../components/StatsBar";
-import BrandPartners from "../components/BrandPartners";
 import LatestContent from "../components/LatestContent";
 import SEO from "../components/SEO";
 import theme from "../theme";
@@ -173,9 +172,6 @@ const Index = () => {
               isQuickLink={true}
             />
           </SimpleGrid>
-        </CollapsibleSection>
-        <CollapsibleSection title="Brands I've Worked With">
-          <BrandPartners />
         </CollapsibleSection>
         <CollapsibleSection title="Quick Links" defaultOpen={false}>
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
