@@ -95,7 +95,6 @@ const Index = () => {
   </p>
 </Box>
           <StatsBar />
-          <BrandPartners />
         </Box>
         <CollapsibleSection title="Social Links">
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
@@ -154,6 +153,9 @@ const Index = () => {
               isQuickLink={true}
             />
           </SimpleGrid>
+        </CollapsibleSection>
+        <CollapsibleSection title="Brands I've Worked With">
+          <BrandPartners />
         </CollapsibleSection>
         <CollapsibleSection title="Quick Links" defaultOpen={false}>
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>

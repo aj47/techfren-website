@@ -1,11 +1,8 @@
-import { Box, Image, Link, Text, Tooltip, Wrap, WrapItem } from "@chakra-ui/react";
+import { Box, Image, Link, Tooltip, Wrap, WrapItem } from "@chakra-ui/react";
 import { mediaKit } from "../mediakit";
 
 const BrandPartners = () => (
-  <Box maxW="3xl" mx="auto" mt={5}>
-    <Text fontSize="xs" textTransform="uppercase" letterSpacing="0.1em" opacity={0.8} mb={2}>
-      Brands I&apos;ve worked with
-    </Text>
+  <Box maxW="3xl" mx="auto" py={4}>
     <Wrap justify="center" spacing={{ base: 2, md: 3 }}>
       {mediaKit.brandPartners.map(partner => (
         <WrapItem key={partner.name}>
