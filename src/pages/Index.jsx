@@ -21,6 +21,7 @@ import FeaturedSpotlight from "../components/FeaturedSpotlight";
 import ProjectCard from "../components/ProjectCard";
 import StatsBar from "../components/StatsBar";
 import LatestContent from "../components/LatestContent";
+import NewsletterSignup from "../components/NewsletterSignup";
 import SEO from "../components/SEO";
 import theme from "../theme";
 import "@fontsource/press-start-2p";
@@ -266,6 +267,7 @@ const Index = () => {
             ))}
           </SimpleGrid>
         </CollapsibleSection>
+        <NewsletterSignup />
         <Box mt={8}>
           <LatestContent />
         </Box>
