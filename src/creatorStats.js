@@ -2,8 +2,8 @@
 // browser API, so update it by hand. Discord members are refreshed live and
 // fall back to this value.
 export const creatorStats = {
-  asOf: '2026-09-28',
-  totalFollowers: 130000,
+  asOf: '2026-11-18',
+  totalFollowers: 150000,
   discordMembers: 3560,
 };
 
