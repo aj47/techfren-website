@@ -8,7 +8,7 @@ export default function Newsletter() {
     <ChakraProvider theme={theme}>
       <SEO title="Newsletter | TechFren" description="AI agent workflows and tools from TechFren." />
       <Container maxW="container.md" py={20}>
-        <NewsletterSignup source="techfren-newsletter-page" />
+        <NewsletterSignup source="techfren-signup-page" />
       </Container>
     </ChakraProvider>
   );

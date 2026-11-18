@@ -18,7 +18,7 @@ function App() {
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/projects" element={<Projects />} />
-          <Route path="/newsletter" element={<Newsletter />} />
+          <Route path="/signup" element={<Newsletter />} />
           <Route path="/mediakit" element={<MediaKit />} />
           <Route path="/timeline" element={<Navigate to="/projects" replace />} />
         </Routes>
