@@ -16,6 +16,12 @@
 .projects-shell { max-width: 1280px; margin: 0 auto; padding: 0 40px; }
 .projects-skip { position: fixed; top: -100px; left: 16px; z-index: 10; padding: 12px; background: var(--projects-green); color: #000; }
 .projects-skip:focus { top: 16px; }
+.projects-nav { display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 84px; border-bottom: 1px solid var(--projects-border); }
+.projects-logo { color: #fff; font: 15px 'Press Start 2P', monospace; }
+.projects-logo span { color: var(--projects-green); }
+.projects-nav nav { display: flex; align-items: center; gap: 26px; }
+.projects-nav nav a, .projects-nav nav span { display: inline-flex; align-items: center; gap: 5px; min-height: 44px; color: var(--projects-muted); font-size: 14px; }
+.projects-nav nav a:hover, .projects-nav nav span { color: var(--projects-green); }
 .projects-hero { padding: 75px 0 72px; border-bottom: 1px solid var(--projects-border); }
 .projects-eyebrow, .projects-kicker { margin: 0 0 18px; color: var(--projects-green); font: 12px/1.5 monospace; letter-spacing: .16em; }
 .projects-hero h1 { max-width: 850px; margin: 0 0 23px; font-size: clamp(42px, 6vw, 78px); font-weight: 700; line-height: 1.08; letter-spacing: -.045em; }
@@ -75,6 +81,11 @@
 
 @media (max-width: 650px) {
   .projects-shell { padding: 0 20px; }
+  .projects-nav { min-height: 72px; }
+  .projects-logo { font-size: 12px; }
+  .projects-nav nav { gap: 14px; }
+  .projects-nav nav a, .projects-nav nav span { font-size: 12px; }
+  .projects-nav nav a:last-child { display: none; }
   .projects-hero { padding: 52px 0 48px; }
   .projects-hero h1 { font-size: clamp(38px, 10vw, 52px); }
   .projects-intro { font-size: 16px; }
