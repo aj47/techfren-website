@@ -16,6 +16,7 @@ import DigitalRain from "../components/DigitalRain";
 import ProjectCard from "../components/ProjectCard";
 import SiteNav from "../components/SiteNav";
 import StatsBar from "../components/StatsBar";
+import BrandPartners from "../components/BrandPartners";
 import LatestContent from "../components/LatestContent";
 import SEO from "../components/SEO";
 import theme from "../theme";
@@ -94,6 +95,7 @@ const Index = () => {
   </p>
 </Box>
           <StatsBar />
+          <BrandPartners />
         </Box>
         <CollapsibleSection title="Social Links">
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>

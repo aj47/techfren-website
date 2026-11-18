@@ -40,6 +40,13 @@ const StatsBar = () => {
           label="followers"
           href="/mediakit"
         />
+        {creatorStats.totalViews && (
+          <Stat
+            value={`${formatCount(creatorStats.totalViews)}+`}
+            label="views"
+            href="/mediakit"
+          />
+        )}
         <Stat
           value={formatCount(discordMembers)}
           label="Discord members"
