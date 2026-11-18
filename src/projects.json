@@ -1,5 +1,12 @@
 [
   {
+    "name": "gmclip",
+    "description": "Edit video like a doc. A word-based Mac editor that turns long recordings into Shorts and YouTube cuts: strike words in the transcript to cut, frame 9:16 and 16:9, and burn in captions. A built-in MCP server lets your own AI agent find the best moments. Open source, built with Rust and Tauri.",
+    "image": "/project-thumbs/gmclip.jpg",
+    "github": "https://github.com/aj47/gmclip-video",
+    "live": "https://gmclip.com"
+  },
+  {
     "name": "VibeCodingTribe",
     "description": "A credit-based exchange where builders test each other's products. Features server-authoritative transactions, mission and claim workflows with escrow funding, GitHub/LinkedIn OAuth identities, a real-time public chat room, and an agent API with hosted callback inboxes. Built on React, Cloudflare Workers, and Durable Objects.",
     "image": "/project-thumbs/vibecodingtribe.jpg",
