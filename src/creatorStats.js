@@ -2,8 +2,11 @@
 // browser API, so update it by hand. Discord members are refreshed live and
 // fall back to this value.
 export const creatorStats = {
-  asOf: '2026-09-28',
-  totalFollowers: 130000,
+  asOf: '2026-11-18',
+  totalFollowers: 150000,
+  // Lifetime views summed across TikTok, Instagram, YouTube and the rest.
+  // The badge stays hidden until this is set.
+  totalViews: null,
   discordMembers: 3560,
 };
 
@@ -14,6 +17,10 @@ export const TWITCH_CHANNEL = 'techfren';
 export const DISCORD_INVITE = 'cK9WeQ7jPq';
 
 export function formatCount(value) {
+  if (value >= 1000000) {
+    const millions = value / 1000000;
+    return `${millions >= 100 ? Math.round(millions) : Number(millions.toFixed(1))}M`;
+  }
   if (value >= 1000) {
     const thousands = value / 1000;
     return `${thousands >= 100 ? Math.round(thousands) : Number(thousands.toFixed(1))}K`;
