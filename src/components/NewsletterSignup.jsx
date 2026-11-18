@@ -23,15 +23,15 @@ export default function NewsletterSignup({ source = "techfren-home" }) {
   };
 
   return (
-    <Box textAlign="center" p={6} my={8} borderRadius="lg" borderWidth="1px" borderColor="whiteAlpha.300" bg="blackAlpha.500">
-      <Heading size="md" mb={2}>The TechFren newsletter</Heading>
-      <Text mb={4} color="gray.400">AI agent workflows I actually use and new tools worth your time.</Text>
+    <Box textAlign="center" p={{ base: 6, md: 10 }} my={10} borderRadius="lg" borderWidth="2px" borderColor="#00ff00" boxShadow="0 0 14px #00ff00" bg="blackAlpha.800">
+      <Heading as="h2" fontSize={{ base: "md", md: "xl" }} color="#00ff00" mb={4}>Join the newsletter</Heading>
+      <Text mb={6} color="#00ff00">AI agent workflows I actually use and new tools worth your time.</Text>
       {state === "done" ? (
-        <Text color="green.300">You&apos;re in. Watch your inbox.</Text>
+         <Text color="#00ff00">You&apos;re in. Watch your inbox.</Text>
       ) : (
         <Flex as="form" onSubmit={submit} gap={2} maxW="md" mx="auto" direction={{ base: "column", sm: "row" }}>
-          <Input type="email" required placeholder="you@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />
-          <Button type="submit" colorScheme="purple" isLoading={state === "loading"}>Subscribe</Button>
+          <Input type="email" size="lg" bg="black" color="#00ff00" borderColor="#00ff00" _placeholder={{ color: "green.700" }} _hover={{ borderColor: "#00ff00" }} _focus={{ borderColor: "#00ff00", boxShadow: "0 0 10px #00ff00" }} required placeholder="you@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <Button type="submit" size="lg" bg="#00ff00" color="black" fontFamily="'Press Start 2P', cursive" fontSize="xs" px={6} _hover={{ bg: "#00ff00", boxShadow: "0 0 16px #00ff00" }} isLoading={state === "loading"}>Subscribe</Button>
         </Flex>
       )}
       {state === "error" && <Text mt={2} color="red.300">Something went wrong, try again.</Text>}
