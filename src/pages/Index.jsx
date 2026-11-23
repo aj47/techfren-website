@@ -271,6 +271,9 @@ const Index = () => {
         <Box mt={8}>
           <LatestContent />
         </Box>
+        <Box as="footer" mt={10} mb={6} textAlign="center" fontSize="sm">
+          <Link href="/privacy" color="#00ff00">Privacy Policy</Link>
+        </Box>
       </Container>
     </ChakraProvider>
   );
